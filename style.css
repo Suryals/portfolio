@@ -43,6 +43,32 @@ em { font-style: italic; }
 /* Shared content container — everything aligns to this */
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
 
+/* ---------- Custom cursor (fine pointers only) ---------- */
+@media (hover: hover) and (pointer: fine) {
+    body { cursor: none; }
+    a, button, .filter, .menu-btn, [role="button"] { cursor: none; }
+    .cursor {
+        position: fixed; top: 0; left: 0; z-index: 9999;
+        width: 11px; height: 11px; border-radius: 50%;
+        background: var(--accent);
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: width .28s var(--ease), height .28s var(--ease),
+                    background-color .28s var(--ease), opacity .3s;
+        mix-blend-mode: multiply;
+        will-change: transform;
+    }
+    .cursor.hover {
+        width: 46px; height: 46px;
+        background: rgba(255, 74, 28, 0.16);
+        mix-blend-mode: normal;
+    }
+    .cursor.down { width: 8px; height: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cursor { transition: none; }
+}
+
 /* ---------- Reveal animation ---------- */
 .reveal {
     opacity: 0;
