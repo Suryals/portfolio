@@ -99,7 +99,7 @@
 .nsa-side.right { position: relative; }
 .nsa-extbox.dark { background: var(--ink); color: rgba(241,238,230,.82); border-color: var(--ink); }
 .nsa-extbox.dark b { color: var(--accent); font-weight: 500; display: block; font-size: 11px; letter-spacing: .4px; }
-.nsa-railtag { position: absolute; top: -11px; right: 8px; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: var(--accent-deep); background: var(--paper); padding: 0 8px; }
+.nsa-railtag { display: block; text-align: center; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: var(--accent-deep); margin-bottom: 6px; }
 
 .nsa-conn { display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 15px; }
 
