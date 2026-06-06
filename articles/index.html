@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization — by Suryaprakash Lakshmanan.">
+    <link rel="canonical" href="https://suryal.dev/articles/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Articles — Suryaprakash Lakshmanan">
+    <meta property="og:description" content="Long-form notes on enterprise AI architecture, MCP & agentic operations, SRE/platform engineering, and cloud modernization.">
+    <meta property="og:url" content="https://suryal.dev/articles/">
+    <meta property="og:image" content="https://suryal.dev/images/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://suryal.dev/images/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23F1EEE6%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%2317150F%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FF4A1C%22/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../articles.css">
+</head>
+<body>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="../index.html#top" class="mark">
+                <span class="mark-name">Surya</span>
+                <span class="mark-dot"></span>
+            </a>
+            <nav class="nav" aria-label="Primary">
+                <a href="../index.html#work"><i>01</i> Work</a>
+                <a href="../index.html#capabilities"><i>02</i> Capabilities</a>
+                <a href="../index.html#experience"><i>03</i> Experience</a>
+                <a href="../index.html#writing"><i>04</i> Writing</a>
+                <a href="../index.html#contact"><i>05</i> Contact</a>
+            </nav>
+            <a href="../index.html#top" class="topbar-cta">Home ↗</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="../index.html#work"><i>01</i> Work</a>
+        <a href="../index.html#capabilities"><i>02</i> Capabilities</a>
+        <a href="../index.html#experience"><i>03</i> Experience</a>
+        <a href="../index.html#writing"><i>04</i> Writing</a>
+        <a href="../index.html#contact"><i>05</i> Contact</a>
+    </div>
+
+    <main>
+        <div class="wrap">
+            <section class="page-head">
+                <p class="breadcrumb"><a href="../index.html#top">Home</a> <span>/</span> Articles</p>
+                <span class="eyebrow" style="margin-top:16px">Writing · Long-form</span>
+                <h1 class="page-title">Field notes on<br><em>building AI in production.</em></h1>
+                <p class="page-lede">The permanent library — long-form engineering and architecture writing on enterprise AI, MCP &amp; agentic operations, platform engineering, and cloud modernization. LinkedIn is where the discussion happens; this is where the thinking lives.</p>
+
+                <div class="cat-filters" id="filters">
+                    <button class="filter active" data-filter="all">All</button>
+                    <button class="filter" data-filter="enterprise-ai">Enterprise AI Architecture</button>
+                    <button class="filter" data-filter="agentic">MCP &amp; Agentic Ops</button>
+                    <button class="filter" data-filter="platform">SRE / Platform</button>
+                    <button class="filter" data-filter="cloud">Cloud Modernization</button>
+                </div>
+            </section>
+
+            <section class="art-list" id="artList">
+                <!-- Featured / latest -->
+                <a class="art-row featured" data-category="enterprise-ai" href="sap-northstar-ai-architecture.html">
+                    <div class="art-main">
+                        <span class="art-cat">Enterprise AI Architecture <span class="art-flag">Latest</span></span>
+                        <h2>SAP NorthStar AI Architecture: Context Moat, HANA&apos;s Elevation, and the Gatekeeping Problem</h2>
+                        <p class="art-sub">A practitioner&apos;s page-by-page read — what it gets right, and which doors stay gatekeeped.</p>
+                        <p class="art-sum">Why the context thesis is the most honest thing an ERP vendor has said about AI, why HANA&apos;s move from in-memory database to context engine matters, and where the open-by-design rhetoric collides with data toll roads, ECC reality, and CI/CD.</p>
+                        <div class="art-tags"><span>Enterprise AI</span><span>HANA</span><span>Knowledge Graph</span><span>MCP</span><span>Agentic AI</span><span>BTP</span></div>
+                        <span class="art-go">Read article →</span>
+                    </div>
+                    <div class="art-meta">June 2026 · 16 min</div>
+                </a>
+
+                <!-- Empty-state hint for filtered categories with nothing yet -->
+                <p class="art-empty" id="artEmpty" hidden>More articles in this category are on the way.</p>
+            </section>
+
+            <section style="padding: clamp(56px,8vh,90px) 0 clamp(80px,12vh,140px)">
+                <p style="font-family:var(--mono);font-size:13px;color:var(--ink-faint);">More in progress — MCP framework patterns, AIOps agent design, and cloud-modernization field notes. <a href="https://www.linkedin.com/in/suryaprakash-lakshmanan-068a7684/recent-activity/all/" target="_blank" rel="noopener" style="color:var(--accent-deep);text-decoration:underline;text-underline-offset:3px;">Follow on LinkedIn</a> to catch them first.</p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">Suryaprakash Lakshmanan<b>.</b></span>
+                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span><a href="../index.html" style="color:inherit">Home</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body>
+</html>
