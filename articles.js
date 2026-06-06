@@ -22,29 +22,6 @@
         window.addEventListener("resize", update);
     }
 
-    /* ---------- Copy share text ---------- */
-    const copyBtn = document.getElementById("copyBtn");
-    const shareText = document.getElementById("shareText");
-    if (copyBtn && shareText) {
-        copyBtn.addEventListener("click", async () => {
-            const text = shareText.textContent.trim();
-            try {
-                await navigator.clipboard.writeText(text);
-            } catch {
-                const r = document.createRange();
-                r.selectNodeContents(shareText);
-                const sel = window.getSelection();
-                sel.removeAllRanges(); sel.addRange(r);
-                try { document.execCommand("copy"); } catch {}
-                sel.removeAllRanges();
-            }
-            const original = copyBtn.textContent;
-            copyBtn.textContent = "Copied ✓";
-            copyBtn.classList.add("done");
-            setTimeout(() => { copyBtn.textContent = original; copyBtn.classList.remove("done"); }, 2000);
-        });
-    }
-
     /* ---------- Category filter (listing page) ---------- */
     const filters = document.getElementById("filters");
     const rows = Array.from(document.querySelectorAll(".art-row"));

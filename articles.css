@@ -203,19 +203,6 @@
 .li-button .li-badge { width: 24px; height: 24px; border-radius: 6px; background: var(--accent); color: var(--paper); display: grid; place-items: center; font-family: var(--sans); font-weight: 700; font-size: 12px; }
 .li-button:hover .li-badge { background: var(--paper); color: var(--accent); }
 
-/* Share version (collapsible) */
-.share-version { max-width: var(--measure); margin: 28px auto 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-.share-version summary { list-style: none; cursor: pointer; padding: 16px 22px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); display: flex; align-items: center; gap: 10px; transition: background .25s; }
-.share-version summary::-webkit-details-marker { display: none; }
-.share-version summary::before { content: "＋"; color: var(--accent); font-size: 15px; }
-.share-version[open] summary::before { content: "－"; }
-.share-version summary:hover { background: var(--paper-2); }
-.share-body { padding: 0 22px 22px; }
-.share-text { font-size: 14.5px; line-height: 1.65; color: var(--read); white-space: pre-wrap; background: var(--paper-2); border: 1px solid var(--line); border-radius: 8px; padding: 18px; max-height: 360px; overflow: auto; }
-.copy-btn { margin-top: 14px; font-family: var(--mono); font-size: 12px; padding: 9px 16px; border: 1px solid var(--line); border-radius: 100px; background: none; color: var(--ink); cursor: pointer; transition: all .25s; }
-.copy-btn:hover { border-color: var(--ink); background: var(--ink); color: var(--paper); }
-.copy-btn.done { border-color: #2e7d32; color: #2e7d32; }
-
 /* Related / next */
 .related { margin: clamp(60px,9vh,110px) 0 0; padding-top: clamp(40px,6vh,64px); border-top: 1px solid var(--line); }
 .related .eyebrow { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-deep); }
