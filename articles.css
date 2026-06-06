@@ -91,7 +91,8 @@
 
 /* Hero architecture diagram — NorthStar, redrawn on-brand */
 .nsa { margin: clamp(34px,5vh,56px) 0 0; }
-.nsa-grid { display: grid; grid-template-columns: 168px 28px 1fr 28px 180px; align-items: stretch; }
+.nsa-grid { display: grid; grid-template-columns: 168px 28px minmax(0, 1fr) 28px 180px; align-items: stretch; }
+.nsa-grid > * { min-width: 0; }
 .nsa-side { display: flex; flex-direction: column; gap: 10px; justify-content: center; }
 .nsa-extbox { border: 1px solid var(--line); border-radius: 10px; padding: 16px 14px; text-align: center; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); line-height: 1.4; background: var(--paper); transition: border-color .3s; }
 .nsa-extbox:hover { border-color: var(--ink); }
@@ -102,7 +103,7 @@
 
 .nsa-conn { display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 15px; }
 
-.nsa-core { border: 1px solid var(--ink); border-radius: 14px; overflow: hidden; }
+.nsa-core { border: 1px solid var(--ink); border-radius: 14px; overflow: hidden; min-width: 0; }
 .nsa-coretitle { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-soft); text-align: center; padding: 9px; background: var(--paper-2); border-bottom: 1px solid var(--line); }
 .nsa-layer { padding: 14px clamp(14px,2vw,20px); border-bottom: 1px solid var(--line); transition: background .3s; }
 .nsa-layer:last-child { border-bottom: none; }
@@ -119,11 +120,16 @@
 .nsa figcaption a:hover { color: var(--accent); }
 
 @media (max-width: 900px) {
-    .nsa-grid { grid-template-columns: 1fr; gap: 12px; }
+    /* Single clean column; rails stack full-width so nothing forces
+       the diagram wider than the screen (no caps needed). */
+    .nsa-grid { display: flex; flex-direction: column; gap: 12px; }
+    .nsa-grid > * { min-width: 0; }
     .nsa-conn { display: none; }
-    .nsa-side { flex-direction: row; flex-wrap: wrap; }
-    .nsa-side > * { flex: 1 1 130px; }
-    .nsa-railtag { position: static; display: inline-block; margin-bottom: 2px; }
+    .nsa-side { flex-direction: column; }
+    .nsa-railtag { position: static; display: inline-block; margin-bottom: 4px; }
+    .nsa-layhead { flex-wrap: wrap; gap: 4px 10px; }
+    .nsa-layhead i { margin-left: 0; }
+    .nsa-chips span { font-size: 10.5px; padding: 4px 8px; }
 }
 
 /* TL;DR / key takeaways */
@@ -263,3 +269,4 @@
 @media (max-width: 600px) {
     .article-body p, .article-body li { font-size: 17px; }
 }
+
