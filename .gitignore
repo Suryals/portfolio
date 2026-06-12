@@ -9,3 +9,8 @@
 
 # Logs
 *.log
+
+# Local-only: agent config, superseded designs, internal notes
+.claude/
+_archive/
+docs/

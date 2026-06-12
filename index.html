@@ -8,17 +8,18 @@
     <meta name="keywords" content="AI Platform Engineer, MCP, Agentic AI, AIOps, GCP, Kubernetes, Terraform, Cloud Architect, PayPal, Chennai">
     <link rel="canonical" href="https://suryal.dev/">
     <meta property="og:title" content="Suryaprakash Lakshmanan — Staff AI Platform &amp; Cloud Engineer">
-    <meta property="og:description" content="Building the platform layer that lets enterprises connect LLMs and agents to backend systems through governed, auditable paths.">
+    <meta property="og:description" content="Building the control plane that lets enterprises connect LLMs and agents to backend systems through governed, auditable paths.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://suryal.dev/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Suryaprakash Lakshmanan — Staff AI Platform &amp; Cloud Engineer">
-    <meta name="twitter:description" content="Building the platform layer that lets enterprises connect LLMs and agents to backend systems through governed, auditable paths.">
+    <meta name="twitter:description" content="Building the control plane that lets enterprises connect LLMs and agents to backend systems through governed, auditable paths.">
     <meta property="og:image" content="https://suryal.dev/images/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:image" content="https://suryal.dev/images/og-image.png">
-    <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+    <meta name="theme-color" content="#0B0D0A">
+    <noscript><style>.reveal{opacity:1!important;transform:none!important}.sys-clock{display:none}</style></noscript>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -33,10 +34,10 @@
       "knowsAbout": ["Agentic AI", "Model Context Protocol", "AIOps", "Google Cloud Platform", "Kubernetes", "Terraform", "RAG", "Platform Engineering"]
     }
     </script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23F1EEE6%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%2317150F%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FF4A1C%22/></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="articles.css">
 </head>
@@ -44,23 +45,22 @@
     <!-- Custom cursor -->
     <div class="cursor" id="cursor" aria-hidden="true"></div>
 
-    <!-- Top bar -->
+    <!-- Top bar — console header -->
     <header class="topbar" id="topbar">
         <div class="bar">
-            <a href="#top" class="mark">
-                <span class="mark-name">Surya</span>
-                <span class="mark-dot"></span>
-            </a>
+            <a href="#top" class="mark">SURYA.L</a>
             <nav class="nav" aria-label="Primary">
-                <a href="#work"><i>01</i> Work</a>
-                <a href="#capabilities"><i>02</i> Capabilities</a>
-                <a href="#experience"><i>03</i> Experience</a>
-                <a href="#writing"><i>04</i> Writing</a>
-                <a href="#contact"><i>05</i> Contact</a>
+                <a href="#work"><i>01</i> Services</a>
+                <a href="#lab"><i>02</i> Lab</a>
+                <a href="#capabilities"><i>03</i> Subsystems</a>
+                <a href="#experience"><i>04</i> Uptime</a>
+                <a href="#writing"><i>05</i> Logs</a>
+                <a href="#contact"><i>06</i> Channel</a>
             </nav>
-            <a href="articles/sap-northstar-ai-architecture.html" class="topbar-cta">
-                <span class="pulse"></span> New article
-            </a>
+            <div class="sys" aria-label="System status">
+                <span class="sys-status"><span class="pulse"></span>sys:nominal</span>
+                <span class="sys-clock" id="sysClock" aria-label="Local time, Chennai">IST --:--:--</span>
+            </div>
             <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
                 <span></span><span></span>
             </button>
@@ -69,11 +69,12 @@
 
     <!-- Mobile menu -->
     <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-        <a href="#work"><i>01</i> Work</a>
-        <a href="#capabilities"><i>02</i> Capabilities</a>
-        <a href="#experience"><i>03</i> Experience</a>
-        <a href="#writing"><i>04</i> Writing</a>
-        <a href="#contact"><i>05</i> Contact</a>
+        <a href="#work"><i>01</i> Services</a>
+        <a href="#lab"><i>02</i> Lab</a>
+        <a href="#capabilities"><i>03</i> Subsystems</a>
+        <a href="#experience"><i>04</i> Uptime</a>
+        <a href="#writing"><i>05</i> Logs</a>
+        <a href="#contact"><i>06</i> Channel</a>
     </div>
 
     <main id="top">
@@ -82,14 +83,13 @@
             <div class="wrap">
                 <div class="hero-meta reveal">
                     <span class="tag">Staff AI Platform &amp; Cloud Engineer · PayPal</span>
-                    <span class="loc">Chennai, India</span>
+                    <span class="loc">12.97°N 80.22°E · Chennai, India</span>
                 </div>
 
                 <h1 class="hero-title">
-                    <span class="line reveal">I build the</span>
-                    <span class="line reveal"><em>platform layer</em> that lets</span>
-                    <span class="line reveal">enterprises connect <em>AI</em></span>
-                    <span class="line reveal">to their <span class="mark-accent">backends.</span></span>
+                    <span class="line reveal"><span class="prompt">&gt;</span> I build the</span>
+                    <span class="line reveal"><span class="hl">control plane</span></span>
+                    <span class="line reveal">for enterprise AI<span class="caret" aria-hidden="true"></span></span>
                 </h1>
 
                 <div class="hero-base">
@@ -99,64 +99,79 @@
                         wire LLMs and agents into backend systems: MCP server frameworks, tool-use SDKs, and the
                         middleware that absorbs identity, data governance, and guardrails.
                     </p>
-                    <div class="hero-spec reveal">
+                    <div class="hero-spec reveal" role="group" aria-label="Telemetry">
                         <div class="spec-row"><span>Role</span><b>Staff Engineer · PayPal</b></div>
                         <div class="spec-row"><span>Focus</span><b>Agentic AI · MCP · AIOps</b></div>
                         <div class="spec-row"><span>Base</span><b>Google Cloud · Kubernetes</b></div>
+                        <div class="spec-row"><span>Uptime</span><b>13 yrs in production</b></div>
                         <div class="spec-row"><span>Status</span><b class="live"><span class="pulse"></span>Building in public</b></div>
                     </div>
                 </div>
 
                 <a href="#work" class="scroll-hint reveal" aria-label="Scroll to work">
-                    <span>Selected work</span>
+                    <span>Inspect services</span>
                     <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 4v16M6 14l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
                 </a>
             </div>
         </section>
 
-        <!-- ───────────── AGENTIC SCHEMATIC ───────────── -->
+        <!-- ───────────── TRACE — a governed tool call, live ───────────── -->
         <section class="schematic">
             <div class="wrap">
-                <span class="idx reveal">The pattern I build</span>
-                <div class="flow reveal">
-                    <div class="node">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="12" cy="18" r="2.4"/><path d="M7.7 7.6 10.6 16M16.3 7.6 13.4 16M8.4 6h7.2"/></svg>
-                        <span>Agent / LLM</span>
-                        <i>Tool-use</i>
+                <span class="idx reveal">Trace — what a governed tool call looks like</span>
+                <div class="trace-panel reveal" style="margin-top:24px">
+                    <div class="trace-head">
+                        <span>trace_id: gov-tool-call</span>
+                        <span class="t-live"><span class="pulse"></span>live</span>
                     </div>
-                    <div class="link"><span class="dot"></span></div>
-                    <div class="node hot">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3 21 8 12 13 3 8 12 3Z"/><path d="M3 12 12 17 21 12"/><path d="M3 16 12 21 21 16"/></svg>
-                        <span>MCP Server</span>
-                        <i>FastMCP</i>
+                    <div class="flow">
+                        <div class="node">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="12" cy="18" r="2.4"/><path d="M7.7 7.6 10.6 16M16.3 7.6 13.4 16M8.4 6h7.2"/></svg>
+                            <span>Agent / LLM</span>
+                            <i>Tool-use</i>
+                        </div>
+                        <div class="link"><span class="dot"></span></div>
+                        <div class="node hot">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3 21 8 12 13 3 8 12 3Z"/><path d="M3 12 12 17 21 12"/><path d="M3 16 12 21 21 16"/></svg>
+                            <span>MCP Server</span>
+                            <i>FastMCP</i>
+                        </div>
+                        <div class="link"><span class="dot" style="--fd:.5s"></span></div>
+                        <div class="node">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.6"/><path d="M10.6 10.6 20 20M16.5 17.5l2-2M14.5 19.5l2-2"/></svg>
+                            <span>Federated Identity</span>
+                            <i>SAML · OAuth</i>
+                        </div>
+                        <div class="link"><span class="dot" style="--fd:1s"></span></div>
+                        <div class="node">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg>
+                            <span>Guardrails</span>
+                            <i>Governance</i>
+                        </div>
+                        <div class="link"><span class="dot" style="--fd:1.5s"></span></div>
+                        <div class="node">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg>
+                            <span>Enterprise Systems</span>
+                            <i>Databases · APIs</i>
+                        </div>
                     </div>
-                    <div class="link"><span class="dot"></span></div>
-                    <div class="node">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.6"/><path d="M10.6 10.6 20 20M16.5 17.5l2-2M14.5 19.5l2-2"/></svg>
-                        <span>Federated Identity</span>
-                        <i>SAML · OAuth</i>
-                    </div>
-                    <div class="link"><span class="dot"></span></div>
-                    <div class="node">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg>
-                        <span>Guardrails</span>
-                        <i>Governance</i>
-                    </div>
-                    <div class="link"><span class="dot"></span></div>
-                    <div class="node">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg>
-                        <span>Enterprise Systems</span>
-                        <i>Databases · APIs</i>
+                    <div class="trace-log" id="traceLog">
+                        <div class="ln"><span class="k">agent.request</span><span class="dots"> ·········· </span><span>tool: system_health</span><span class="dots"> ·········· </span><span class="amb">RECEIVED</span></div>
+                        <div class="ln"><span class="k">mcp.route</span><span class="dots"> ·········· </span><span>fastmcp runtime</span><span class="dots"> ·········· </span><span class="ok">OK</span></div>
+                        <div class="ln"><span class="k">identity.assert</span><span class="dots"> ·········· </span><span>saml → oauth</span><span class="dots"> ·········· </span><span class="ok">VERIFIED</span></div>
+                        <div class="ln"><span class="k">guardrail.check</span><span class="dots"> ·········· </span><span>policy: governed-query</span><span class="dots"> ·········· </span><span class="ok">PASS</span></div>
+                        <div class="ln"><span class="k">backend.exec</span><span class="dots"> ·········· </span><span>enterprise api</span><span class="dots"> ·········· </span><span class="ok">200</span></div>
+                        <div class="ln"><span class="k">audit.log</span><span class="dots"> ·········· </span><span>full trail persisted</span><span class="dots"> ·········· </span><span class="ok">WRITTEN</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ───────────── WORK ───────────── -->
+        <!-- ───────────── WORK / SERVICES ───────────── -->
         <section class="block" id="work">
             <div class="wrap">
                 <div class="block-head reveal">
-                    <span class="idx">01 — Selected Work</span>
+                    <span class="idx">01 — Service Registry</span>
                     <h2 class="block-title">Platform work,<br><em>in production.</em></h2>
                     <div class="filters" id="filters">
                         <button class="filter active" data-filter="all">All</button>
@@ -168,91 +183,178 @@
                 </div>
 
                 <div class="work-list" id="workList">
-                    <article class="work-item reveal" data-category="ai-enablement">
-                        <span class="work-no">01</span>
-                        <div class="work-main">
-                            <h3>Governed AI-to-Backend Integration (MCP)</h3>
+                    <details class="work-item reveal" data-category="ai-enablement">
+                        <summary>
+                            <span class="work-no">01</span>
+                            <span class="work-name">Governed AI-to-Backend Integration (MCP)</span>
+                            <span class="work-stack">MCP · Federated Identity · Enterprise Backends</span>
+                            <span class="work-status prod">prod</span>
+                            <span class="work-toggle" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="work-body">
                             <p>Defined an MCP → federated-identity → enterprise-systems topology, now the org-standard pattern for agentic workloads. First proven across SAP HANA, OData, and SaaS landscapes — cutting new integration build time from weeks to days.</p>
+                            <span class="work-cat">AI Enablement</span>
                         </div>
-                        <div class="work-stack">MCP · Federated Identity · Enterprise Backends</div>
-                        <span class="work-cat">AI Enablement</span>
-                        <span class="work-arrow" aria-hidden="true">↗</span>
-                    </article>
+                    </details>
 
-                    <article class="work-item reveal" data-category="ai-enablement">
-                        <span class="work-no">02</span>
-                        <div class="work-main">
-                            <h3>End-to-End MCP Framework &amp; Reusable SDKs</h3>
+                    <details class="work-item reveal" data-category="ai-enablement">
+                        <summary>
+                            <span class="work-no">02</span>
+                            <span class="work-name">End-to-End MCP Framework &amp; Reusable SDKs</span>
+                            <span class="work-stack">FastMCP · Python · SAML / OAuth · Guardrails</span>
+                            <span class="work-status prod">prod</span>
+                            <span class="work-toggle" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="work-body">
                             <p>Shipped an MCP framework with shared SDK libraries that absorb federated auth, query governance, and security guardrails — so consuming teams inherit production-grade safety by default instead of rebuilding it per system. Pioneered the FastMCP runtime in production.</p>
+                            <span class="work-cat">AI Enablement</span>
                         </div>
-                        <div class="work-stack">FastMCP · Python · SAML / OAuth · Guardrails</div>
-                        <span class="work-cat">AI Enablement</span>
-                        <span class="work-arrow" aria-hidden="true">↗</span>
-                    </article>
+                    </details>
 
-                    <article class="work-item reveal" data-category="aiops">
-                        <span class="work-no">03</span>
-                        <div class="work-main">
-                            <h3>AIOps Agent Fleet</h3>
+                    <details class="work-item reveal" data-category="aiops">
+                        <summary>
+                            <span class="work-no">03</span>
+                            <span class="work-name">AIOps Agent Fleet</span>
+                            <span class="work-stack">LangGraph · n8n · RAG · Vector DBs</span>
+                            <span class="work-status building">building</span>
+                            <span class="work-toggle" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="work-body">
                             <p>Architecting AIOps across three agentic domains — Monitoring &amp; Alerting (triage, Dataproc/BigQuery monitoring, vulnerability tracking), Operations (change coordination, patch-day automation, system-health analysis), and Knowledge &amp; Query (L1 knowledge and troubleshooting agents).</p>
+                            <span class="work-cat">AIOps</span>
                         </div>
-                        <div class="work-stack">LangGraph · n8n · RAG · Vector DBs</div>
-                        <span class="work-cat">AIOps</span>
-                        <span class="work-arrow" aria-hidden="true">↗</span>
-                    </article>
+                    </details>
 
-                    <article class="work-item reveal" data-category="aiops">
-                        <span class="work-no">04</span>
-                        <div class="work-main">
-                            <h3>Conversational Health-Monitoring Agent</h3>
+                    <details class="work-item reveal" data-category="aiops">
+                        <summary>
+                            <span class="work-no">04</span>
+                            <span class="work-name">Conversational Health-Monitoring Agent</span>
+                            <span class="work-stack">LLM Tool-Use · Embeddings · OpenTelemetry</span>
+                            <span class="work-status prod">prod</span>
+                            <span class="work-toggle" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="work-body">
                             <p>Productionized an agent giving SRE and platform teams natural-language access to system health, sessions, and workload analytics on the HANA platform — now the reference implementation other agents are built from.</p>
+                            <span class="work-cat">AIOps</span>
                         </div>
-                        <div class="work-stack">LLM Tool-Use · Embeddings · OpenTelemetry</div>
-                        <span class="work-cat">AIOps</span>
-                        <span class="work-arrow" aria-hidden="true">↗</span>
-                    </article>
+                    </details>
 
-                    <article class="work-item reveal" data-category="cloud">
-                        <span class="work-no">05</span>
-                        <div class="work-main">
-                            <h3>FinOps Governance Program</h3>
+                    <details class="work-item reveal" data-category="cloud">
+                        <summary>
+                            <span class="work-no">05</span>
+                            <span class="work-name">FinOps Governance Program</span>
+                            <span class="work-stack">BigQuery Slots · GCP CUDs · Rightsizing</span>
+                            <span class="work-status prod">active</span>
+                            <span class="work-toggle" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="work-body">
                             <p>Drove FinOps governance delivering <b>verified, recurring cost savings</b> — BigQuery slot reservations, GCP committed-use discounts, rightsizing, and quota management — with no performance degradation.</p>
+                            <span class="work-cat">Cloud &amp; FinOps</span>
                         </div>
-                        <div class="work-stack">BigQuery Slots · GCP CUDs · Rightsizing</div>
-                        <span class="work-cat">Cloud &amp; FinOps</span>
-                        <span class="work-arrow" aria-hidden="true">↗</span>
-                    </article>
+                    </details>
 
-                    <article class="work-item reveal" data-category="platform">
-                        <span class="work-no">06</span>
-                        <div class="work-main">
-                            <h3>Self-Service Platform &amp; Terraform Frameworks</h3>
+                    <details class="work-item reveal" data-category="platform">
+                        <summary>
+                            <span class="work-no">06</span>
+                            <span class="work-name">Self-Service Platform &amp; Terraform Frameworks</span>
+                            <span class="work-stack">Terraform · GKE · CLI Tooling · GitOps</span>
+                            <span class="work-status prod">prod</span>
+                            <span class="work-toggle" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="work-body">
                             <p>Built Terraform provisioning frameworks that eliminated <b>~80%</b> of manual ClickOps and self-service platforms that offloaded <b>~70%</b> of L1/L2 tasks — plus CLI-generated, production-ready MCP servers and an interactive docs site that turns one-off builds into a repeatable authoring path.</p>
+                            <span class="work-cat">Platform</span>
                         </div>
-                        <div class="work-stack">Terraform · GKE · CLI Tooling · GitOps</div>
-                        <span class="work-cat">Platform</span>
-                        <span class="work-arrow" aria-hidden="true">↗</span>
-                    </article>
+                    </details>
 
-                    <article class="work-item reveal" data-category="cloud">
-                        <span class="work-no">07</span>
-                        <div class="work-main">
-                            <h3>Real-Time Streaming Platform</h3>
+                    <details class="work-item reveal" data-category="cloud">
+                        <summary>
+                            <span class="work-no">07</span>
+                            <span class="work-name">Real-Time Streaming Platform</span>
+                            <span class="work-stack">PySpark · Dataproc · Pub/Sub · BigQuery</span>
+                            <span class="work-status prod">prod</span>
+                            <span class="work-toggle" aria-hidden="true">+</span>
+                        </summary>
+                        <div class="work-body">
                             <p>Architected Apache Spark / Dataproc platforms processing <b>200M+ events per day</b> — PySpark pipelines over Pub/Sub streaming and batch ingestion at multi-terabyte scale, with GKE-based orchestration and capacity monitoring.</p>
+                            <span class="work-cat">Cloud &amp; Data</span>
                         </div>
-                        <div class="work-stack">PySpark · Dataproc · Pub/Sub · BigQuery</div>
-                        <span class="work-cat">Cloud &amp; Data</span>
-                        <span class="work-arrow" aria-hidden="true">↗</span>
-                    </article>
+                    </details>
                 </div>
             </div>
         </section>
 
-        <!-- ───────────── CAPABILITIES ───────────── -->
+        <!-- ───────────── LAB / BUILDING IN PUBLIC ───────────── -->
+        <section class="block" id="lab">
+            <div class="wrap">
+                <div class="block-head reveal">
+                    <span class="idx">02 — Lab · Building in Public</span>
+                    <h2 class="block-title">Experiments,<br><em>in the open.</em></h2>
+                    <p class="lede">Side-of-desk research, run in public — benchmark harnesses, live dashboards, and evals. Code on GitHub, every number reproducible; the write-ups live in the logs.</p>
+                </div>
+
+                <div class="lab-grid">
+                    <article class="lab-card reveal">
+                        <div class="lab-head">
+                            <span class="lab-id">exp-001</span>
+                            <span class="work-status prod">live</span>
+                        </div>
+                        <h3>mlx-lab — how far can one Mac go?</h3>
+                        <p>A benchmark harness for local LLMs on Apple Silicon (MLX): a model ladder from 3B to 123B on a 128GB M5 Max — decode, TTFT, the real memory ceiling (spoiler: not where Apple says), and the 14-inch thermal tax. Live dashboard, every number reproducible from the repo.</p>
+                        <div class="lab-tags">MLX · Apple Silicon · Local LLM · Benchmarks</div>
+                        <div class="lab-links">
+                            <a href="articles/mlx-breaking-point.html">[ live dashboard ]</a>
+                            <a href="https://github.com/Suryals/mlx-lab" target="_blank" rel="noopener">[ github ]</a>
+                        </div>
+                    </article>
+
+                    <article class="lab-card reveal">
+                        <div class="lab-head">
+                            <span class="lab-id">exp-002</span>
+                            <span class="work-status building">queued</span>
+                        </div>
+                        <h3>Local tool-routing eval</h3>
+                        <p>Next in the series: can a local model pick the right tool for an operations alert? The number that actually matters for autonomous ops — eval design in progress, same build-in-public rules.</p>
+                        <div class="lab-tags">Local LLM · Tool-Use · AIOps Evals</div>
+                        <div class="lab-links">
+                            <span class="lab-soon">shipping next</span>
+                        </div>
+                    </article>
+                    <article class="lab-card reveal">
+                        <div class="lab-head">
+                            <span class="lab-id">exp-003</span>
+                            <span class="work-status building">beta</span>
+                        </div>
+                        <h3>Resident agent — a real LLM in your browser</h3>
+                        <p>The little bot in the corner of this page. Scripted telemetry by default — but click <em>load real brain</em> and it boots a ~0.6B local model on your own GPU via WebGPU. No server, no API key, nothing leaves your machine.</p>
+                        <div class="lab-tags">WebLLM · WebGPU · Local LLM · This Very Site</div>
+                        <div class="lab-links">
+                            <a href="#agent" onclick="document.getElementById('agentBot')?.click(); return false;">[ poke the agent ]</a>
+                        </div>
+                    </article>
+                    <article class="lab-card reveal">
+                        <div class="lab-head">
+                            <span class="lab-id">exp-004</span>
+                            <span class="work-status building">soon</span>
+                        </div>
+                        <h3>mcp-postgres-oidc — governed SQL for agents</h3>
+                        <p>This site's thesis as a runnable lab: an end-to-end OIDC auth flow from agent to Postgres through MCP — built for headless agent workloads, not just humans at a browser — with role-based column masking, SELECT-only guardrails, table ACLs, rate limits, and a full audit trail. One <code>docker compose up</code>, end to end.</p>
+                        <div class="lab-tags">FastMCP · Keycloak OIDC · PostgreSQL · Guardrails · Audit</div>
+                        <div class="lab-links">
+                            <span class="lab-soon">shipping soon</span>
+                        </div>
+                    </article>
+                    <!-- Add new experiments here: copy a .lab-card, bump exp-id, set status live/queued -->
+                </div>
+                <a href="https://github.com/Suryals" target="_blank" rel="noopener" class="writing-cta reveal">More on GitHub ↗</a>
+            </div>
+        </section>
+
+        <!-- ───────────── CAPABILITIES / SUBSYSTEMS ───────────── -->
         <section class="block" id="capabilities">
             <div class="wrap">
                 <div class="block-head reveal">
-                    <span class="idx">02 — Capabilities</span>
+                    <span class="idx">03 — Subsystems</span>
                     <h2 class="block-title">What I work in,<br><em>concretely.</em></h2>
                 </div>
 
@@ -316,39 +418,39 @@
                 <div class="stack-strip reveal">
                     <span class="stack-strip-label">Daily Tooling</span>
                     <div class="logo-row">
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/modelcontextprotocol.svg)"><i></i>MCP</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/googlecloud.svg)"><i></i>Google Cloud</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/kubernetes.svg)"><i></i>Kubernetes</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/terraform.svg)"><i></i>Terraform</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/docker.svg)"><i></i>Docker</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/helm.svg)"><i></i>Helm</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/sap.svg)"><i></i>SAP</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/apachespark.svg)"><i></i>Spark</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/datadog.svg)"><i></i>Datadog</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/prometheus.svg)"><i></i>Prometheus</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/grafana.svg)"><i></i>Grafana</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/opentelemetry.svg)"><i></i>OpenTelemetry</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/python.svg)"><i></i>Python</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/ansible.svg)"><i></i>Ansible</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/githubactions.svg)"><i></i>GitHub Actions</span>
-                        <span class="logo-chip" style="--m:url(https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/jenkins.svg)"><i></i>Jenkins</span>
-                        <span class="logo-chip" style="--m:url(images/harness-mask.png)"><i></i>Harness</span>
+                        <span class="logo-chip">mcp</span>
+                        <span class="logo-chip">google-cloud</span>
+                        <span class="logo-chip">kubernetes</span>
+                        <span class="logo-chip">terraform</span>
+                        <span class="logo-chip">docker</span>
+                        <span class="logo-chip">helm</span>
+                        <span class="logo-chip">sap</span>
+                        <span class="logo-chip">spark</span>
+                        <span class="logo-chip">datadog</span>
+                        <span class="logo-chip">prometheus</span>
+                        <span class="logo-chip">grafana</span>
+                        <span class="logo-chip">opentelemetry</span>
+                        <span class="logo-chip">python</span>
+                        <span class="logo-chip">ansible</span>
+                        <span class="logo-chip">github-actions</span>
+                        <span class="logo-chip">jenkins</span>
+                        <span class="logo-chip">harness</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ───────────── EXPERIENCE ───────────── -->
+        <!-- ───────────── EXPERIENCE / UPTIME LOG ───────────── -->
         <section class="block" id="experience">
             <div class="wrap">
                 <div class="block-head reveal">
-                    <span class="idx">03 — Experience</span>
+                    <span class="idx">04 — Uptime Log</span>
                     <h2 class="block-title">Thirteen years,<br><em>one through-line.</em></h2>
                 </div>
 
                 <ol class="timeline">
                     <li class="reveal">
-                        <span class="tl-when">2017 — Present</span>
+                        <span class="tl-when">2017 — now</span>
                         <div class="tl-main">
                             <h3>PayPal</h3>
                             <span class="tl-role">Staff System &amp; Cloud Engineer</span>
@@ -389,11 +491,11 @@
             </div>
         </section>
 
-        <!-- ───────────── WRITING (long-form + posts) ───────────── -->
+        <!-- ───────────── WRITING / LOGS ───────────── -->
         <section class="block home-writing" id="writing">
             <div class="wrap">
                 <div class="block-head reveal">
-                    <span class="idx">04 — Writing</span>
+                    <span class="idx">05 — Logs &amp; Field Notes</span>
                     <h2 class="block-title">Long-form &amp;<br><em>field notes.</em></h2>
                     <p class="lede">A working library of engineering and architecture writing — enterprise AI, MCP &amp; agentic operations, platform engineering, and cloud modernization. The long-form lives here; the shorter takes go out on LinkedIn.</p>
                 </div>
@@ -437,10 +539,10 @@
             </div>
         </section>
 
-        <!-- ───────────── CONTACT ───────────── -->
+        <!-- ───────────── CONTACT / OPEN CHANNEL ───────────── -->
         <section class="contact" id="contact">
             <div class="wrap">
-                <span class="idx reveal">05 — Contact</span>
+                <span class="idx reveal">06 — Open Channel</span>
                 <h2 class="contact-title reveal">Always up for a<br>good <em>systems</em> conversation.</h2>
                 <p class="contact-lede reveal">If you&apos;re working on agentic platforms, MCP, or AIOps — or just want to compare notes — say hello. Email is the surest way to reach me.</p>
                 <a href="mailto:suryal.k90@gmail.com" class="contact-mail reveal">suryal.k90@gmail.com</a>
@@ -455,15 +557,35 @@
     <footer class="footer">
         <div class="wrap footer-inner">
             <div class="footer-col">
-                <span class="footer-mark">Suryaprakash Lakshmanan<b>.</b></span>
+                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
                 <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+                <span class="footer-status"><span class="pulse"></span>all systems nominal</span>
             </div>
             <div class="footer-col footer-colophon">
-                <span>© <span id="year">2025</span> — All rights reserved</span>
-                <span>Set in Instrument Serif &amp; Hanken Grotesk</span>
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span>Set in Fraunces &amp; IBM Plex</span>
             </div>
         </div>
     </footer>
+
+    <!-- Resident ops agent (exp-003: optional real local model via WebGPU) -->
+    <div class="agent" id="agent">
+        <div class="agent-bubble"><span id="agentText"></span><span class="agent-caret" aria-hidden="true"></span></div>
+        <form class="agent-chat" id="agentChat" hidden>
+            <input id="agentInput" type="text" maxlength="200" placeholder="ask the agent…" aria-label="Ask the agent" autocomplete="off">
+        </form>
+        <button class="agent-brain" id="agentBrain" type="button" hidden
+                title="Downloads a ~0.6B model once (a few hundred MB, cached). Runs fully in your browser via WebGPU — nothing leaves your machine.">
+            [ load real brain · runs in your browser ]
+        </button>
+        <button class="agent-bot" id="agentBot" tabindex="-1" aria-label="Resident agent">
+            <span class="agent-antenna" aria-hidden="true"></span>
+            <span class="agent-face" aria-hidden="true">
+                <span class="agent-eye"><i></i></span>
+                <span class="agent-eye"><i></i></span>
+            </span>
+        </button>
+    </div>
 
     <script src="script.js"></script>
 </body>
