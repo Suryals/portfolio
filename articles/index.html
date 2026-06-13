@@ -71,9 +71,21 @@
 
             <section class="art-list" id="artList">
                 <!-- Featured / latest -->
-                <a class="art-row featured" data-category="platform" href="mlx-breaking-point.html">
+                <a class="art-row featured" data-category="agentic" href="principal-propagation-mcp.html">
                     <div class="art-main">
-                        <span class="art-cat">Local AI · Benchmarking <span class="art-flag">Latest</span></span>
+                        <span class="art-cat">Security · MCP · Identity <span class="art-flag">Latest</span></span>
+                        <h2>MCP Access to a Database — as the User, Not a Service Account</h2>
+                        <p class="art-sub">Principal propagation for AI agents — carry the user&apos;s identity to the data source, not a shared service account.</p>
+                        <p class="art-sum">A working demo: an AI agent reaches a Postgres banking database through MCP as the end user — role-based PII masking, per-tool RBAC, and audit attributed to the real human — plus a Postgres-18 path where the database engine itself denies unauthorized columns via SASL OAUTHBEARER. Honest throughout about what&apos;s app-layer versus engine-enforced.</p>
+                        <div class="art-tags"><span>MCP</span><span>OIDC</span><span>Keycloak</span><span>PostgreSQL</span><span>OAUTHBEARER</span><span>Compliance</span></div>
+                        <span class="art-go">Read the case study →</span>
+                    </div>
+                    <div class="art-meta">June 2026 · Case study</div>
+                </a>
+
+                <a class="art-row" data-category="platform" href="mlx-breaking-point.html">
+                    <div class="art-main">
+                        <span class="art-cat">Local AI · Benchmarking</span>
                         <h2>How Far Can One Mac Go? Local LLM Limits on an M5 Max</h2>
                         <p class="art-sub">Six models, 3B → 123B, on 128GB of unified memory — measured, charted, reproducible.</p>
                         <p class="art-sum">A live dashboard of the full ladder through one MLX benchmark harness on an M5 Max: the scaling curve, the memory ceiling that wasn't where Apple said (123B ran in 69GB; the probe hit 128GB with no refusal), and the 14-inch thermal tax — decode holds, prefill pays. Every number reproducible from the open-source repo.</p>

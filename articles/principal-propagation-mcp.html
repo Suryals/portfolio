@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Querying a Regulated Database as the User, Not a Service Account — Suryaprakash Lakshmanan</title>
-    <meta name="description" content="A reference pattern and working demo for principal propagation: an AI agent queries a regulated PostgreSQL database carrying the end user's verified identity — with authentication, authorization, and audit enforced at the data source, via MCP, OIDC/Keycloak, and Postgres 18 SASL OAUTHBEARER.">
+    <title>MCP Access to a Database — as the User, Not a Service Account — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="Giving an AI agent MCP access to a regulated PostgreSQL database — carrying the end user's verified identity to the data source, with authentication, authorization, and audit enforced there. Built with MCP, OIDC/Keycloak, and Postgres 18 SASL OAUTHBEARER.">
     <link rel="canonical" href="https://suryal.dev/articles/principal-propagation-mcp.html">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="Querying a Regulated Database as the User, Not a Service Account">
-    <meta property="og:description" content="Principal propagation for AI agents: carry the end user's identity all the way to Postgres, and enforce authN, authZ, and audit where the data lives. MCP · OIDC · PG18 OAUTHBEARER.">
+    <meta property="og:title" content="MCP Access to a Database — as the User, Not a Service Account">
+    <meta property="og:description" content="MCP access to a regulated database, done right: carry the end user's identity all the way to Postgres, and enforce authN, authZ, and audit where the data lives. MCP · OIDC · PG18 OAUTHBEARER.">
     <meta property="og:url" content="https://suryal.dev/articles/principal-propagation-mcp.html">
     <meta property="og:image" content="https://suryal.dev/images/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -84,8 +84,8 @@
     {
       "@context": "https://schema.org",
       "@type": "TechArticle",
-      "headline": "Querying a Regulated Database as the User, Not a Service Account",
-      "description": "A reference pattern and working demo for principal propagation: an AI agent queries a regulated PostgreSQL database carrying the end user's verified identity, with authN, authZ, and audit enforced at the data source.",
+      "headline": "MCP Access to a Database — as the User, Not a Service Account",
+      "description": "Giving an AI agent MCP access to a regulated PostgreSQL database via principal propagation: carrying the end user's verified identity to the data source, with authN, authZ, and audit enforced there.",
       "datePublished": "2026-06-14",
       "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
       "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
@@ -130,8 +130,8 @@
             <header class="article-header">
                 <p class="breadcrumb"><a href="../index.html#lab">Lab</a> <span>/</span> exp-004</p>
                 <span class="article-cat" style="margin-top:14px">Security · MCP · Identity</span>
-                <h1 class="article-title">Querying a regulated database as the <em>user</em> — not a service account.</h1>
-                <p class="article-sub">A reference pattern and working demo for <em>principal propagation</em>: an AI agent reaches a banking database carrying the end user's verified identity — with authentication, authorization, and audit enforced where the data lives.</p>
+                <h1 class="article-title">MCP access to a database — as the <em>user</em>, not a service account.</h1>
+                <p class="article-sub">A reference pattern and working demo for <em>principal propagation</em>: an AI agent reaches a banking database through MCP carrying the end user's verified identity — with authentication, authorization, and audit enforced where the data lives.</p>
                 <div class="article-meta">
                     <span class="who">Suryaprakash Lakshmanan</span>
                     <span class="sep">·</span><span>June 2026</span>
