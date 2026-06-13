@@ -335,13 +335,14 @@
                     <article class="lab-card reveal">
                         <div class="lab-head">
                             <span class="lab-id">exp-004</span>
-                            <span class="work-status building">soon</span>
+                            <span class="work-status prod">live</span>
                         </div>
-                        <h3>mcp-postgres-oidc — governed SQL for agents</h3>
-                        <p>This site's thesis as a runnable lab: an end-to-end OIDC auth flow from agent to Postgres through MCP — built for headless agent workloads, not just humans at a browser — with role-based column masking, SELECT-only guardrails, table ACLs, rate limits, and a full audit trail. One <code>docker compose up</code>, end to end.</p>
-                        <div class="lab-tags">FastMCP · Keycloak OIDC · PostgreSQL · Guardrails · Audit</div>
+                        <h3>Principal propagation — query a regulated DB as the user</h3>
+                        <p>This site's thesis as a runnable lab: an AI agent reaches a Postgres banking database carrying the end user's verified identity — not a shared service account — with authentication, authorization, and audit enforced at the data source. Role-based PII masking, per-tool RBAC, and a Postgres-18 path where the database itself denies unauthorized columns.</p>
+                        <div class="lab-tags">MCP · OIDC · Keycloak · PostgreSQL · OAUTHBEARER · Audit</div>
                         <div class="lab-links">
-                            <span class="lab-soon">shipping soon</span>
+                            <a href="articles/principal-propagation-mcp.html">[ case study ]</a>
+                            <a href="https://github.com/Suryals/principal-propagation-mcp" target="_blank" rel="noopener">[ github ]</a>
                         </div>
                     </article>
                     <!-- Add new experiments here: copy a .lab-card, bump exp-id, set status live/queued -->

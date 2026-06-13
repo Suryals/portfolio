@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Querying a Regulated Database as the User, Not a Service Account — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="A reference pattern and working demo for principal propagation: an AI agent queries a regulated PostgreSQL database carrying the end user's verified identity — with authentication, authorization, and audit enforced at the data source, via MCP, OIDC/Keycloak, and Postgres 18 SASL OAUTHBEARER.">
+    <link rel="canonical" href="https://suryal.dev/articles/principal-propagation-mcp.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Querying a Regulated Database as the User, Not a Service Account">
+    <meta property="og:description" content="Principal propagation for AI agents: carry the end user's identity all the way to Postgres, and enforce authN, authZ, and audit where the data lives. MCP · OIDC · PG18 OAUTHBEARER.">
+    <meta property="og:url" content="https://suryal.dev/articles/principal-propagation-mcp.html">
+    <meta property="og:image" content="https://suryal.dev/images/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://suryal.dev/images/og-image.png">
+    <meta name="theme-color" content="#0B0D0A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../articles.css">
+    <style>
+    /* ---- principal-propagation case study (scoped) ---- */
+    .pp-shot{margin:clamp(26px,4vh,44px) 0 8px}
+    .pp-screen{background:#f4f2ec;border:1px solid var(--line);border-radius:12px;
+        padding:clamp(10px,1.6vw,18px);overflow:hidden;box-shadow:0 0 28px rgba(0,0,0,.35)}
+    .pp-screen img{width:100%;height:auto;display:block;border-radius:6px}
+    .pp-cap{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-top:12px;line-height:1.6}
+    .pp-cap b{color:var(--accent-deep);font-weight:500}
+
+    /* the pattern: authN / authZ / audit at the source */
+    .pp-pattern{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:24px 0 8px}
+    .pp-pat{background:var(--paper-2);padding:22px 20px;display:flex;flex-direction:column;gap:9px}
+    .pp-pat .k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-deep)}
+    .pp-pat h4{font-family:var(--serif);font-weight:400;font-size:21px;color:var(--ink);margin:0}
+    .pp-pat p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.6}
+
+    /* two tiers */
+    .pp-tiers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0 8px}
+    .pp-tier{border:1px solid var(--line);border-radius:12px;padding:clamp(22px,2.6vw,30px);
+        background:color-mix(in srgb, var(--paper-2) 55%, transparent)}
+    .pp-tier .badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);
+        font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;padding:5px 11px;
+        border:1px solid var(--line);border-radius:4px;color:var(--ink-soft)}
+    .pp-tier.live .badge{color:var(--ok);border-color:rgba(126,217,138,.3)}
+    .pp-tier.live .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px rgba(126,217,138,.7)}
+    .pp-tier.proven .badge{color:var(--accent);border-color:rgba(255,178,36,.35)}
+    .pp-tier.proven .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px rgba(255,178,36,.7)}
+    .pp-tier h3{font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.4vw,28px);margin:14px 0 4px;color:var(--ink);letter-spacing:-.01em}
+    .pp-tier .lede{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px}
+    .pp-tier ul{list-style:none;padding:0;margin:0;display:grid;gap:9px}
+    .pp-tier li{position:relative;padding-left:20px;font-size:14px;color:var(--ink-soft);line-height:1.5}
+    .pp-tier li::before{content:"›";position:absolute;left:0;color:var(--accent)}
+    .pp-tier li b{color:var(--ink);font-weight:600}
+
+    /* audit table */
+    .pp-audit{width:100%;border-collapse:collapse;margin:20px 0 6px;font-family:var(--mono);font-size:12.5px}
+    .pp-audit th{text-align:left;padding:10px 12px;border-bottom:1.5px solid var(--line);
+        color:var(--ink-faint);font-weight:500;text-transform:uppercase;font-size:10px;letter-spacing:.05em}
+    .pp-audit td{padding:10px 12px;border-bottom:1px solid var(--line);color:var(--ink-soft);vertical-align:top}
+    .pp-audit .u{color:var(--ink)}
+    .pp-audit .role-admin{color:var(--ok)}
+    .pp-audit .role-mask{color:var(--accent)}
+    .pp-audit .none{color:var(--ink-faint)}
+    .pp-audit tr:hover td{background:var(--paper-2)}
+
+    /* stack chips */
+    .pp-stack{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0 6px}
+    .pp-chip{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);padding:8px 14px;
+        border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+    .pp-chip::before{content:"[";color:var(--ink-faint);margin-right:7px}
+    .pp-chip::after{content:"]";color:var(--ink-faint);margin-left:7px}
+
+    @media(max-width:760px){
+        .pp-pattern{grid-template-columns:1fr}
+        .pp-tiers{grid-template-columns:1fr}
+        .pp-audit{font-size:11px}.pp-audit th,.pp-audit td{padding:8px 7px}
+        .pp-audit .q{display:none}
+    }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Querying a Regulated Database as the User, Not a Service Account",
+      "description": "A reference pattern and working demo for principal propagation: an AI agent queries a regulated PostgreSQL database carrying the end user's verified identity, with authN, authZ, and audit enforced at the data source.",
+      "datePublished": "2026-06-14",
+      "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
+      "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
+      "mainEntityOfPage": "https://suryal.dev/articles/principal-propagation-mcp.html",
+      "keywords": "MCP, Principal Propagation, OIDC, Keycloak, PostgreSQL, OAUTHBEARER, Zero Trust, Compliance, PII Masking, Audit",
+      "image": "https://suryal.dev/images/og-image.png"
+    }
+    </script>
+</head>
+<body>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="../index.html#top" class="mark"><span class="mark-name">Surya</span><span class="mark-dot"></span></a>
+            <nav class="nav" aria-label="Primary">
+                <a href="../index.html#work"><i>01</i> Services</a>
+                <a href="../index.html#lab"><i>02</i> Lab</a>
+                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+                <a href="../index.html#experience"><i>04</i> Uptime</a>
+                <a href="../index.html#writing"><i>05</i> Logs</a>
+                <a href="../index.html#contact"><i>06</i> Channel</a>
+            </nav>
+            <a href="../index.html#lab" class="topbar-cta">← Back to Lab</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="../index.html#work"><i>01</i> Services</a>
+        <a href="../index.html#lab"><i>02</i> Lab</a>
+        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+        <a href="../index.html#experience"><i>04</i> Uptime</a>
+        <a href="../index.html#writing"><i>05</i> Logs</a>
+        <a href="../index.html#contact"><i>06</i> Channel</a>
+    </div>
+
+    <main class="article">
+        <div class="wrap">
+            <header class="article-header">
+                <p class="breadcrumb"><a href="../index.html#lab">Lab</a> <span>/</span> exp-004</p>
+                <span class="article-cat" style="margin-top:14px">Security · MCP · Identity</span>
+                <h1 class="article-title">Querying a regulated database as the <em>user</em> — not a service account.</h1>
+                <p class="article-sub">A reference pattern and working demo for <em>principal propagation</em>: an AI agent reaches a banking database carrying the end user's verified identity — with authentication, authorization, and audit enforced where the data lives.</p>
+                <div class="article-meta">
+                    <span class="who">Suryaprakash Lakshmanan</span>
+                    <span class="sep">·</span><span>June 2026</span>
+                    <span class="sep">·</span><span>Lab · exp-004</span>
+                    <span class="sep">·</span><a href="https://github.com/Suryals/principal-propagation-mcp" target="_blank" rel="noopener">github ↗</a>
+                </div>
+                <div class="article-tags">
+                    <span>MCP</span><span>OIDC · Keycloak</span><span>PostgreSQL</span><span>Principal Propagation</span><span>Zero Trust</span><span>Compliance</span>
+                </div>
+
+                <figure class="pp-shot">
+                    <div class="pp-screen">
+                        <img src="../images/ppmcp/claude-desktop-masked-readonly.png" alt="Claude Desktop showing three customers with SSN and email columns fully masked as asterisks, with a note that the db_readonly role cannot see PII." loading="lazy">
+                    </div>
+                    <figcaption class="pp-cap">A <b>db_readonly</b> user asks Claude for customer SSNs and emails — and the data comes back <b>masked</b> (<code>***-**-****</code>, <code>****@*****.***</code>). The role simply isn't permitted to see PII. Same server, same tool; a higher-privilege role would see the real values.</figcaption>
+                </figure>
+            </header>
+
+            <article class="article-body">
+                <p>Give an AI assistant tools to query your production database and you hit a wall that has nothing to do with the model. The agent connects through <strong>one shared "service account"</strong> with broad access — and that quietly breaks compliance in three places at once. This project is a runnable answer to that problem.</p>
+
+                <h2><span class="h2-no">01</span>The problem with service accounts</h2>
+                <p>The convenient path — one pooled database login that every request shares — fails an auditor on three distinct counts:</p>
+                <div class="takeaways">
+                    <h4>Three ways a shared account breaks compliance</h4>
+                    <ul>
+                        <li><strong>No real authentication.</strong> The database never sees the actual person behind the query — only the service account. "Who ran this?" has no honest answer.</li>
+                        <li><strong>Coarse authorization.</strong> That one account can read everything. There's no way to say <em>this</em> analyst may see masked PII while <em>that</em> admin sees it in full — the grant is all-or-nothing.</li>
+                        <li><strong>Fake audit trail.</strong> Every row in the access log reads <code>svc_account</code>, not <code>alice@bank</code>. The trail SOC&nbsp;2 / PCI / GDPR actually demand — <em>which human touched this record</em> — doesn't exist.</li>
+                    </ul>
+                </div>
+
+                <h2><span class="h2-no">02</span>The pattern: principal propagation</h2>
+                <p>The fix is an old idea from enterprise SSO, applied to agents: <strong>carry the end user's verified identity all the way to the source</strong>, and enforce the three controls where the data lives — not in app code that an auditor has to take on faith.</p>
+                <div class="pp-pattern">
+                    <div class="pp-pat">
+                        <span class="k">AuthN</span>
+                        <h4>Who is it?</h4>
+                        <p>The user logs in through the identity provider (Keycloak / OIDC). Their token, not a shared secret, rides the request to the data source.</p>
+                    </div>
+                    <div class="pp-pat">
+                        <span class="k">AuthZ</span>
+                        <h4>What may they see?</h4>
+                        <p>Roles in the token decide access — full PII for an admin, masked columns for an analyst, redacted for read-only. Per-tool RBAC on top.</p>
+                    </div>
+                    <div class="pp-pat">
+                        <span class="k">Audit</span>
+                        <h4>What did they do?</h4>
+                        <p>Every query is logged against the <em>real human</em> — user, role, and exactly which sensitive columns were masked. An immutable per-principal trail.</p>
+                    </div>
+                </div>
+
+                <h2><span class="h2-no">03</span>See it work</h2>
+                <p>The demo is a FastMCP server over a synthetic PostgreSQL banking database, driven live from Claude Desktop. Login is native MCP OAuth — protected-resource discovery, dynamic client registration, a browser PKCE flow — so there's <strong>nothing to paste</strong>; the client discovers Keycloak and caches the token itself.</p>
+
+                <figure class="pp-shot">
+                    <div class="pp-screen">
+                        <img src="../images/ppmcp/claude-desktop-list-tables.png" alt="Claude Desktop, connected as db_admin, listing five banking tables — accounts, audit_logs, customers, employees, transactions — each tagged with a sensitivity label." loading="lazy">
+                    </div>
+                    <figcaption class="pp-cap">Connected as <b>db_admin</b>: the server reports each table's <b>sensitivity label</b> and which role can see what. The agent inherits the user's privileges — it never gets a god-mode connection of its own.</figcaption>
+                </figure>
+
+                <figure class="pp-shot">
+                    <div class="pp-screen">
+                        <img src="../images/ppmcp/claude-desktop-audit-denied.png" alt="Claude Desktop explaining that the audit_logs table is off-limits to the current db_readonly user because it requires the db_admin role." loading="lazy">
+                    </div>
+                    <figcaption class="pp-cap">Least privilege, enforced: the same read-only user is <b>refused the audit log</b> — it requires <code>db_admin</code>. The guardrail denies the <b>tool</b>, not just the data, and explains why.</figcaption>
+                </figure>
+
+                <h3>Audit at the source</h3>
+                <p>Asking the server for its audit log returns a trail attributed to the real principal — the literal "who accessed this customer's data, and what were they allowed to see?" answer:</p>
+                <table class="pp-audit">
+                    <thead><tr><th>User</th><th>Role</th><th class="q">Query</th><th>Masked cols</th></tr></thead>
+                    <tbody>
+                        <tr><td class="u">alice@banking.demo</td><td class="role-admin">db_admin</td><td class="q">SELECT first_name, last_name, ssn, email …</td><td class="none">— none —</td></tr>
+                        <tr><td class="u">bob@banking.demo</td><td class="role-mask">db_analyst</td><td class="q">SELECT ssn, email, phone, date_of_birth …</td><td class="role-mask">ssn, email, phone, dob</td></tr>
+                        <tr><td class="u">carol@banking.demo</td><td class="role-mask">db_readonly</td><td class="q">SELECT ssn, email, phone, date_of_birth …</td><td class="role-mask">ssn, email, phone, dob</td></tr>
+                    </tbody>
+                </table>
+                <p class="pp-cap">Empty "masked cols" for <code>db_admin</code> means unmasked access; populated for the lower roles records exactly what was redacted. AuthN, AuthZ, and audit, in one row each.</p>
+
+                <h2><span class="h2-no">04</span>How far it goes — two tiers</h2>
+                <p>The project is built in two tiers, both demonstrated. The honest distinction between them is the whole point — and the more interesting half is the one that doesn't quite run from a browser yet.</p>
+                <div class="pp-tiers">
+                    <div class="pp-tier live">
+                        <span class="badge">runs today</span>
+                        <h3>Tier 1 — app-enforced</h3>
+                        <p class="lede">Any Postgres · live in Claude Desktop</p>
+                        <ul>
+                            <li>OIDC login (browser PKCE + DCR), <b>role-based PII masking</b>, per-tool RBAC.</li>
+                            <li>Audit trail attributed to the <b>real OIDC user</b>, independent of the DB connection.</li>
+                            <li><b>Honest caveat:</b> the database connection is still a pooled <code>mcp_user</code> — masking and audit live in the app layer here, not the engine.</li>
+                        </ul>
+                    </div>
+                    <div class="pp-tier proven">
+                        <span class="badge">proven end-state</span>
+                        <h3>Tier 2 — DB-enforced</h3>
+                        <p class="lede">Postgres 18 · no service account</p>
+                        <ul>
+                            <li>The user's identity reaches <b>Postgres itself</b> via SASL <code>OAUTHBEARER</code> — the DB authenticates the user, trusting Keycloak.</li>
+                            <li>Authorization is real column <code>GRANT</code>s: <code>SELECT ssn</code> as <code>db_readonly</code> is <b>denied by the engine</b>, not app code. <code>current_user</code> is the real user.</li>
+                            <li><b>Honest caveat:</b> proven via a protocol-level client, <b>not yet</b> the browser flow — mainstream Python drivers don't speak <code>OAUTHBEARER</code> yet.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h2><span class="h2-no">05</span>The detail I'm proudest of</h2>
+                <p>Tier 2 has a sharp edge: <code>asyncpg</code> and <code>psycopg3</code> can't speak Postgres's <code>OAUTHBEARER</code> SASL mechanism yet, so there was no off-the-shelf way to open a per-user, token-authenticated connection. So I wrote one — a ~120-line Postgres <strong>wire-protocol client</strong> (<code>pgwire.py</code>) that does the token-first SASL handshake by hand. That's the piece that makes "the database authenticates the actual user" real today instead of theoretical.</p>
+                <p>Around it: <strong>RFC&nbsp;8693 token exchange</strong> to re-audience the user's token for the database, <strong>Keycloak Authorization Services (UMA)</strong> so the IdP makes the authz decision and Postgres trusts it, and a <strong>clone-and-run</strong> bring-up (<code>./up.sh</code>) that mints random local credentials so nothing sensitive is ever committed.</p>
+                <div class="pp-stack">
+                    <span class="pp-chip">FastMCP</span>
+                    <span class="pp-chip">Keycloak 26 · OIDC</span>
+                    <span class="pp-chip">PostgreSQL 16 / 18</span>
+                    <span class="pp-chip">OAUTHBEARER · SASL</span>
+                    <span class="pp-chip">RFC 8693</span>
+                    <span class="pp-chip">Traefik</span>
+                    <span class="pp-chip">Docker</span>
+                    <span class="pp-chip">Python</span>
+                </div>
+
+                <h2><span class="h2-no">06</span>What this is — and isn't</h2>
+                <p>It's a <strong>demo lab</strong>, and worth being precise about. The data is synthetic (Faker), the credentials are generated locally at bring-up, and it isn't hardened for production deployment. There's no public live demo — it runs on a local Docker + Keycloak + Traefik stack, so the screenshots and the source tell the story. What it <em>is</em> is a correct, working reference for the pattern enterprises keep asking about: <strong>let agents reach regulated data as the user, and prove who saw what.</strong> That's the SOC&nbsp;2 / PCI / GDPR question, answered at the data source.</p>
+                <p>This is part of a build-in-public series on production-grade agentic platforms. The companion benchmark work — how far local models scale on one machine — is over in <a href="mlx-breaking-point.html">the MLX dashboard</a>.</p>
+            </article>
+
+            <section class="discussion">
+                <span class="eyebrow">The code</span>
+                <h3>It clones and runs in one command.</h3>
+                <p>The full server, the Keycloak realm, the Postgres-18 SASL experiment, the wire client, and the auth-flow writeup are all in the repo — <code>./up.sh</code> brings the whole stack up with generated credentials.</p>
+                <a class="li-button" href="https://github.com/Suryals/principal-propagation-mcp" target="_blank" rel="noopener">
+                    <span class="li-badge">↗</span> View principal-propagation-mcp on GitHub
+                </a>
+            </section>
+
+            <section class="related">
+                <span class="eyebrow">Keep reading</span>
+                <div class="related-grid">
+                    <a class="rel-card" href="mlx-breaking-point.html">
+                        <span class="rc-cat">Lab · exp-001</span>
+                        <h4>How Far Can One Mac Go?</h4>
+                        <p>Six local LLMs, 3B → 123B, on a 128GB M5 Max — the scaling curve, the memory ceiling, and the thermal tax.</p>
+                        <span class="rc-go">Open the dashboard →</span>
+                    </a>
+                    <a class="rel-card cta" href="../index.html#lab">
+                        <span class="rc-cat">Building in public</span>
+                        <h4>More from the Lab</h4>
+                        <p>Experiments in the open — benchmarks, governed agent infra, and evals. Code on GitHub, every claim reproducible.</p>
+                        <span class="rc-go">Back to the Lab →</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
+                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body>
+</html>
