@@ -71,9 +71,21 @@
 
             <section class="art-list" id="artList">
                 <!-- Featured / latest -->
-                <a class="art-row featured" data-category="agentic" href="principal-propagation-mcp.html">
+                <a class="art-row featured" data-category="agentic" href="mcp-summit-mumbai-2026.html">
                     <div class="art-main">
-                        <span class="art-cat">Security · MCP · Identity <span class="art-flag">Latest</span></span>
+                        <span class="art-cat">MCP &amp; Agentic Ops · Field notes <span class="art-flag">Latest</span></span>
+                        <h2>Agents Fail at the Seams — Field Notes from MCP Dev Summit Mumbai 2026</h2>
+                        <p class="art-sub">Two days, 16 sessions, one through-line: multi-agent AI fails between agents, tools, and protocols — and every failure is a missing contract.</p>
+                        <p class="art-sum">A practitioner&apos;s synthesis of the summit: the RAM/disk/syscall mental model, the six spines, and a failures→contracts table where every fix is discipline, not a smarter model — security as the floor (confused-deputy authorization), durable context as the ceiling (the empty &ldquo;event clock&rdquo;), the tool surface as the product (TDQS), and the unowned MCP↔A2A seam. Plus the gaps worth building and verified ecosystem notes.</p>
+                        <div class="art-tags"><span>MCP</span><span>A2A</span><span>Multi-Agent</span><span>Context Engineering</span><span>MCP Gateways</span><span>AAIF</span></div>
+                        <span class="art-go">Read the field notes →</span>
+                    </div>
+                    <div class="art-meta">June 2026 · Field notes</div>
+                </a>
+
+                <a class="art-row" data-category="agentic" href="principal-propagation-mcp.html">
+                    <div class="art-main">
+                        <span class="art-cat">Security · MCP · Identity</span>
                         <h2>MCP Access to a Database — as the User, Not a Service Account</h2>
                         <p class="art-sub">Principal propagation for AI agents — carry the user&apos;s identity to the data source, not a shared service account.</p>
                         <p class="art-sum">A working demo: an AI agent reaches a Postgres banking database through MCP as the end user — role-based PII masking, per-tool RBAC, and audit attributed to the real human — plus a Postgres-18 path where the database engine itself denies unauthorized columns via SASL OAUTHBEARER. Honest throughout about what&apos;s app-layer versus engine-enforced.</p>

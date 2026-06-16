@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Field Notes — MCP Dev Summit Mumbai 2026: Agents Fail at the Seams — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="Two days, 16 sessions, one through-line: multi-agent AI doesn't fail inside the protocol — it fails at the seams between agents, tools, and protocols, and every failure is a missing contract. A practitioner's field notes from MCP Dev Summit Mumbai 2026.">
+    <link rel="canonical" href="https://suryal.dev/articles/mcp-summit-mumbai-2026.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Agents Fail at the Seams — Field Notes from MCP Dev Summit Mumbai 2026">
+    <meta property="og:description" content="The through-line across 16 sessions: multi-agent failures aren't model failures — they're missing contracts, and they cluster at the seams between agents, tools, and protocols.">
+    <meta property="og:url" content="https://suryal.dev/articles/mcp-summit-mumbai-2026.html">
+    <meta property="og:image" content="https://suryal.dev/images/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://suryal.dev/images/og-image.png">
+    <meta name="theme-color" content="#0B0D0A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../articles.css">
+    <style>
+    /* ---- MCP Summit field notes (scoped) ---- */
+    /* six spines grid */
+    .sm-spines{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:26px 0 8px}
+    .sm-spine{background:var(--paper-2);padding:22px 20px;display:flex;flex-direction:column;gap:8px}
+    .sm-spine .n{font-family:var(--mono);font-size:11px;color:var(--accent-deep);letter-spacing:.08em}
+    .sm-spine h4{font-family:var(--serif);font-weight:400;font-size:19px;color:var(--ink);margin:0;line-height:1.2}
+    .sm-spine p{font-size:13px;color:var(--ink-soft);margin:0;line-height:1.55}
+
+    /* failures -> contracts table */
+    .sm-fail{width:100%;border-collapse:collapse;margin:22px 0 6px;font-size:13.5px}
+    .sm-fail th{text-align:left;padding:11px 13px;border-bottom:1.5px solid var(--line);
+        color:var(--ink-faint);font-family:var(--mono);font-weight:500;text-transform:uppercase;font-size:10px;letter-spacing:.06em}
+    .sm-fail td{padding:12px 13px;border-bottom:1px solid var(--line);color:var(--ink-soft);vertical-align:top;line-height:1.5}
+    .sm-fail td.f{color:var(--ink);font-weight:500}
+    .sm-fail td.c{font-family:var(--mono);font-size:12.5px}
+    .sm-fail tr:hover td{background:var(--paper-2)}
+    .sm-fail code{font-size:12px}
+
+    /* stat row */
+    .sm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0 8px}
+    .sm-stat{border:1px solid var(--line);border-radius:12px;padding:22px 20px;
+        background:color-mix(in srgb, var(--paper-2) 55%, transparent)}
+    .sm-stat .big{font-family:var(--serif);font-size:clamp(30px,4vw,42px);color:var(--accent);line-height:1;letter-spacing:-.02em}
+    .sm-stat p{font-size:13px;color:var(--ink-soft);margin:10px 0 0;line-height:1.5}
+
+    /* chips */
+    .sm-chips{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0 6px}
+    .sm-chip{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);padding:8px 14px;
+        border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+    .sm-chip::before{content:"[";color:var(--ink-faint);margin-right:7px}
+    .sm-chip::after{content:"]";color:var(--ink-faint);margin-left:7px}
+
+    @media(max-width:760px){
+        .sm-spines{grid-template-columns:1fr}
+        .sm-stats{grid-template-columns:1fr}
+        .sm-fail{font-size:12px}.sm-fail th,.sm-fail td{padding:9px 8px}
+        .sm-fail th.w,.sm-fail td.w{display:none}
+    }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Agents Fail at the Seams — Field Notes from MCP Dev Summit Mumbai 2026",
+      "description": "A practitioner's synthesis of MCP Dev Summit Mumbai 2026: multi-agent AI fails at the seams between agents, tools, and protocols, and every failure is a missing contract.",
+      "datePublished": "2026-06-17",
+      "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
+      "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
+      "mainEntityOfPage": "https://suryal.dev/articles/mcp-summit-mumbai-2026.html",
+      "keywords": "MCP, Model Context Protocol, A2A, multi-agent, agentic AI, MCP gateway, context engineering, TDQS, confused deputy, AAIF, agentgateway",
+      "image": "https://suryal.dev/images/og-image.png"
+    }
+    </script>
+</head>
+<body>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="../index.html#top" class="mark"><span class="mark-name">Surya</span><span class="mark-dot"></span></a>
+            <nav class="nav" aria-label="Primary">
+                <a href="../index.html#work"><i>01</i> Services</a>
+                <a href="../index.html#lab"><i>02</i> Lab</a>
+                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+                <a href="../index.html#experience"><i>04</i> Uptime</a>
+                <a href="../index.html#writing"><i>05</i> Logs</a>
+                <a href="../index.html#contact"><i>06</i> Channel</a>
+            </nav>
+            <a href="index.html" class="topbar-cta">← All articles</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="../index.html#work"><i>01</i> Services</a>
+        <a href="../index.html#lab"><i>02</i> Lab</a>
+        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+        <a href="../index.html#experience"><i>04</i> Uptime</a>
+        <a href="../index.html#writing"><i>05</i> Logs</a>
+        <a href="../index.html#contact"><i>06</i> Channel</a>
+    </div>
+
+    <main class="article">
+        <div class="wrap">
+            <header class="article-header">
+                <p class="breadcrumb"><a href="index.html">Articles</a> <span>/</span> MCP &amp; Agentic Ops</p>
+                <span class="article-cat" style="margin-top:14px">MCP &amp; Agentic Ops · Field notes</span>
+                <h1 class="article-title">Agents fail at the <em>seams</em>.</h1>
+                <p class="article-sub">Two days, 16 sessions, one through-line from MCP Dev Summit Mumbai 2026: multi-agent systems don't fail inside the protocol — they fail in the gaps <em>between</em> agents, tools, and protocols, and every failure turns out to be a contract nobody wrote down.</p>
+                <div class="article-meta">
+                    <span class="who">Suryaprakash Lakshmanan</span>
+                    <span class="sep">·</span><span>June 2026</span>
+                    <span class="sep">·</span><span>Field notes · 14 min</span>
+                </div>
+                <div class="article-tags">
+                    <span>MCP</span><span>A2A</span><span>Multi-Agent</span><span>Context Engineering</span><span>MCP Gateways</span><span>AAIF</span>
+                </div>
+
+                <div class="takeaways">
+                    <h4>The short version</h4>
+                    <ul>
+                        <li>The whole-summit thesis, named independently in at least four talks: <strong>multi-agent AI fails at the seams, and every failure is a missing contract</strong> — when to stop, who's authorized, how errors propagate, how good the data is.</li>
+                        <li>The mental model worth keeping: <strong>context window = RAM, context graph = disk, MCP = the system call, the gateway = the kernel's security layer.</strong> Security is the floor; durable context is the ceiling.</li>
+                        <li>Day 2 sharpened a second front — <strong>the tool/description surface <em>is</em> the product.</strong> Most tools have a description defect; rewriting descriptions alone measurably raises selection and task success.</li>
+                        <li>The biggest greenfield isn't a model. It's the <strong>contracts and the bridges</strong> — Server Cards, topology contracts, the MCP↔A2A bridge, tool-quality gates. Whoever standardizes those owns how agents get built.</li>
+                    </ul>
+                </div>
+            </header>
+
+            <article class="article-body">
+                <p><em>I spent June 14–15 at MCP Dev Summit Mumbai — 16 sessions across two days, run under the Linux Foundation's Agentic AI Foundation (AAIF). These are my field notes: what I actually heard in the room, plus where I landed on it as someone who builds agentic platforms for a living. I've kept the vendor numbers loose on purpose — several are from speakers' own experiments, and I flag those as directional.</em></p>
+
+                <p>Most of what gets written about agents is about the model — which one, how big, how well it reasons. Two days of practitioners who actually run these systems in production said something almost the opposite: <strong>the model is rarely the problem.</strong> The same models, wired into a different topology, fail or hold. What breaks is the plumbing between the pieces — and it breaks in ways that are nameable, repeatable, and fixable with a contract rather than a smarter model.</p>
+
+                <h2><span class="h2-no">01</span>The one mental model to keep</h2>
+                <p>The cleanest framing came from the context-engine session, and it recurred all weekend. Treat the agent like an operating system:</p>
+                <ul>
+                    <li><strong>Context window = RAM</strong> — fast, tiny, expensive. The system prompt, tool schemas, memory, message buffer.</li>
+                    <li><strong>Context graph = disk</strong> — large, durable, cheap. Entities, relationships, facts, and decision traces that survive across sessions.</li>
+                    <li><strong>MCP = the system call</strong> between them — it pages context in, and writes results back out.</li>
+                    <li><strong>The gateway = the kernel's security layer</strong> — auth, audit, isolation, rate limits, versioning.</li>
+                </ul>
+                <p>Once you see it that way, the two halves of the problem fall out cleanly. <strong>Security is the floor</strong> — centralize it so individual MCP servers stay dumb. <strong>Durable context is the ceiling</strong> — give agents real memory, not just retrieval. And there's a third thread that Day 1 kept circling: even with both, you still have to design <em>how the model consumes tool output</em>. A tool response is a prompt surface. Structure it or the model will hallucinate over it.</p>
+
+                <h2><span class="h2-no">02</span>The through-line: failures at the seams</h2>
+                <p>Here's the line that held the whole summit together, said almost word-for-word in the "100 Agents in 100 Days" talk and echoed everywhere else:</p>
+                <blockquote class="pullquote">&ldquo;Most agent failures don't happen inside protocols. They happen <em>between</em> protocols.&rdquo;</blockquote>
+                <p>Between agents. Between tools. Between MCP and A2A. And in every case the root cause was the same shape: <strong>a contract nobody wrote down.</strong> When does the loop stop? Who has authority to act? How does an error propagate upstream? How fresh is this data, and is it complete? Naming the failure mode turned out to be half the fix — because once it's named, the fix is usually thirty lines of JSON in a server card, not a new framework.</p>
+                <p>The Coordination Tax talk put the sharpest edge on it: past roughly four agents, <em>every agent you add makes the system worse</em> — not flat, worse. They measured a negative coefficient and named it. It isn't the model or the prompts. It's the orchestration topology having no rules. As one slide put it: <strong>"a contract nobody wrote down is just a hope."</strong></p>
+
+                <h2><span class="h2-no">03</span>The six spines</h2>
+                <p>The 16 sessions clustered into six parallel concerns. This is the map I'll be using to organize my own work coming out of the event.</p>
+                <div class="sm-spines">
+                    <div class="sm-spine">
+                        <span class="n">01</span>
+                        <h4>Security &amp; Identity</h4>
+                        <p>Centralize auth/audit into a control plane. The hard problem is <em>authorization across agent boundaries</em> — the confused deputy — not authentication.</p>
+                    </div>
+                    <div class="sm-spine">
+                        <span class="n">02</span>
+                        <h4>Context &amp; Memory</h4>
+                        <p>Durable, temporal, write-back memory — not retrieval. The "event clock" (what happened, in what order, and why) barely exists yet.</p>
+                    </div>
+                    <div class="sm-spine">
+                        <span class="n">03</span>
+                        <h4>Coordination &amp; Failure Modes</h4>
+                        <p>Multi-agent systems fail in nameable, contract-fixable ways. Fix with a lightweight handshake, not a new model.</p>
+                    </div>
+                    <div class="sm-spine">
+                        <span class="n">04</span>
+                        <h4>Transport &amp; Isolation</h4>
+                        <p>The plumbing: gRPC as an enterprise transport, microVM sandboxes for untrusted agent code, shared filesystems for state.</p>
+                    </div>
+                    <div class="sm-spine">
+                        <span class="n">05</span>
+                        <h4>The Tool Surface IS the Product</h4>
+                        <p>Descriptions are contracts you test and score. Expose <em>tasks</em>, not endpoints. Curate a small surface.</p>
+                    </div>
+                    <div class="sm-spine">
+                        <span class="n">06</span>
+                        <h4>The Seam (MCP↔A2A)</h4>
+                        <p>Failures happen between protocols. The bridge — trace context, identity delegation, schema, task lifecycle — is unowned territory.</p>
+                    </div>
+                </div>
+
+                <h2><span class="h2-no">04</span>The pattern, made concrete: failures → contracts</h2>
+                <p>Strip out the vendor logos and the same table assembles itself across the talks. Each failure mode maps to a missing contract and a fix you can ship today.</p>
+                <table class="sm-fail">
+                    <thead>
+                        <tr><th>Failure mode</th><th>The missing contract / fix</th><th class="w">Where it came up</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="f">Tool-call / infinite loop</td>
+                            <td class="c"><code>max_tool_calls</code> + a confidence signal; a circuit breaker on consecutive same-tool calls</td>
+                            <td class="w">Agentless · Coordination Tax · 100 Agents</td>
+                        </tr>
+                        <tr>
+                            <td class="f">Hallucination on empty / sparse data</td>
+                            <td class="c">freshness + confidence bounds; never return <code>[]</code> without a <code>data_quality</code> reason</td>
+                            <td class="w">Agentless Agents</td>
+                        </tr>
+                        <tr>
+                            <td class="f">Silent partial / fallback data</td>
+                            <td class="c">surface drop/completeness metadata; a propagation contract that flags every fallback</td>
+                            <td class="w">Agentless · Coordination Tax</td>
+                        </tr>
+                        <tr>
+                            <td class="f">False consensus ("yes-man")</td>
+                            <td class="c">a dissent contract — blind, independent voting; escalate, don't execute</td>
+                            <td class="w">Coordination Tax</td>
+                        </tr>
+                        <tr>
+                            <td class="f">Confused deputy / auth leakage</td>
+                            <td class="c">bind intent at source · reduce authority per hop (STS) · validate (OPA/Cedar)</td>
+                            <td class="w">OAuth Isn't Enough · MCP↔A2A</td>
+                        </tr>
+                        <tr>
+                            <td class="f">Trace severance across protocols</td>
+                            <td class="c">propagate trace context via MCP <code>_meta</code> so the trace tree survives the boundary</td>
+                            <td class="w">Where MCP Ends &amp; A2A Begins</td>
+                        </tr>
+                        <tr>
+                            <td class="f">Vague tool descriptions</td>
+                            <td class="c">treat descriptions as contracts; score them (TDQS, six dimensions)</td>
+                            <td class="w">Rethinking Testing · TDQS · Beyond 1:1</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>What I like about this table is that none of the fixes need a frontier model. They're discipline: a stop condition, a quality field, a voting rule, a token you down-scope at each hop. The summit's quietly radical claim is that <strong>most of "agent reliability" is contract hygiene, not capability.</strong></p>
+
+                <h2><span class="h2-no">05</span>Security is the floor — and authorization is the hard part</h2>
+                <p>The auth thread was the one I came in most opinionated about, and it held up. Today every MCP server re-implements the same boring, dangerous things: token refresh, secret storage, audit logging, content filtering, access control. The gateway pattern moves all of that into one <strong>centralized control plane</strong>, so servers go back to exposing just tools, resources, and prompts. Same lesson the API-gateway era taught us — except we briefly forgot it and shipped one MCP server per microservice, which is hundreds of front doors all over again.</p>
+                <p>But the deeper point landed in the confused-deputy session. OAuth is becoming the default, and <strong>authentication is largely solved. Authorization across agent boundaries is not.</strong> An orchestrator delegates to a sub-agent using the user's authority; an untrusted input — a prompt injection, a poisoned tool manifest — steers that sub-agent to act beyond what the user ever intended. It has valid credentials the whole time. The reframe that stuck with me: stop asking <em>"can this action happen?"</em> and start asking <strong>"should this action happen?"</strong></p>
+                <p>The reference pattern is three layers: <strong>preserve intent</strong> (bind the user's original intent at the source so a hop can't exceed it), <strong>reduce authority</strong> (down-scope the token per hop with STS session policies), and <strong>validate the action</strong> (a policy check before execution via OPA/Cedar). Live demo, same pipeline run twice: default delegation leaked data via prompt injection; with all three controls, the attack was blocked, logged, and auditable. If you're building multi-agent MCP, that's the floor.</p>
+
+                <h2><span class="h2-no">06</span>Context is the ceiling — and the event clock is empty</h2>
+                <p>The context-engine session was the one I keep replaying. The first-principles framing: an LLM is not a pure function — <em>output = f(context)</em>, behavior steered by the window, not the weights. So the window is a <strong>budget, not a bucket</strong>: target under ~40% utilization on long-running work, and move through research → plan → implement, compacting at each hand-off.</p>
+                <p>RAG gives you text chunks similar to a query. Agents need to reason over identity (who is this, across tools?), relationships (who owns what?), temporal state (what was true, and when?), and the <em>why</em> behind decisions. The distinction that reframed it for me:</p>
+                <blockquote class="pullquote">&ldquo;Agents don't just need the rulebook. They need the case law.&rdquo;</blockquote>
+                <p>Rules say what should happen in general. <strong>Decision traces</strong> say what happened in <em>this</em> case — "used X under policy v3.2, with a VP exception, based on precedent Z." That's the operational-context foundation most teams skip, and it's where MCP closes the loop: most MCP servers are read-only vector wrappers, but a <strong>bidirectional, graph-backed server lets agents write their own state back</strong> — decision traces compound into long-term memory for the whole ecosystem. The "state clock" (what's true right now) is a trillion-dollar solved problem. The <strong>event clock</strong> — what happened, in what order, with what reasoning — barely exists. That's the opportunity.</p>
+
+                <h2><span class="h2-no">07</span>The tool surface is the product</h2>
+                <p>Day 2's loudest convergence: agents don't fail because your server is buggy — they fail because the <strong>tool descriptions are too vague for the model to pick the right tool.</strong> The consumer of your tool is a model, not a developer. It can't read your docs, doesn't hold your service map, and gets measurably worse the more tools you throw at it. So the design move is to <strong>expose tasks, not endpoints</strong> — one <code>search_knowledge(query, scope?)</code> that fans out, applies ACLs, and dedupes, instead of five tools that mirror your plumbing.</p>
+                <div class="sm-stats">
+                    <div class="sm-stat">
+                        <div class="big">~97%</div>
+                        <p>of surveyed MCP tools had at least one description quality defect; most never say <em>when</em> to use or avoid the tool.</p>
+                    </div>
+                    <div class="sm-stat">
+                        <div class="big">+260%</div>
+                        <p>more tool selections from well-written descriptions — and a few points of task-success lift from rewriting descriptions alone.</p>
+                    </div>
+                    <div class="sm-stat">
+                        <div class="big">3 layers</div>
+                        <p>of testing the LLM client demands: contract, sequence, and error-channel — because a non-deterministic client calls your tools in any order.</p>
+                    </div>
+                </div>
+                <p class="sm-cap" style="font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-top:12px">Figures are summit-sourced from the TDQS and testing talks; treat the magnitudes as directional, the direction as solid.</p>
+                <p>Two ideas I'm taking home from this thread. First, <strong>"descriptions are not documentation, they are contracts"</strong> — review them like you review code, and test them: trigger a failure and assert the error is explicit <em>and</em> actionable, not buried in an unhelpful body. Second, <strong>TDQS</strong> — a Tool Definition Quality Score that grades the definition a client actually receives from <code>tools/list</code> across six dimensions, with hard gates (a tautological description that just echoes the tool name caps your score). It's cheap, reproducible, and the obvious thing to wire into CI. The closing line of that session is the right altitude: <strong>"agents are not clients of your services. They are customers of your product."</strong></p>
+
+                <h2><span class="h2-no">08</span>The seam: where MCP ends and A2A begins</h2>
+                <p>The industry likes to frame A2A versus MCP as a fight. They specify different things. <strong>A2A</strong> owns task lifecycle, agent cards, message parts, streaming. <strong>MCP</strong> owns tool invocation, schemas, resources, prompts. The seam is everything that falls <em>between</em> the two specs — and right now it's owned by no one. Four failure modes, four fixes:</p>
+                <ul>
+                    <li><strong>Trace severance</strong> — the trace breaks at the protocol boundary. Fix: propagate trace context through MCP <code>_meta</code>.</li>
+                    <li><strong>Schema drift</strong> — types diverge across the boundary. Fix: shared schema with versioning at the bridge.</li>
+                    <li><strong>Auth leakage</strong> — the delegation chain breaks. Fix: explicit delegation (RFC 8693), least privilege per hop. (Same pattern as the confused-deputy talk.)</li>
+                    <li><strong>Orphan tasks</strong> — lifecycle ownership is unclear across A2A↔MCP. Fix: a task-lifecycle bridge plus an agent registry.</li>
+                </ul>
+                <p>The proposed answer is a <strong>Protocol Bridge</strong> that owns Context, Identity, Validation, and Lifecycle between the orchestrator and the MCP server. Nobody has shipped the general version. That's a genuine greenfield, and it's near the top of my list to spike.</p>
+
+                <h2><span class="h2-no">09</span>The gaps worth building</h2>
+                <p>If the contracts are the lesson, the gaps are the opportunity. The ones I think are most real:</p>
+                <div class="takeaways">
+                    <h4>Where I'd point a team</h4>
+                    <ul>
+                        <li><strong>A CI/SDLC quality-gate suite for MCP.</strong> The SAST/DAST/coverage/lint equivalents for MCP servers and agents — TDQS-style scoring plus contract/sequence/error tests, wired into Dev → Build → Deploy → Live. Standards are still forming, so there's a first-mover window.</li>
+                        <li><strong>The MCP↔A2A bridge framework.</strong> The seam (trace, identity delegation, schema, lifecycle) is unowned. A reusable abstraction that bridges the two protocols is greenfield.</li>
+                        <li><strong>A bidirectional, graph-backed MCP server.</strong> Read context <em>and</em> write decision traces, with provenance and supersession built in. Almost everything shipping today is a read-only vector wrapper.</li>
+                        <li><strong>The Topology Contract as a hardened standard.</strong> Termination, dissent, propagation, saturation — the handshake exists as v0.1 and unscaled. Tie it to the 2026 MCP Server Cards roadmap and it subsumes a lot of the failure modes above.</li>
+                        <li><strong>A "safe tool response" library.</strong> A schema that bakes in confidence, data_quality, freshness, and baselines so every response constrains the model's reasoning by default. Cheap to start, high leverage, cross-cuts everything.</li>
+                    </ul>
+                </div>
+
+                <h2><span class="h2-no">10</span>What I'm taking forward</h2>
+                <p>My honest read, as someone who builds this stuff rather than sells it:</p>
+                <p><strong>Auth-first is the right instinct, and the precise problem is authorization, not authentication.</strong> Abstract auth and guardrails into the gateway/SDK layer so individual agents stay simple. Pair it with audit, isolation, and revocation, and that's the strongest credibility lever for anything enterprise-facing.</p>
+                <p><strong>Start the context layer now, and stop theorizing.</strong> Retrieval isn't enough — agents need durable, temporal, write-back memory, including the <em>why</em> behind decisions. The way to learn it is to ship a real agent against real data and a real decision-trace store, thinking out loud as you go.</p>
+                <p><strong>Get good at operating open models and routing.</strong> Frontier models for everything won't pencil out. Frontier for hard reasoning, smaller/open models for high-volume, cost-sensitive, and data-residency work — that's an operating skill to build, not a tool to buy. (I've been measuring exactly how far open models scale on one machine in <a href="mlx-breaking-point.html">the MLX dashboard</a>.)</p>
+                <p><strong>Adopt the contracts as standards.</strong> TDQS-style description scoring, termination/dissent/propagation contracts, structured tool responses. None of it is exotic; all of it compounds.</p>
+                <p>The biggest takeaway isn't any single agent. It's that <strong>the durable layer is the framework and the standards</strong> — the contracts, the bridges, the quality gates that everyone else builds on. That layer doesn't really exist yet. Whoever builds it well sets the default for how agents get built. That's the prize, and the summit made me more sure it's worth chasing.</p>
+
+                <h2><span class="h2-no">11</span>Ecosystem notes, verified</h2>
+                <p>A few things I checked against primary sources afterward, because conference slides age fast:</p>
+                <ul>
+                    <li><strong>agentgateway</strong> is real and shipped — an open-source Rust gateway (originated at Solo.io, now an AAIF project) that routes HTTP + gRPC with first-class LLM, MCP, and A2A support. v1.0 landed in March 2026; it joined AAIF in April. Worth evaluating directly against Obot for gateway needs.</li>
+                    <li><strong>"MCP v2" isn't a thing.</strong> MCP is date-versioned — current stable is the 2025-11-25 spec, with the next release candidate dated around 2026-07-28. The 2026 roadmap is scalable stateless transport, <strong>Server Cards</strong>, enterprise auth and gateway authorization, and governance. Notably, <em>no new official transports this cycle</em> — so gRPC is a custom/experimental transport, not core.</li>
+                    <li><strong>AAIF</strong> membership is organizational (vendors like SAP are members); individuals contribute via GitHub's Contributor Ladder, the working groups, SEPs, or the Ambassador Program (a June 2026 intake was open, next window January 2027).</li>
+                </ul>
+                <p>That's the summit. The models were almost a footnote — the engineering was all in the seams. If there's one sentence to leave with, it's the one four different speakers arrived at independently: <strong>name the contract, and you've fixed half the failure.</strong></p>
+            </article>
+
+            <section class="related">
+                <span class="eyebrow">Keep reading</span>
+                <div class="related-grid">
+                    <a class="rel-card" href="principal-propagation-mcp.html">
+                        <span class="rc-cat">Lab · exp-004</span>
+                        <h4>MCP Access to a Database — as the User</h4>
+                        <p>A working demo of the auth floor from this article: principal propagation, role-based PII masking, and audit attributed to the real human.</p>
+                        <span class="rc-go">Read the case study →</span>
+                    </a>
+                    <a class="rel-card" href="sap-northstar-ai-architecture.html">
+                        <span class="rc-cat">Enterprise AI Architecture</span>
+                        <h4>SAP NorthStar AI Architecture</h4>
+                        <p>The context-is-the-moat thesis, read page by page — and where the open-by-design rhetoric collides with data toll roads.</p>
+                        <span class="rc-go">Read article →</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
+                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body>
+</html>
