@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Suryaprakash Lakshmanan — Field Notes</title>
+    <link>https://suryal.dev/</link>
+    <atom:link href="https://suryal.dev/feed.xml" rel="self" type="application/rss+xml" />
+    <description>Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization.</description>
+    <language>en-us</language>
+    <managingEditor>suryal.k90@gmail.com (Suryaprakash Lakshmanan)</managingEditor>
+    <lastBuildDate>Tue, 17 Jun 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Field Notes — MCP Dev Summit Mumbai 2026: Agents Fail at the Seams</title>
+      <link>https://suryal.dev/articles/mcp-summit-mumbai-2026.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/mcp-summit-mumbai-2026.html</guid>
+      <pubDate>Tue, 17 Jun 2026 00:00:00 +0000</pubDate>
+      <description>Two days, 16 sessions, one through-line: multi-agent AI doesn't fail inside the protocol — it fails at the seams between agents, tools, and protocols, and every failure is a missing contract. A practitioner's field notes from MCP Dev Summit Mumbai 2026.</description>
+    </item>
+
+    <item>
+      <title>MCP Access to a Database — as the User, Not a Service Account</title>
+      <link>https://suryal.dev/articles/principal-propagation-mcp.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/principal-propagation-mcp.html</guid>
+      <pubDate>Sat, 14 Jun 2026 00:00:00 +0000</pubDate>
+      <description>Giving an AI agent MCP access to a regulated PostgreSQL database — carrying the end user's verified identity to the data source, with authentication, authorization, and audit enforced there. Built with MCP, OIDC/Keycloak, and Postgres 18 SASL OAUTHBEARER.</description>
+    </item>
+
+    <item>
+      <title>How Far Can One Mac Go? Local LLM Limits on an M5 Max</title>
+      <link>https://suryal.dev/articles/mlx-breaking-point.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/mlx-breaking-point.html</guid>
+      <pubDate>Fri, 12 Jun 2026 00:00:00 +0000</pubDate>
+      <description>A reproducible benchmark pushing local LLM inference from 3B to 123B parameters on an Apple M5 Max with 128GB unified memory — decode, TTFT, the real memory ceiling, and the 14-inch thermal tax, measured with MLX.</description>
+    </item>
+
+    <item>
+      <title>SAP NorthStar AI Architecture: Context Moat, HANA &amp; Enterprise AI</title>
+      <link>https://suryal.dev/articles/sap-northstar-ai-architecture.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/sap-northstar-ai-architecture.html</guid>
+      <pubDate>Sat, 06 Jun 2026 00:00:00 +0000</pubDate>
+      <description>A practitioner's breakdown of SAP's AI-Native North Star Architecture, covering context engineering, HANA's evolution, Knowledge Graph, MCP/A2A, data lake concerns, ECC/Z-code, and AI governance.</description>
+    </item>
+
+  </channel>
+</rss>
