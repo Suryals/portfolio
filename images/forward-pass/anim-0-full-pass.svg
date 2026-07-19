@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" font-family="Arial, Helvetica, sans-serif">
+  <style>
+    .ink{fill:#111827}.mut{fill:#6b7280}
+    .t20{font-size:20px;font-weight:700}.t16{font-size:16px;font-weight:700}
+    .t14{font-size:14px}.t13{font-size:13px}.t12{font-size:12px}.t11{font-size:11px}
+    .box{fill:#ffffff;stroke:#111827;stroke-width:2.5}
+    .mono{font-family:Menlo,Consolas,monospace}
+    .bn{font-size:12px;font-weight:700;fill:#ffffff}
+  </style>
+  <rect width="900" height="560" fill="#ffffff"/>
+
+  <!-- header -->
+  <circle cx="45" cy="42" r="20" fill="#111827"/>
+  <text x="45" y="47" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700">1→5</text>
+  <text x="80" y="48" class="ink t20">THE FORWARD PASS — all five stages, one trip per token</text>
+
+  <!-- ================= top row: stages 1-4 ================= -->
+  <!-- arrows between boxes -->
+  <g stroke="#111827" stroke-width="2.5">
+    <line x1="232" y1="150" x2="266" y2="150"/><path d="M268,150 l-10,-6 v12 z" fill="#111827" stroke="none"/>
+    <line x1="442" y1="150" x2="476" y2="150"/><path d="M478,150 l-10,-6 v12 z" fill="#111827" stroke="none"/>
+    <line x1="652" y1="150" x2="686" y2="150"/><path d="M688,150 l-10,-6 v12 z" fill="#111827" stroke="none"/>
+  </g>
+
+  <!-- 1 tokenize -->
+  <rect x="60" y="108" width="170" height="84" rx="12" fill="#FFF7DE" stroke="#111827" stroke-width="2.5"/>
+  <circle cx="78" cy="126" r="11" fill="#FFD54D" stroke="#111827" stroke-width="2"/><text x="78" y="130" text-anchor="middle" class="ink t11" font-weight="700">1</text>
+  <text x="96" y="131" class="ink t13" font-weight="700">TOKENIZE</text>
+  <text x="145" y="154" text-anchor="middle" class="mut t11">"The capital of France is"</text>
+  <text x="145" y="176" text-anchor="middle" class="ink mono" font-size="10" opacity="0">785 6722 315 9625 374
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.08;0.12;1"/>
+  </text>
+  <rect x="60" y="108" width="170" height="84" rx="12" fill="none" stroke="#D99A1E" stroke-width="3.5" opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.06;0.09;0.13;0.17;1"/>
+  </rect>
+
+  <!-- 2 embed -->
+  <rect x="270" y="108" width="170" height="84" rx="12" fill="#EAF6FF" stroke="#111827" stroke-width="2.5"/>
+  <circle cx="288" cy="126" r="11" fill="#8ED1FC" stroke="#111827" stroke-width="2"/><text x="288" y="130" text-anchor="middle" class="ink t11" font-weight="700">2</text>
+  <text x="306" y="131" class="ink t13" font-weight="700">EMBED</text>
+  <text x="355" y="154" text-anchor="middle" class="mut t11">one row per id, copied</text>
+  <text x="355" y="176" text-anchor="middle" class="ink t11 mono" opacity="0">5 tokens × 1,024 numbers
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.17;0.21;1"/>
+  </text>
+  <rect x="270" y="108" width="170" height="84" rx="12" fill="none" stroke="#2E86C1" stroke-width="3.5" opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.15;0.18;0.22;0.26;1"/>
+  </rect>
+
+  <!-- 3 attend (stacked cards) -->
+  <rect x="488" y="100" width="170" height="84" rx="12" fill="#F3FBF1" stroke="#9CA3AF" stroke-width="1.5"/>
+  <rect x="484" y="104" width="170" height="84" rx="12" fill="#F3FBF1" stroke="#9CA3AF" stroke-width="1.5"/>
+  <rect x="480" y="108" width="170" height="84" rx="12" fill="#EFFAEC" stroke="#111827" stroke-width="2.5"/>
+  <circle cx="498" cy="126" r="11" fill="#7BC96F" stroke="#111827" stroke-width="2"/><text x="498" y="130" text-anchor="middle" class="ink t11" font-weight="700">3</text>
+  <text x="516" y="131" class="ink t13" font-weight="700">ATTEND + MLP ×28</text>
+  <text x="565" y="154" text-anchor="middle" class="mut t11">the only place tokens meet</text>
+  <text x="565" y="176" text-anchor="middle" class="ink mono" font-size="10" opacity="0">always (1, 5, 1024)
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.26;0.30;1"/>
+  </text>
+  <rect x="480" y="108" width="170" height="84" rx="12" fill="none" stroke="#2F9E44" stroke-width="3.5" opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.24;0.27;0.33;0.37;1"/>
+  </rect>
+
+  <!-- 4 vote (mini ballot) -->
+  <rect x="690" y="108" width="170" height="84" rx="12" fill="#FFF1F1" stroke="#111827" stroke-width="2.5"/>
+  <circle cx="708" cy="126" r="11" fill="#FF9E9E" stroke="#111827" stroke-width="2"/><text x="708" y="130" text-anchor="middle" class="ink t11" font-weight="700">4</text>
+  <text x="726" y="131" class="ink t13" font-weight="700">VOTE</text>
+  <g class="mono">
+    <text x="704" y="152" class="ink t11">' Paris'</text>
+    <rect x="756" y="143" height="10" rx="3" fill="#7BC96F" stroke="#111827" stroke-width="1.5" width="0">
+      <animate attributeName="width" dur="16s" repeatCount="indefinite" values="0;0;68;68" keyTimes="0;0.38;0.46;1"/>
+    </rect>
+    <text x="704" y="168" class="mut t11">' in'</text>
+    <rect x="756" y="159" height="10" rx="3" fill="#8ED1FC" stroke="#111827" stroke-width="1.5" width="0">
+      <animate attributeName="width" dur="16s" repeatCount="indefinite" values="0;0;21;21" keyTimes="0;0.40;0.48;1"/>
+    </rect>
+    <text x="704" y="184" class="mut t11">'____'</text>
+    <rect x="756" y="175" height="10" rx="3" fill="#FFD54D" stroke="#111827" stroke-width="1.5" width="0">
+      <animate attributeName="width" dur="16s" repeatCount="indefinite" values="0;0;14;14" keyTimes="0;0.42;0.50;1"/>
+    </rect>
+    <text x="852" y="152" text-anchor="end" class="ink t11" opacity="0">28%
+      <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.44;0.50;1"/>
+    </text>
+  </g>
+  <rect x="690" y="108" width="170" height="84" rx="12" fill="none" stroke="#E5484D" stroke-width="3.5" opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.35;0.38;0.46;0.50;1"/>
+  </rect>
+  <text x="860" y="212" text-anchor="end" class="mut t11">a ballot over 151,936 entries — not an answer</text>
+
+  <!-- ================= bottom row: stage 5 loop ================= -->
+  <!-- loop track: down from vote, left through pick & append, up into tokenize -->
+  <g fill="none" stroke="#111827" stroke-width="2.5">
+    <path d="M 775,192 V 264"/>
+    <path d="M 775,268 l-6,-10 h12 z" fill="#111827" stroke="none"/>
+    <line x1="600" y1="300" x2="512" y2="300"/><path d="M510,300 l10,-6 v12 z" fill="#111827" stroke="none"/>
+    <path d="M 250,300 H 145 V 200"/>
+    <path d="M145,198 l-6,10 h12 z" fill="#111827" stroke="none"/>
+  </g>
+
+  <!-- pick box -->
+  <rect x="600" y="270" width="200" height="60" rx="12" fill="#F5F0FF" stroke="#111827" stroke-width="2.5"/>
+  <circle cx="618" cy="288" r="11" fill="#C5A8FF" stroke="#111827" stroke-width="2"/><text x="618" y="292" text-anchor="middle" class="ink t11" font-weight="700">5</text>
+  <text x="636" y="292" class="ink t13" font-weight="700">PICK FROM BALLOT</text>
+  <text x="700" y="316" text-anchor="middle" class="mut t11">greedy / temperature</text>
+  <rect x="600" y="270" width="200" height="60" rx="12" fill="none" stroke="#7C3AED" stroke-width="3.5" opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.48;0.51;0.57;0.61;1"/>
+  </rect>
+
+  <!-- append box -->
+  <rect x="250" y="270" width="260" height="60" rx="12" fill="#ffffff" stroke="#111827" stroke-width="2.5"/>
+  <text x="380" y="292" text-anchor="middle" class="ink t13" font-weight="700">APPEND — prompt grows by one</text>
+  <text x="380" y="316" text-anchor="middle" class="mut t11">…then the whole trip runs again</text>
+  <rect x="250" y="270" width="260" height="60" rx="12" fill="none" stroke="#111827" stroke-width="3.5" opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.61;0.64;0.70;0.74;1"/>
+  </rect>
+
+  <!-- traveling pulse: through stages, down, back along the loop, up to start -->
+  <circle r="8" fill="#EF4444" stroke="#111827" stroke-width="2">
+    <animateMotion dur="16s" repeatCount="indefinite" calcMode="linear"
+      keyPoints="0;0;1;1" keyTimes="0;0.04;0.80;1"
+      path="M 40,150 L 775,150 L 775,300 L 145,300 L 145,150"/>
+  </circle>
+
+  <!-- growing sequence -->
+  <g class="mono">
+    <text x="60" y="382" class="ink t13" font-weight="700" font-family="Arial">the visible result — one token per lap:</text>
+    <rect x="60" y="396" width="300" height="38" rx="10" class="box"/>
+    <text x="210" y="420" text-anchor="middle" class="ink t12">The capital of France is</text>
+    <g opacity="0">
+      <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.68;0.73;0.985;1"/>
+      <rect x="372" y="396" width="84" height="38" rx="10" fill="#7BC96F" stroke="#111827" stroke-width="2.5"/>
+      <text x="414" y="420" text-anchor="middle" class="ink t12">·Paris</text>
+    </g>
+    <text x="470" y="420" class="mut t12" opacity="0">← this lap
+      <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.68;0.73;0.985;1"/>
+    </text>
+  </g>
+
+  <!-- verified banner -->
+  <g opacity="0">
+    <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.80;0.86;0.985;1"/>
+    <rect x="60" y="466" width="780" height="52" rx="14" fill="#EAF3FF" stroke="#2E86C1" stroke-width="2.5"/>
+    <text x="450" y="488" text-anchor="middle" class="ink t13" font-weight="700">every stage above rebuilt by hand and verified: hand-built pass reproduces model(x) — max diff 0.000000</text>
+    <text x="450" y="507" text-anchor="middle" class="mut t11">Qwen3-0.6B-4bit · MLX · runnable scripts at github.com/Suryals/internals-series</text>
+  </g>
+</svg>

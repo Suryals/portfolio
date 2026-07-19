@@ -131,6 +131,8 @@
             <article class="article-body">
                 <p>Ask a chat model <em>"The capital of France is"</em> and it says "Paris". Between your keystroke and that word, exactly one kind of thing happens: a <strong>forward pass</strong> — a single deterministic trip through the network — repeated once per generated token. No search, no lookup, no "generate" circuit. Just the same trip, over and over.</p>
                 <p>This post walks that trip in five stages, rebuilding each one by hand with raw matrix ops and checking the numbers against the real model. If the hand-built version matches the library bit-for-bit, the mental model is right. If it doesn't, the mental model is wrong — and I'll be honest about which is which.</p>
+                <div class="fp-fig"><img src="../images/forward-pass/anim-0-full-pass.svg" alt="Animated diagram: the complete forward pass — a pulse travels tokenize, embed, 28 attention blocks, the ballot, then loops back through pick and append" loading="lazy"></div>
+                <p class="fp-figcap">The whole machine in one loop — a pulse makes the full trip, one visible token per lap. Each stage below gets its own dissection.</p>
 
                 <h2><span class="h2-no">01</span>Tokenize — the model never sees text</h2>
                 <div class="fp-fig"><img src="../images/forward-pass/anim-1-tokenize.svg" alt="Animated diagram: the prompt is chopped into five token pieces, each mapped to an integer id" loading="lazy"></div>
