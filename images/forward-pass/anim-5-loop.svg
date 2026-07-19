@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" font-family="Arial, Helvetica, sans-serif">
+  <style>
+    .ink{fill:#111827}.mut{fill:#6b7280}
+    .t20{font-size:20px;font-weight:700}.t16{font-size:16px;font-weight:700}
+    .t14{font-size:14px}.t13{font-size:13px}.t12{font-size:12px}
+    .box{fill:#ffffff;stroke:#111827;stroke-width:2.5}
+  </style>
+  <rect width="900" height="430" fill="#ffffff"/>
+
+  <!-- header -->
+  <circle cx="45" cy="42" r="20" fill="#C5A8FF" stroke="#111827" stroke-width="2.5"/>
+  <text x="45" y="48" text-anchor="middle" class="ink t16">5</text>
+  <text x="80" y="48" class="ink t20">LOOP — there is no “generate” inside the model</text>
+
+  <!-- three stations -->
+  <rect x="90" y="110" width="200" height="70" rx="14" fill="#FFD54D" stroke="#111827" stroke-width="2.5"/>
+  <text x="190" y="140" text-anchor="middle" class="ink t14" font-weight="700">forward pass</text>
+  <text x="190" y="160" text-anchor="middle" class="mut t12">stages 1→4, one trip</text>
+
+  <rect x="360" y="110" width="200" height="70" rx="14" fill="#7BC96F" stroke="#111827" stroke-width="2.5"/>
+  <text x="460" y="140" text-anchor="middle" class="ink t14" font-weight="700">pick from ballot</text>
+  <text x="460" y="160" text-anchor="middle" class="mut t12">greedy / temperature</text>
+
+  <rect x="630" y="110" width="200" height="70" rx="14" fill="#8ED1FC" stroke="#111827" stroke-width="2.5"/>
+  <text x="730" y="140" text-anchor="middle" class="ink t14" font-weight="700">append token</text>
+  <text x="730" y="160" text-anchor="middle" class="mut t12">prompt grows by one</text>
+
+  <!-- loop track -->
+  <g fill="none" stroke="#111827" stroke-width="2.5">
+    <line x1="292" y1="145" x2="356" y2="145"/>
+    <path d="M356,145 l-10,-6 v12 z" fill="#111827" stroke="none"/>
+    <line x1="562" y1="145" x2="626" y2="145"/>
+    <path d="M626,145 l-10,-6 v12 z" fill="#111827" stroke="none"/>
+    <path d="M 730,182 L 730,230 Q 730,250 710,250 L 210,250 Q 190,250 190,230 L 190,184"/>
+    <path d="M190,184 l-6,10 h12 z" fill="#111827" stroke="none"/>
+  </g>
+  <text x="460" y="242" text-anchor="middle" class="mut t12">back for the next token — same trip, every time</text>
+
+  <!-- moving pulse around the loop (4s per lap, 2 laps per 8s cycle) -->
+  <circle r="8" fill="#EF4444" stroke="#111827" stroke-width="2">
+    <animateMotion dur="7s" repeatCount="indefinite"
+      path="M 190,145 L 460,145 L 730,145 L 730,230 Q 730,250 710,250 L 210,250 Q 190,250 190,230 Z"/>
+  </circle>
+
+  <!-- growing sequence -->
+  <text x="90" y="310" class="ink t14" font-weight="700">the sequence grows, one lap at a time:</text>
+  <g font-family="Menlo,Consolas,monospace">
+    <rect x="90" y="326" width="330" height="40" rx="10" class="box"/>
+    <text x="255" y="351" text-anchor="middle" class="ink t13">The capital of France is</text>
+    <g opacity="0">
+      <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.44;0.50;0.98;1"/>
+      <rect x="432" y="326" width="90" height="40" rx="10" fill="#7BC96F" stroke="#111827" stroke-width="2.5"/>
+      <text x="477" y="351" text-anchor="middle" class="ink t13">·Paris</text>
+    </g>
+    <g opacity="0">
+      <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.68;0.74;0.98;1"/>
+      <rect x="534" y="326" width="50" height="40" rx="10" fill="#FFD54D" stroke="#111827" stroke-width="2.5"/>
+      <text x="559" y="351" text-anchor="middle" class="ink t13">,</text>
+    </g>
+    <g opacity="0">
+      <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.92;0.97;0.99;1"/>
+      <rect x="596" y="326" width="80" height="40" rx="10" fill="#8ED1FC" stroke="#111827" stroke-width="2.5"/>
+      <text x="636" y="351" text-anchor="middle" class="ink t13">·and</text>
+    </g>
+  </g>
+
+  <!-- KV cache badge -->
+  <g>
+    <rect x="700" y="316" width="180" height="60" rx="12" fill="#111827"/>
+    <text x="790" y="340" text-anchor="middle" fill="#ffffff" class="t13" font-weight="700">KV cache: 176.5 tok/s</text>
+    <text x="790" y="360" text-anchor="middle" fill="#9ca3af" class="t12">naive re-run: 55.5 tok/s</text>
+  </g>
+
+  <text x="90" y="405" class="mut t13">prefill the prompt once → then feed ONE new token per lap, reusing cached K/V</text>
+</svg>

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" font-family="Arial, Helvetica, sans-serif">
+  <style>
+    .ink{fill:#111827}.mut{fill:#6b7280}
+    .t20{font-size:20px;font-weight:700}.t16{font-size:16px;font-weight:700}
+    .t14{font-size:14px}.t13{font-size:13px}.t12{font-size:12px}
+    .lbl{paint-order:stroke;stroke:#ffffff;stroke-width:5px;stroke-linejoin:round}
+  </style>
+  <rect width="900" height="430" fill="#ffffff"/>
+
+  <!-- header -->
+  <circle cx="45" cy="42" r="20" fill="#7BC96F" stroke="#111827" stroke-width="2.5"/>
+  <text x="45" y="48" text-anchor="middle" class="ink t16">3</text>
+  <text x="80" y="48" class="ink t20">ATTEND — each token peeks back, scores, and copies</text>
+
+  <!-- Q/K/V legend -->
+  <g class="t13">
+    <rect x="80" y="72" width="14" height="14" rx="4" fill="#FFD54D" stroke="#111827" stroke-width="2"/>
+    <text x="102" y="84" class="ink">Query — “what am I looking for?”</text>
+    <rect x="360" y="72" width="14" height="14" rx="4" fill="#8ED1FC" stroke="#111827" stroke-width="2"/>
+    <text x="382" y="84" class="ink">Key — “what do I contain?”</text>
+    <rect x="600" y="72" width="14" height="14" rx="4" fill="#FF9E9E" stroke="#111827" stroke-width="2"/>
+    <text x="622" y="84" class="ink">Value — “what I hand over”</text>
+  </g>
+
+  <!-- arcs: each leaves the top of “·is” at its OWN anchor point, lands on the
+       target chip's top center. weights layer0/head0: The .46 · capital .01 · of .38 · France .01 -->
+  <g fill="none" stroke="#111827" stroke-linecap="round">
+    <path d="M 700,278 Q 415,100 130,278" stroke-width="7" stroke-opacity="0.85" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+      <animate attributeName="stroke-dashoffset" dur="14s" repeatCount="indefinite" values="100;100;0;0" keyTimes="0;0.20;0.34;1"/>
+    </path>
+    <path d="M 712,278 Q 496,150 280,278" stroke-width="1.5" stroke-opacity="0.4" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+      <animate attributeName="stroke-dashoffset" dur="14s" repeatCount="indefinite" values="100;100;0;0" keyTimes="0;0.24;0.38;1"/>
+    </path>
+    <path d="M 724,278 Q 577,190 430,278" stroke-width="6" stroke-opacity="0.85" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+      <animate attributeName="stroke-dashoffset" dur="14s" repeatCount="indefinite" values="100;100;0;0" keyTimes="0;0.28;0.42;1"/>
+    </path>
+    <path d="M 736,278 Q 658,235 580,278" stroke-width="1.5" stroke-opacity="0.4" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+      <animate attributeName="stroke-dashoffset" dur="14s" repeatCount="indefinite" values="100;100;0;0" keyTimes="0;0.32;0.46;1"/>
+    </path>
+  </g>
+
+  <!-- weight labels: at each arc's apex, with a white halo so they never
+       disappear into a crossing stroke -->
+  <g class="t14" font-weight="700" opacity="0">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.50;0.56;1"/>
+    <text x="415" y="152" text-anchor="middle" class="ink lbl">0.46</text>
+    <text x="496" y="202" text-anchor="middle" fill="#9ca3af" class="lbl">0.01</text>
+    <text x="577" y="224" text-anchor="middle" class="ink lbl">0.38</text>
+    <text x="658" y="248" text-anchor="middle" fill="#9ca3af" class="lbl">0.01</text>
+    <!-- self-attention as a badge instead of a loop -->
+    <rect x="746" y="242" width="84" height="26" rx="13" fill="#ffffff" stroke="#111827" stroke-width="2"/>
+    <text x="788" y="260" text-anchor="middle" class="ink t13">self 0.15</text>
+  </g>
+
+  <!-- token chips -->
+  <g class="t14">
+    <rect x="75" y="280" width="110" height="44" rx="10" fill="#FFD54D" stroke="#111827" stroke-width="2.5"/>
+    <text x="130" y="308" text-anchor="middle" class="ink">The</text>
+    <rect x="225" y="280" width="110" height="44" rx="10" fill="#8ED1FC" stroke="#111827" stroke-width="2.5"/>
+    <text x="280" y="308" text-anchor="middle" class="ink">·capital</text>
+    <rect x="375" y="280" width="110" height="44" rx="10" fill="#7BC96F" stroke="#111827" stroke-width="2.5"/>
+    <text x="430" y="308" text-anchor="middle" class="ink">·of</text>
+    <rect x="525" y="280" width="110" height="44" rx="10" fill="#FF9E9E" stroke="#111827" stroke-width="2.5"/>
+    <text x="580" y="308" text-anchor="middle" class="ink">·France</text>
+    <rect x="675" y="280" width="110" height="44" rx="10" fill="#C5A8FF" stroke="#111827" stroke-width="2.5"/>
+    <text x="730" y="308" text-anchor="middle" class="ink">·is</text>
+  </g>
+  <!-- pulse on the querying token -->
+  <rect x="675" y="280" width="110" height="44" rx="10" fill="none" stroke="#7C3AED" stroke-width="3" opacity="0">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite"
+      values="0;0;1;0.3;1;0.3;1;0;0" keyTimes="0;0.06;0.10;0.14;0.18;0.22;0.26;0.32;1"/>
+  </rect>
+  <text x="730" y="348" text-anchor="middle" class="mut t12">“·is” asks: who back there matters to me?</text>
+
+  <!-- footer facts -->
+  <g opacity="0">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.60;0.66;0.98;1"/>
+    <text x="80" y="398" class="ink t14" font-weight="700">weights are real: layer 0 / head 0 · each row sums to 1 · no peeking forward (causal mask)</text>
+    <rect x="700" y="378" width="180" height="30" rx="15" fill="#111827"/>
+    <text x="790" y="398" text-anchor="middle" fill="#ffffff" class="t13" font-weight="700">× 28 layers × 16 heads</text>
+  </g>
+</svg>

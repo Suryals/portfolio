@@ -7,7 +7,15 @@
     <description>Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization.</description>
     <language>en-us</language>
     <managingEditor>suryal.k90@gmail.com (Suryaprakash Lakshmanan)</managingEditor>
-    <lastBuildDate>Tue, 17 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 20 Jul 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Inside the Forward Pass — What Actually Happens When an LLM Answers You</title>
+      <link>https://suryal.dev/articles/inside-the-forward-pass.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/inside-the-forward-pass.html</guid>
+      <pubDate>Sun, 20 Jul 2026 00:00:00 +0000</pubDate>
+      <description>Internals #1: the LLM forward pass rebuilt by hand on a real quantized model with MLX on Apple Silicon — tokenization, embeddings, attention, logits, and the generation loop, every claim verified bit-for-bit against the library's own kernels. Five animated stages, runnable on any Apple Silicon Mac.</description>
+    </item>
 
     <item>
       <title>Field Notes — MCP Dev Summit Mumbai 2026: Agents Fail at the Seams</title>

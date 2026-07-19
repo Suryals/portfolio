@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" font-family="Arial, Helvetica, sans-serif">
+  <style>
+    .ink{fill:#111827}.mut{fill:#6b7280}
+    .t20{font-size:20px;font-weight:700}.t16{font-size:16px;font-weight:700}
+    .t14{font-size:14px}.t13{font-size:13px}.t12{font-size:12px}
+    .box{fill:#ffffff;stroke:#111827;stroke-width:2.5}
+    .mono{font-family:Menlo,Consolas,monospace}
+  </style>
+  <rect width="900" height="430" fill="#ffffff"/>
+
+  <!-- header -->
+  <circle cx="45" cy="42" r="20" fill="#FFD54D" stroke="#111827" stroke-width="2.5"/>
+  <text x="45" y="48" text-anchor="middle" class="ink t16">1</text>
+  <text x="80" y="48" class="ink t20">TOKENIZE — the model never sees text, only IDs</text>
+
+  <!-- prompt box -->
+  <g>
+    <rect x="230" y="88" width="440" height="54" rx="12" class="box"/>
+    <text x="450" y="122" text-anchor="middle" class="ink t16">“The capital of France is”</text>
+    <!-- chop lines flash -->
+    <g stroke="#EF4444" stroke-width="2.5" stroke-dasharray="6 5" opacity="0">
+      <line x1="308" y1="92" x2="308" y2="138"/>
+      <line x1="404" y1="92" x2="404" y2="138"/>
+      <line x1="452" y1="92" x2="452" y2="138"/>
+      <line x1="548" y1="92" x2="548" y2="138"/>
+      <animate attributeName="opacity" dur="14s" repeatCount="indefinite"
+        values="0;0;1;1;0;0" keyTimes="0;0.12;0.16;0.3;0.36;1"/>
+    </g>
+  </g>
+  <text x="690" y="122" class="mut t13" opacity="0">chop
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite"
+      values="0;0;1;1;0;0" keyTimes="0;0.12;0.16;0.3;0.36;1"/>
+  </text>
+
+  <!-- token chips (staggered drop-in) -->
+  <!-- chip template: rect w=124 h=46 at y=210, ids at y=316 -->
+  <g opacity="0">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.24;0.30;1"/>
+    <animateTransform attributeName="transform" type="translate" dur="14s" repeatCount="indefinite"
+      values="0 -60;0 -60;0 0;0 0" keyTimes="0;0.24;0.30;1"/>
+    <rect x="120" y="210" width="124" height="46" rx="10" fill="#FFD54D" stroke="#111827" stroke-width="2.5"/>
+    <text x="182" y="239" text-anchor="middle" class="ink t14">The</text>
+  </g>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.29;0.35;1"/>
+    <animateTransform attributeName="transform" type="translate" dur="14s" repeatCount="indefinite"
+      values="0 -60;0 -60;0 0;0 0" keyTimes="0;0.29;0.35;1"/>
+    <rect x="256" y="210" width="124" height="46" rx="10" fill="#8ED1FC" stroke="#111827" stroke-width="2.5"/>
+    <text x="318" y="239" text-anchor="middle" class="ink t14">·capital</text>
+  </g>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.34;0.40;1"/>
+    <animateTransform attributeName="transform" type="translate" dur="14s" repeatCount="indefinite"
+      values="0 -60;0 -60;0 0;0 0" keyTimes="0;0.34;0.40;1"/>
+    <rect x="392" y="210" width="124" height="46" rx="10" fill="#7BC96F" stroke="#111827" stroke-width="2.5"/>
+    <text x="454" y="239" text-anchor="middle" class="ink t14">·of</text>
+  </g>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.39;0.45;1"/>
+    <animateTransform attributeName="transform" type="translate" dur="14s" repeatCount="indefinite"
+      values="0 -60;0 -60;0 0;0 0" keyTimes="0;0.39;0.45;1"/>
+    <rect x="528" y="210" width="124" height="46" rx="10" fill="#FF9E9E" stroke="#111827" stroke-width="2.5"/>
+    <text x="590" y="239" text-anchor="middle" class="ink t14">·France</text>
+  </g>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.44;0.50;1"/>
+    <animateTransform attributeName="transform" type="translate" dur="14s" repeatCount="indefinite"
+      values="0 -60;0 -60;0 0;0 0" keyTimes="0;0.44;0.50;1"/>
+    <rect x="664" y="210" width="124" height="46" rx="10" fill="#C5A8FF" stroke="#111827" stroke-width="2.5"/>
+    <text x="726" y="239" text-anchor="middle" class="ink t14">·is</text>
+  </g>
+
+  <!-- ids -->
+  <g opacity="0" class="mono">
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.55;0.62;1"/>
+    <g stroke="#6b7280" stroke-width="2">
+      <line x1="182" y1="262" x2="182" y2="292"/><line x1="318" y1="262" x2="318" y2="292"/>
+      <line x1="454" y1="262" x2="454" y2="292"/><line x1="590" y1="262" x2="590" y2="292"/>
+      <line x1="726" y1="262" x2="726" y2="292"/>
+    </g>
+    <text x="182" y="318" text-anchor="middle" class="ink t16">785</text>
+    <text x="318" y="318" text-anchor="middle" class="ink t16">6722</text>
+    <text x="454" y="318" text-anchor="middle" class="ink t16">315</text>
+    <text x="590" y="318" text-anchor="middle" class="ink t16">9625</text>
+    <text x="726" y="318" text-anchor="middle" class="ink t16">374</text>
+    <text x="454" y="345" text-anchor="middle" class="mut t13">indices into a 151,936-piece vocabulary, frozen before training</text>
+  </g>
+
+  <!-- footnote -->
+  <text x="454" y="400" text-anchor="middle" class="mut t14" opacity="0">
+    rare text shatters: “Kanchipuram idli podi” → 8 pieces
+    <animate attributeName="opacity" dur="14s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.68;0.74;0.96;1"/>
+  </text>
+</svg>

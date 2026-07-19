@@ -73,9 +73,21 @@
 
             <section class="art-list" id="artList">
                 <!-- Featured / latest -->
-                <a class="art-row featured" data-category="agentic" href="mcp-summit-mumbai-2026.html">
+                <a class="art-row featured" data-category="platform" href="inside-the-forward-pass.html">
                     <div class="art-main">
-                        <span class="art-cat">MCP &amp; Agentic Ops · Field notes <span class="art-flag">Latest</span></span>
+                        <span class="art-cat">Local AI · Internals #1 <span class="art-flag">Latest</span></span>
+                        <h2>Inside the Forward Pass — What Actually Happens When an LLM Answers You</h2>
+                        <p class="art-sub">The forward pass rebuilt by hand on a real quantized model — five animated stages, every number verified against the library&apos;s own kernels.</p>
+                        <p class="art-sum">Tokenize → embed → attend → vote → loop, each stage re-done with raw matrix ops on Qwen3-0.6B under MLX and checked bit-for-bit: hand-built attention matched the library kernel with max diff 0.0, the full 28-block pass reproduced model(x) exactly, and the KV cache ran 3× faster than the naive loop — plus the honest footnote where bf16 rounding flipped a greedy argmax. Runs on any Apple Silicon Mac with a 350&nbsp;MB model.</p>
+                        <div class="art-tags"><span>LLM Internals</span><span>Transformers</span><span>Attention</span><span>KV Cache</span><span>MLX</span><span>Apple Silicon</span></div>
+                        <span class="art-go">Read Internals #1 →</span>
+                    </div>
+                    <div class="art-meta">July 2026 · Animated · Runnable</div>
+                </a>
+
+                <a class="art-row" data-category="agentic" href="mcp-summit-mumbai-2026.html">
+                    <div class="art-main">
+                        <span class="art-cat">MCP &amp; Agentic Ops · Field notes</span>
                         <h2>Agents Fail at the Seams — Field Notes from MCP Dev Summit Mumbai 2026</h2>
                         <p class="art-sub">Two days, 16 sessions, one through-line: multi-agent AI fails between agents, tools, and protocols — and every failure is a missing contract.</p>
                         <p class="art-sum">A practitioner&apos;s synthesis of the summit: the RAM/disk/syscall mental model, the six spines, and a failures→contracts table where every fix is discipline, not a smarter model — security as the floor (confused-deputy authorization), durable context as the ceiling (the empty &ldquo;event clock&rdquo;), the tool surface as the product (TDQS), and the unowned MCP↔A2A seam. Plus the gaps worth building and verified ecosystem notes.</p>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inside the Forward Pass — What Actually Happens When an LLM Answers You — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="Internals #1: the LLM forward pass rebuilt by hand on a real quantized model with MLX on Apple Silicon — tokenization, embeddings, attention, logits, and the generation loop, every claim verified against the library's own kernels.">
+    <link rel="canonical" href="https://suryal.dev/articles/inside-the-forward-pass.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Inside the Forward Pass — What Actually Happens When an LLM Answers You">
+    <meta property="og:description" content="The forward pass rebuilt by hand on a real 0.6B model — five stages, animated, every number verified bit-for-bit against the library. Runs on any Apple Silicon Mac.">
+    <meta property="og:url" content="https://suryal.dev/articles/inside-the-forward-pass.html">
+    <meta property="og:image" content="https://suryal.dev/images/og-image-v2.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://suryal.dev/images/og-image-v2.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../articles.css">
+    <style>
+    /* ---- Internals #1 (scoped) ---- */
+    .fp-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:34px 0 8px}
+    .fp-hero-stat{background:var(--paper-2);padding:26px 24px;display:flex;flex-direction:column;gap:8px}
+    .fp-hero-num{font-family:var(--serif);font-size:clamp(34px,5.2vw,50px);line-height:.95;color:var(--ink)}
+    .fp-hero-num i{font-size:.42em;font-style:normal;color:var(--ink-faint);font-family:var(--mono)}
+    .fp-hero-cap{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;
+        text-transform:uppercase;color:var(--ink-faint)}
+    .fp-caption{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-top:10px}
+    .fp-caption a{color:var(--ink-soft)}
+    /* animated diagram card — diagrams are light-canvas by design */
+    .fp-fig{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:30px 0 6px}
+    .fp-fig img{display:block;width:100%;height:auto}
+    .fp-figcap{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin:8px 0 26px}
+    /* terminal output blocks */
+    .fp-pre{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;
+        padding:18px 20px;margin:0 0 1.6em;overflow-x:auto}
+    .fp-pre code{font-family:var(--mono);font-size:13.5px;line-height:1.65;color:var(--ink-soft);
+        background:none;border:none;padding:0;white-space:pre;display:block}
+    .fp-pre .hi{color:var(--accent);font-weight:600}
+    @media(max-width:680px){
+        .fp-hero{grid-template-columns:1fr}
+        .fp-pre code{font-size:11.5px}
+    }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Inside the Forward Pass — What Actually Happens When an LLM Answers You",
+      "description": "Internals #1: the LLM forward pass rebuilt by hand on a real quantized model with MLX — tokenization, embeddings, attention, logits, and the generation loop, verified against the library's own kernels.",
+      "datePublished": "2026-07-20",
+      "dateModified": "2026-07-20",
+      "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
+      "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
+      "mainEntityOfPage": "https://suryal.dev/articles/inside-the-forward-pass.html",
+      "keywords": "LLM Internals, Forward Pass, Transformer, Attention, KV Cache, MLX, Apple Silicon, Tokenization, Embeddings",
+      "image": "https://suryal.dev/images/og-image-v2.png"
+    }
+    </script>
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="5cba5c2d-95f5-4ccb-896c-9104be4f00d2"></script>
+</head>
+<body>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="../index.html#top" class="mark">
+                <span class="mark-name">Surya</span>
+                <span class="mark-dot"></span>
+            </a>
+            <nav class="nav" aria-label="Primary">
+                <a href="../index.html#work"><i>01</i> Services</a>
+                <a href="../index.html#lab"><i>02</i> Lab</a>
+                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+                <a href="../index.html#experience"><i>04</i> Uptime</a>
+                <a href="../index.html#writing"><i>05</i> Logs</a>
+                <a href="../index.html#contact"><i>06</i> Channel</a>
+            </nav>
+            <a href="index.html" class="topbar-cta">All articles ↗</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="../index.html#work"><i>01</i> Services</a>
+        <a href="../index.html#lab"><i>02</i> Lab</a>
+        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+        <a href="../index.html#experience"><i>04</i> Uptime</a>
+        <a href="../index.html#writing"><i>05</i> Logs</a>
+        <a href="../index.html#contact"><i>06</i> Channel</a>
+    </div>
+
+    <main class="article">
+        <div class="wrap">
+            <header class="article-header">
+                <p class="breadcrumb"><a href="index.html">Articles</a> <span>/</span> Local AI</p>
+                <span class="article-cat" style="margin-top:14px">Internals · #1 of the series</span>
+                <h1 class="article-title">Inside the Forward Pass</h1>
+                <p class="article-sub">What actually happens when an LLM answers you — rebuilt by hand on a real quantized model, stage by stage, and verified bit-for-bit against the library's own kernels. Every number below came off a MacBook, not a diagram.</p>
+                <div class="article-meta">
+                    <span class="who">Suryaprakash Lakshmanan</span>
+                    <span class="sep">·</span><span>July 2026</span>
+                    <span class="sep">·</span><span>5 animated stages · runnable code</span>
+                </div>
+                <div class="article-tags">
+                    <span>LLM Internals</span><span>Transformers</span><span>Attention</span><span>KV Cache</span><span>MLX</span><span>Apple Silicon</span>
+                </div>
+
+                <div class="fp-hero">
+                    <div class="fp-hero-stat">
+                        <span class="fp-hero-num">0.0</span>
+                        <span class="fp-hero-cap">max diff — hand-built attention vs library kernel</span>
+                    </div>
+                    <div class="fp-hero-stat">
+                        <span class="fp-hero-num">151,936</span>
+                        <span class="fp-hero-cap">tokens on the ballot, every single step</span>
+                    </div>
+                    <div class="fp-hero-stat">
+                        <span class="fp-hero-num">350<i> MB</i></span>
+                        <span class="fp-hero-cap">model download — verify all of this yourself tonight</span>
+                    </div>
+                </div>
+                <p class="fp-caption">Model: mlx-community/Qwen3-0.6B-4bit · engine: mlx-lm · Apple Silicon · July 2026. Every claim runnable — <a href="https://github.com/Suryals/internals-series" target="_blank" rel="noopener">github.com/Suryals/internals-series</a>.</p>
+            </header>
+
+            <article class="article-body">
+                <p>Ask a chat model <em>"The capital of France is"</em> and it says "Paris". Between your keystroke and that word, exactly one kind of thing happens: a <strong>forward pass</strong> — a single deterministic trip through the network — repeated once per generated token. No search, no lookup, no "generate" circuit. Just the same trip, over and over.</p>
+                <p>This post walks that trip in five stages, rebuilding each one by hand with raw matrix ops and checking the numbers against the real model. If the hand-built version matches the library bit-for-bit, the mental model is right. If it doesn't, the mental model is wrong — and I'll be honest about which is which.</p>
+
+                <h2><span class="h2-no">01</span>Tokenize — the model never sees text</h2>
+                <div class="fp-fig"><img src="../images/forward-pass/anim-1-tokenize.svg" alt="Animated diagram: the prompt is chopped into five token pieces, each mapped to an integer id" loading="lazy"></div>
+                <p class="fp-figcap">All diagrams loop on a 14s cycle — real ids, real weights, real percentages from the scripts.</p>
+                <p>The model has no idea what a word is. It sees <strong>token ids</strong>: indices into a fixed vocabulary of 151,936 subword pieces, frozen before training ever started.</p>
+                <div class="fp-pre"><code>prompt      : 'The capital of France is'
+token ids   : [785, 6722, 315, 9625, 374]
+pieces      :
+       785  ->  'The'
+      6722  ->  ' capital'
+       315  ->  ' of'
+      9625  ->  ' France'
+       374  ->  ' is'</code></div>
+                <p>Common English maps almost word-per-token. Text the tokenizer saw less of during training shatters:</p>
+                <div class="fp-pre"><code>rare text   : 'Kanchipuram idli podi'
+  'K' 'anch' 'ipur' 'am' ' id' 'li' ' pod' 'i'</code></div>
+                <p>Three words became eight pieces. This is why models are worse at counting letters, why rare names cost more tokens, and why "token limits" don't map cleanly to word counts. <em>Code: <a href="https://github.com/Suryals/internals-series/blob/main/01-forward-pass/01_tokenize.py" target="_blank" rel="noopener"><code>01_tokenize.py</code></a></em></p>
+
+                <h2><span class="h2-no">02</span>Embed — one lookup, no computation</h2>
+                <div class="fp-fig"><img src="../images/forward-pass/anim-2-embed.svg" alt="Animated diagram: token id 9625 selects one row of the embedding table, which is copied out as a 1,024-number vector" loading="lazy"></div>
+                <p>Each id selects one row from a big lookup table — 151,936 rows × 1,024 numbers. That's it. No math yet, just a copy:</p>
+                <div class="fp-pre"><code>embedding table  : 151,936 x 1024
+activations      : (1, 5, 1024)  dtype=bfloat16</code></div>
+                <p>Two details that surprise people:</p>
+                <ol>
+                    <li><strong>Identical tokens get identical vectors.</strong> The token <code>' is'</code> at position 2 and position 9 start as the exact same 1,024 numbers — the script asserts it with <code>array_equal</code>.</li>
+                    <li><strong>Position isn't added here.</strong> Older transformers added a position vector at this stage. This family doesn't — position enters later, <em>inside attention</em>, via RoPE. At embedding time the model literally cannot tell where a token sits.</li>
+                </ol>
+                <p>From here on, everything is vector math on a <code>(1, 5, 1024)</code> tensor. <em>Code: <a href="https://github.com/Suryals/internals-series/blob/main/01-forward-pass/02_embeddings.py" target="_blank" rel="noopener"><code>02_embeddings.py</code></a></em></p>
+
+                <h2><span class="h2-no">03</span>Attend — one transformer block, by hand</h2>
+                <p>A block is two sub-steps, each wrapped in a pre-norm and a residual:</p>
+                <div class="fp-pre"><code>h   = x + Attention(RMSNorm(x))
+out = h + MLP(RMSNorm(h))</code></div>
+                <div class="fp-fig"><img src="../images/forward-pass/anim-3-attend.svg" alt="Animated diagram: attention arcs drawn from the token 'is' back to earlier tokens, thickness proportional to the real attention weights" loading="lazy"></div>
+                <p>Attention is the only place tokens interact. Each token produces three projections — <strong>Query</strong> ("what am I looking for?"), <strong>Key</strong> ("what do I contain?"), and <strong>Value</strong> ("what I hand over" — the only thing tokens actually share). This model uses <strong>grouped-query attention</strong>: 16 query heads but only 8 key/value heads, visible right in the shapes:</p>
+                <div class="fp-pre"><code>q (1, 5, 2048)  k (1, 5, 1024)  v (1, 5, 1024)   &lt;- K/V are smaller: GQA</code></div>
+                <p>Then RoPE rotates q and k by a position-dependent angle — the moment "token #4" becomes distinguishable from "token #1". Scores are dot products, a causal mask forbids peeking at future tokens, and softmax turns scores into weights. These are the <em>real</em> weights from layer 0, head 0:</p>
+                <div class="fp-pre"><code>              The   capita       of   France       is
+    The      1.00        -        -        -        -
+ capita      0.88     0.12        -        -        -
+     of      0.41     0.00     0.59        -        -
+ France      0.57     0.04     0.38     0.02        -
+     is      0.46     0.01     0.38     0.01     0.15</code></div>
+                <p>Each row sums to 1: a budget for how much each token copies from the ones before it. Then the MLP (SwiGLU here) processes each position independently, and residuals mean the input is never replaced — only added to.</p>
+                <p><strong>The verification</strong> — because floating point deserves honesty, two checks:</p>
+                <div class="fp-pre"><code>(a) our q/k/v + library kernel vs library attention: <span class="hi">max diff 0.0</span>
+(b) fully-manual block vs library block: max rel diff 0.234%, cosine 0.999963
+<span class="hi">mental model verified.</span></code></div>
+                <p>Check (a) hands the hand-computed q/k/v — norms, RoPE, GQA and all — to the library's fused attention kernel, and matches <strong>bit for bit</strong>. Check (b) runs the from-scratch softmax path instead; a fused kernel rounds differently than step-by-step bfloat16 tensors, so ~0.2% max deviation with near-perfect cosine is exactly what <em>correct</em> looks like. Anyone whose from-scratch reimplementation "matched exactly" is either fusing the same way or not checking. <em>Code: <a href="https://github.com/Suryals/internals-series/blob/main/01-forward-pass/03_inside_one_block.py" target="_blank" rel="noopener"><code>03_inside_one_block.py</code></a></em></p>
+
+                <h2><span class="h2-no">04</span>Vote — 28 blocks and a ballot</h2>
+                <div class="fp-fig"><img src="../images/forward-pass/anim-4-vote.svg" alt="Animated diagram: the last token's vector is compared against all 151,936 embedding rows, producing a growing bar chart of next-token probabilities" loading="lazy"></div>
+                <p>The whole model is: embed → the same block 28 times (new weights each time) → final RMSNorm → project to vocabulary.</p>
+                <div class="fp-pre"><code>embeddings : (1, 5, 1024)
+after layer  0: (1, 5, 1024)  (shape never changes — only meaning does)
+after layer 14: (1, 5, 1024)
+after layer 27: (1, 5, 1024)
+logits     : (1, 5, 151936)</code></div>
+                <p>The shape never changes through all 28 blocks — only the meaning packed into those 1,024 numbers does. The final projection reuses the <em>same table from stage 2</em> (tied embeddings): the last token's vector is compared against all 151,936 embedding rows, one score per vocabulary entry. Rebuilding all of it by hand and comparing against <code>model(x)</code>:</p>
+                <div class="fp-pre"><code>max |manual - model(x)| = 0.000000
+<span class="hi">hand-built forward pass == library forward pass</span></code></div>
+                <p>And what the model actually "thinks" after <em>'The capital of France is'</em>:</p>
+                <div class="fp-pre"><code>  27.94%  ' Paris'
+   8.52%  ' in'
+   5.50%  '____'
+   4.56%  ' __'
+   4.28%  ' ____'</code></div>
+                <p>Note what this is: <strong>a ballot, not an answer</strong>. The model doesn't output "Paris" — it outputs a probability for every one of 151,936 tokens, and something outside the model picks one. (A 0.6B model giving Paris only 28% — and hedging with fill-in-the-blank underscores, a residue of its training data — is its own little lesson in model size.) <em>Code: <a href="https://github.com/Suryals/internals-series/blob/main/01-forward-pass/04_forward_pass_by_hand.py" target="_blank" rel="noopener"><code>04_forward_pass_by_hand.py</code></a></em></p>
+
+                <h2><span class="h2-no">05</span>Loop — generation is just the forward pass, repeated</h2>
+                <div class="fp-fig"><img src="../images/forward-pass/anim-5-loop.svg" alt="Animated diagram: a pulse orbits forward pass, pick from ballot, append token — while the sequence grows one token per lap" loading="lazy"></div>
+                <p>There is no "generate" mode inside the network. Chat is: <strong>forward pass → pick a token from the ballot → append it → forward pass → …</strong></p>
+                <p>The one real optimization is the <strong>KV cache</strong>: after the prompt is processed once (prefill), each step feeds only the <em>one</em> new token, reusing the keys and values already computed. The naive alternative re-runs the entire growing sequence every step. Same Mac, same 30 tokens:</p>
+                <div class="fp-pre"><code>KV-cached:  <span class="hi">176.5 tok/s</span>
+    naive:   55.5 tok/s</code></div>
+                <p>3× faster at 30 tokens — and the gap grows quadratically with sequence length, which is why nobody ships the naive version.</p>
+                <p>One honest footnote: the cache removes re-work, it never changes the <em>math</em> — but in bfloat16, processing a full sequence batches operations differently than processing one token at a time, and those last-bit rounding differences can flip a greedy argmax. In my run the two versions agreed for ~25 tokens, then picked different words. Determinism in floating point is more fragile than the textbook diagram admits — a thread this series will pull on later. <em>Code: <a href="https://github.com/Suryals/internals-series/blob/main/01-forward-pass/05_generate_loop.py" target="_blank" rel="noopener"><code>05_generate_loop.py</code></a></em></p>
+
+                <div class="takeaways">
+                    <h4>What to take away</h4>
+                    <ul>
+                        <li>An LLM is <strong>one deterministic function applied in a loop</strong> — tokens in, ballot out. Sampling (everything people call "creativity", "temperature", "hallucination risk") happens <em>outside</em> the forward pass.</li>
+                        <li>The shape <code>(1, L, 1024)</code> never changes through 28 layers — depth changes <em>meaning</em>, not structure. Attention is the only place tokens meet.</li>
+                        <li>You can verify all of this yourself, tonight, on any Apple Silicon Mac with a 350&nbsp;MB model: <code>pip install mlx mlx-lm</code> and five short scripts.</li>
+                    </ul>
+                </div>
+
+                <p>This is <strong>Internals #1</strong> — a series that rebuilds AI systems from their parts and verifies every claim on real models running locally. Next: what attention heads actually specialize in — and after that, the KV cache in depth, where that 3× gap at 30 tokens becomes the entire economics of inference at 30,000.</p>
+            </article>
+
+            <section class="discussion">
+                <span class="eyebrow">Discussion</span>
+                <h3>Join the conversation on LinkedIn</h3>
+                <p>The code lives on GitHub; the discussion — what surprised you, what to dissect next — happens on LinkedIn.</p>
+                <a class="li-button" href="https://www.linkedin.com/in/suryaprakash-lakshmanan-068a7684/recent-activity/all/" target="_blank" rel="noopener">
+                    <span class="li-badge">in</span> Join the discussion on LinkedIn
+                </a>
+            </section>
+
+            <section class="related">
+                <span class="eyebrow">Keep reading</span>
+                <div class="related-grid">
+                    <a class="rel-card" href="https://github.com/Suryals/internals-series" target="_blank" rel="noopener">
+                        <span class="rc-cat">The code</span>
+                        <h4>internals-series on GitHub</h4>
+                        <p>Five scripts, one per stage — run them in order on any Apple Silicon Mac and watch the numbers match.</p>
+                        <span class="rc-go">View the repo →</span>
+                    </a>
+                    <a class="rel-card" href="mlx-breaking-point.html">
+                        <span class="rc-cat">Local AI · Benchmarking</span>
+                        <h4>How Far Can One Mac Go?</h4>
+                        <p>Six models, 3B → 123B, on an M5 Max — the scaling curve, the real memory ceiling, and the thermal tax.</p>
+                        <span class="rc-go">Open the dashboard →</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
+                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body>
+</html>
