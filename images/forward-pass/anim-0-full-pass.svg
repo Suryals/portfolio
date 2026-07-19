@@ -139,7 +139,7 @@
   <g opacity="0">
     <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.80;0.86;0.985;1"/>
     <rect x="60" y="466" width="780" height="52" rx="14" fill="#EAF3FF" stroke="#2E86C1" stroke-width="2.5"/>
-    <text x="450" y="488" text-anchor="middle" class="ink t13" font-weight="700">every stage above rebuilt by hand and verified: hand-built pass reproduces model(x) — max diff 0.000000</text>
+    <text x="450" y="488" text-anchor="middle" class="ink t13" font-weight="700">every stage above verified on a real model: the step-by-step pass reproduces model(x) — max diff 0.000000</text>
     <text x="450" y="507" text-anchor="middle" class="mut t11">Qwen3-0.6B-4bit · MLX · runnable scripts at github.com/Suryals/internals-series</text>
   </g>
 </svg>
