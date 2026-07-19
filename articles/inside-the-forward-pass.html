@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inside the Forward Pass — What Actually Happens When an LLM Answers You — Suryaprakash Lakshmanan</title>
-    <meta name="description" content="Internals #1: the LLM forward pass rebuilt by hand on a real quantized model with MLX on Apple Silicon — tokenization, embeddings, attention, logits, and the generation loop, every claim verified against the library's own kernels.">
+    <meta name="description" content="Internals #1: the LLM forward pass taken apart stage by stage on a real quantized model with MLX on Apple Silicon — tokenization, embeddings, attention, logits, and the generation loop, every claim verified against the library's own kernels.">
     <link rel="canonical" href="https://suryal.dev/articles/inside-the-forward-pass.html">
     <meta property="og:type" content="article">
     <meta property="og:title" content="Inside the Forward Pass — What Actually Happens When an LLM Answers You">
-    <meta property="og:description" content="The forward pass rebuilt by hand on a real 0.6B model — five stages, animated, every number verified bit-for-bit against the library. Runs on any Apple Silicon Mac.">
+    <meta property="og:description" content="The forward pass taken apart on a real 0.6B model — five stages, animated, every number verified bit-for-bit against the library. Runs on any Apple Silicon Mac.">
     <meta property="og:url" content="https://suryal.dev/articles/inside-the-forward-pass.html">
     <meta property="og:image" content="https://suryal.dev/images/og-image-v2.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -50,7 +50,7 @@
       "@context": "https://schema.org",
       "@type": "TechArticle",
       "headline": "Inside the Forward Pass — What Actually Happens When an LLM Answers You",
-      "description": "Internals #1: the LLM forward pass rebuilt by hand on a real quantized model with MLX — tokenization, embeddings, attention, logits, and the generation loop, verified against the library's own kernels.",
+      "description": "Internals #1: the LLM forward pass taken apart stage by stage on a real quantized model with MLX — tokenization, embeddings, attention, logits, and the generation loop, verified against the library's own kernels.",
       "datePublished": "2026-07-20",
       "dateModified": "2026-07-20",
       "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
@@ -101,7 +101,7 @@
                 <p class="breadcrumb"><a href="index.html">Articles</a> <span>/</span> Local AI</p>
                 <span class="article-cat" style="margin-top:14px">Internals · #1 of the series</span>
                 <h1 class="article-title">Inside the Forward Pass</h1>
-                <p class="article-sub">What actually happens when an LLM answers you — rebuilt by hand on a real quantized model, stage by stage, and verified bit-for-bit against the library's own kernels. Every number below came off a MacBook, not a diagram.</p>
+                <p class="article-sub">What actually happens when an LLM answers you — taken apart stage by stage on a real quantized model and verified bit-for-bit against the library's own kernels. Every number below came off a MacBook, not a diagram.</p>
                 <div class="article-meta">
                     <span class="who">Suryaprakash Lakshmanan</span>
                     <span class="sep">·</span><span>July 2026</span>
@@ -114,7 +114,7 @@
                 <div class="fp-hero">
                     <div class="fp-hero-stat">
                         <span class="fp-hero-num">0.0</span>
-                        <span class="fp-hero-cap">max diff — hand-built attention vs library kernel</span>
+                        <span class="fp-hero-cap">max diff — step-by-step attention vs library kernel</span>
                     </div>
                     <div class="fp-hero-stat">
                         <span class="fp-hero-num">151,936</span>
@@ -130,7 +130,7 @@
 
             <article class="article-body">
                 <p>Ask a chat model <em>"The capital of France is"</em> and it says "Paris". Between your keystroke and that word, exactly one kind of thing happens: a <strong>forward pass</strong> — a single deterministic trip through the network — repeated once per generated token. No search, no lookup, no "generate" circuit. Just the same trip, over and over.</p>
-                <p>This post walks that trip in five stages, rebuilding each one by hand with raw matrix ops and checking the numbers against the real model. If the hand-built version matches the library bit-for-bit, the mental model is right. If it doesn't, the mental model is wrong — and I'll be honest about which is which.</p>
+                <p>This post walks that trip in five stages, recomputing each one with raw matrix ops and checking the numbers against the real model. If the step-by-step version matches the library bit-for-bit, the mental model is right. If it doesn't, the mental model is wrong — and I'll be honest about which is which.</p>
                 <div class="fp-fig"><img src="../images/forward-pass/anim-0-full-pass.svg" alt="Animated diagram: the complete forward pass — a pulse travels tokenize, embed, 28 attention blocks, the ballot, then loops back through pick and append" loading="lazy"></div>
                 <p class="fp-figcap">The whole machine in one loop — a pulse makes the full trip, one visible token per lap. Each stage below gets its own dissection.</p>
 
@@ -163,7 +163,7 @@ activations      : (1, 5, 1024)  dtype=bfloat16</code></div>
                 </ol>
                 <p>From here on, everything is vector math on a <code>(1, 5, 1024)</code> tensor. <em>Code: <a href="https://github.com/Suryals/internals-series/blob/main/01-forward-pass/02_embeddings.py" target="_blank" rel="noopener"><code>02_embeddings.py</code></a></em></p>
 
-                <h2><span class="h2-no">03</span>Attend — one transformer block, by hand</h2>
+                <h2><span class="h2-no">03</span>Attend — one transformer block, step by step</h2>
                 <p>A block is two sub-steps, each wrapped in a pre-norm and a residual:</p>
                 <div class="fp-pre"><code>h   = x + Attention(RMSNorm(x))
 out = h + MLP(RMSNorm(h))</code></div>
@@ -182,7 +182,7 @@ out = h + MLP(RMSNorm(h))</code></div>
                 <div class="fp-pre"><code>(a) our q/k/v + library kernel vs library attention: <span class="hi">max diff 0.0</span>
 (b) fully-manual block vs library block: max rel diff 0.234%, cosine 0.999963
 <span class="hi">mental model verified.</span></code></div>
-                <p>Check (a) hands the hand-computed q/k/v — norms, RoPE, GQA and all — to the library's fused attention kernel, and matches <strong>bit for bit</strong>. Check (b) runs the from-scratch softmax path instead; a fused kernel rounds differently than step-by-step bfloat16 tensors, so ~0.2% max deviation with near-perfect cosine is exactly what <em>correct</em> looks like. Anyone whose from-scratch reimplementation "matched exactly" is either fusing the same way or not checking. <em>Code: <a href="https://github.com/Suryals/internals-series/blob/main/01-forward-pass/03_inside_one_block.py" target="_blank" rel="noopener"><code>03_inside_one_block.py</code></a></em></p>
+                <p>Check (a) feeds the recomputed q/k/v — norms, RoPE, GQA and all — to the library's fused attention kernel, and matches <strong>bit for bit</strong>. Check (b) runs the from-scratch softmax path instead; a fused kernel rounds differently than step-by-step bfloat16 tensors, so ~0.2% max deviation with near-perfect cosine is exactly what <em>correct</em> looks like. Anyone whose from-scratch reimplementation "matched exactly" is either fusing the same way or not checking. <em>Code: <a href="https://github.com/Suryals/internals-series/blob/main/01-forward-pass/03_inside_one_block.py" target="_blank" rel="noopener"><code>03_inside_one_block.py</code></a></em></p>
 
                 <h2><span class="h2-no">04</span>Vote — 28 blocks and a ballot</h2>
                 <div class="fp-fig"><img src="../images/forward-pass/anim-4-vote.svg" alt="Animated diagram: the last token's vector is compared against all 151,936 embedding rows, producing a growing bar chart of next-token probabilities" loading="lazy"></div>
@@ -192,9 +192,9 @@ after layer  0: (1, 5, 1024)  (shape never changes — only meaning does)
 after layer 14: (1, 5, 1024)
 after layer 27: (1, 5, 1024)
 logits     : (1, 5, 151936)</code></div>
-                <p>The shape never changes through all 28 blocks — only the meaning packed into those 1,024 numbers does. The final projection reuses the <em>same table from stage 2</em> (tied embeddings): the last token's vector is compared against all 151,936 embedding rows, one score per vocabulary entry. Rebuilding all of it by hand and comparing against <code>model(x)</code>:</p>
+                <p>The shape never changes through all 28 blocks — only the meaning packed into those 1,024 numbers does. The final projection reuses the <em>same table from stage 2</em> (tied embeddings): the last token's vector is compared against all 151,936 embedding rows, one score per vocabulary entry. Recomputing the full stack step by step and comparing against <code>model(x)</code>:</p>
                 <div class="fp-pre"><code>max |manual - model(x)| = 0.000000
-<span class="hi">hand-built forward pass == library forward pass</span></code></div>
+<span class="hi">step-by-step forward pass == library forward pass</span></code></div>
                 <p>And what the model actually "thinks" after <em>'The capital of France is'</em>:</p>
                 <div class="fp-pre"><code>  27.94%  ' Paris'
    8.52%  ' in'

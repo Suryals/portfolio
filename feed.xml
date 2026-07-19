@@ -14,7 +14,7 @@
       <link>https://suryal.dev/articles/inside-the-forward-pass.html</link>
       <guid isPermaLink="true">https://suryal.dev/articles/inside-the-forward-pass.html</guid>
       <pubDate>Sun, 20 Jul 2026 00:00:00 +0000</pubDate>
-      <description>Internals #1: the LLM forward pass rebuilt by hand on a real quantized model with MLX on Apple Silicon — tokenization, embeddings, attention, logits, and the generation loop, every claim verified bit-for-bit against the library's own kernels. Five animated stages, runnable on any Apple Silicon Mac.</description>
+      <description>Internals #1: the LLM forward pass taken apart stage by stage on a real quantized model with MLX on Apple Silicon — tokenization, embeddings, attention, logits, and the generation loop, every claim verified bit-for-bit against the library's own kernels. Five animated stages, runnable on any Apple Silicon Mac.</description>
     </item>
 
     <item>

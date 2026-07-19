@@ -77,8 +77,8 @@
                     <div class="art-main">
                         <span class="art-cat">Local AI · Internals #1 <span class="art-flag">Latest</span></span>
                         <h2>Inside the Forward Pass — What Actually Happens When an LLM Answers You</h2>
-                        <p class="art-sub">The forward pass rebuilt by hand on a real quantized model — five animated stages, every number verified against the library&apos;s own kernels.</p>
-                        <p class="art-sum">Tokenize → embed → attend → vote → loop, each stage re-done with raw matrix ops on Qwen3-0.6B under MLX and checked bit-for-bit: hand-built attention matched the library kernel with max diff 0.0, the full 28-block pass reproduced model(x) exactly, and the KV cache ran 3× faster than the naive loop — plus the honest footnote where bf16 rounding flipped a greedy argmax. Runs on any Apple Silicon Mac with a 350&nbsp;MB model.</p>
+                        <p class="art-sub">The forward pass taken apart stage by stage on a real quantized model — five animated stages, every number verified against the library&apos;s own kernels.</p>
+                        <p class="art-sum">Tokenize → embed → attend → vote → loop, each stage re-done with raw matrix ops on Qwen3-0.6B under MLX and checked bit-for-bit: the recomputed attention matched the library kernel with max diff 0.0, the full 28-block pass reproduced model(x) exactly, and the KV cache ran 3× faster than the naive loop — plus the honest footnote where bf16 rounding flipped a greedy argmax. Runs on any Apple Silicon Mac with a 350&nbsp;MB model.</p>
                         <div class="art-tags"><span>LLM Internals</span><span>Transformers</span><span>Attention</span><span>KV Cache</span><span>MLX</span><span>Apple Silicon</span></div>
                         <span class="art-go">Read Internals #1 →</span>
                     </div>
