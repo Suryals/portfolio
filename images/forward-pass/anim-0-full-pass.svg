@@ -84,7 +84,7 @@
   <rect x="690" y="108" width="170" height="84" rx="12" fill="none" stroke="#E5484D" stroke-width="3.5" opacity="0">
     <animate attributeName="opacity" dur="16s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.35;0.38;0.46;0.50;1"/>
   </rect>
-  <text x="860" y="212" text-anchor="end" class="mut t11">a ballot over 151,936 entries — not an answer</text>
+  <text x="760" y="215" text-anchor="end" class="mut t11">a ballot over 151,936 entries — not an answer</text>
 
   <!-- ================= bottom row: stage 5 loop ================= -->
   <!-- loop track: down from vote, left through pick & append, up into tokenize -->
