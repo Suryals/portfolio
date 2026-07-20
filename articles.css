@@ -207,6 +207,11 @@
     transition: background .3s, transform .3s var(--ease);
 }
 .li-button:hover { background: var(--accent); transform: translateY(-2px); }
+.share-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.x-button { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+.x-button .li-badge { background: var(--ink); color: var(--paper); }
+.x-button:hover { background: var(--ink); color: var(--paper); }
+.x-button:hover .li-badge { background: var(--paper); color: var(--ink); }
 .li-button .li-badge { width: 24px; height: 24px; border-radius: 6px; background: var(--accent); color: var(--paper); display: grid; place-items: center; font-family: var(--sans); font-weight: 700; font-size: 12px; }
 .li-button:hover .li-badge { background: var(--paper); color: var(--accent); }
 
