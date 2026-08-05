@@ -75,9 +75,21 @@
 
             <section class="art-list" id="artList">
                 <!-- Featured / latest -->
-                <a class="art-row featured" data-category="platform" href="inside-the-forward-pass.html">
+                <a class="art-row featured" data-category="agentic" href="mcp-went-stateless.html">
                     <div class="art-main">
-                        <span class="art-cat">Local AI · Internals #1 <span class="art-flag">Latest</span></span>
+                        <span class="art-cat">MCP · Protocol Analysis <span class="art-flag">Latest</span></span>
+                        <h2>MCP Just Went Stateless — and It's the Biggest Redesign Since the Protocol Launched</h2>
+                        <p class="art-sub">The 2026-07-28 revision removes the handshake, kills sessions, and stops servers from ever calling clients back — the same tool call went from nine messages to four.</p>
+                        <p class="art-sum">A production engineer&apos;s walkthrough of MCP&apos;s first true architectural rewrite: no <code>initialize</code>, no <code>Mcp-Session-Id</code>, no server-initiated requests. Mid-request input now rides the Multi Round-Trip Request pattern — an HMAC-sealed <code>requestState</code> the client mails back — so any replica can finish the job and sticky sessions disappear. Sampling and roots deprecated. Plus the governance angle: the first revision shipped since MCP moved under the Agentic AI Foundation. Animated old-vs-new comparison included.</p>
+                        <div class="art-tags"><span>MCP</span><span>Stateless</span><span>MRTR</span><span>Platform Engineering</span><span>Agentic AI</span><span>SRE</span></div>
+                        <span class="art-go">Read the analysis →</span>
+                    </div>
+                    <div class="art-meta">August 2026 · Animated</div>
+                </a>
+
+                <a class="art-row" data-category="platform" href="inside-the-forward-pass.html">
+                    <div class="art-main">
+                        <span class="art-cat">Local AI · Internals #1</span>
                         <h2>Inside the Forward Pass — What Actually Happens When an LLM Answers You</h2>
                         <p class="art-sub">The forward pass taken apart stage by stage on a real quantized model — five animated stages, every number verified against the library&apos;s own kernels.</p>
                         <p class="art-sum">Tokenize → embed → attend → vote → loop, each stage re-done with raw matrix ops on Qwen3-0.6B under MLX and checked bit-for-bit: the recomputed attention matched the library kernel with max diff 0.0, the full 28-block pass reproduced model(x) exactly, and the KV cache ran 3× faster than the naive loop — plus the honest footnote where bf16 rounding flipped a greedy argmax. Runs on any Apple Silicon Mac with a 350&nbsp;MB model.</p>

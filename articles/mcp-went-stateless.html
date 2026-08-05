@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Just Went Stateless — The Biggest Redesign Since Launch — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="The 2026-07-28 Model Context Protocol revision removes the handshake, kills sessions, and deprecates sampling and roots — turning MCP into something a platform team can actually load-balance. What changed, why, and what it means in production.">
+    <link rel="canonical" href="https://suryal.dev/articles/mcp-went-stateless.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="MCP Just Went Stateless — and It's the Biggest Redesign Since the Protocol Launched">
+    <meta property="og:description" content="No handshake. No sessions. No server-initiated requests. The same tool call went from nine messages to four. A production engineer's walkthrough of MCP 2026-07-28.">
+    <meta property="og:url" content="https://suryal.dev/articles/mcp-went-stateless.html">
+    <meta property="og:image" content="https://suryal.dev/images/mcp-stateless/mcp-stateless-poster.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@suryaagentic">
+    <meta name="twitter:creator" content="@suryaagentic">
+    <meta name="twitter:image" content="https://suryal.dev/images/mcp-stateless/mcp-stateless-poster.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../articles.css">
+    <style>
+    /* ---- MCP stateless (scoped) ---- */
+    .mcp-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:34px 0 8px}
+    .mcp-hero-stat{background:var(--paper-2);padding:26px 24px;display:flex;flex-direction:column;gap:8px}
+    .mcp-hero-num{font-family:var(--serif);font-size:clamp(34px,5.2vw,50px);line-height:.95;color:var(--ink)}
+    .mcp-hero-num i{font-size:.42em;font-style:normal;color:var(--ink-faint);font-family:var(--mono)}
+    .mcp-hero-num.term{font-family:var(--mono);font-weight:600;font-size:clamp(26px,3.6vw,36px);letter-spacing:.02em;color:var(--accent-deep)}
+    .mcp-hero-cap code{font-family:var(--mono);font-size:.92em;color:var(--ink-soft)}
+    .mcp-hero-cap{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;
+        text-transform:uppercase;color:var(--ink-faint)}
+    .mcp-caption{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-top:10px}
+    .mcp-caption a{color:var(--ink-soft)}
+    /* video figure */
+    .mcp-fig{background:#0B0D0A;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:30px 0 6px}
+    .mcp-fig video{display:block;width:100%;height:auto;background:#0B0D0A}
+    .mcp-figcap{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin:8px 0 26px}
+    /* code blocks */
+    .mcp-pre{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;
+        padding:18px 20px;margin:0 0 1.6em;overflow-x:auto}
+    .mcp-pre code{font-family:var(--mono);font-size:13px;line-height:1.6;color:var(--ink-soft);
+        background:none;border:none;padding:0;white-space:pre;display:block}
+    .mcp-pre .k{color:var(--accent-deep)}
+    @media(max-width:680px){
+        .mcp-hero{grid-template-columns:1fr}
+        .mcp-pre code{font-size:11px}
+    }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "MCP Just Went Stateless — and It's the Biggest Redesign Since the Protocol Launched",
+      "description": "The 2026-07-28 Model Context Protocol revision removes the handshake, kills sessions, deprecates sampling and roots, and turns MCP into a stateless, cacheable, load-balanceable protocol. What changed, why, and what it means in production.",
+      "datePublished": "2026-08-05",
+      "dateModified": "2026-08-05",
+      "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
+      "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
+      "mainEntityOfPage": "https://suryal.dev/articles/mcp-went-stateless.html",
+      "keywords": "MCP, Model Context Protocol, Stateless, MRTR, Platform Engineering, Agentic AI, Load Balancing, Agentic AI Foundation",
+      "image": "https://suryal.dev/images/mcp-stateless/mcp-stateless-poster.png"
+    }
+    </script>
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="5cba5c2d-95f5-4ccb-896c-9104be4f00d2"></script>
+</head>
+<body>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="../index.html#top" class="mark">
+                <span class="mark-name">Surya</span>
+                <span class="mark-dot"></span>
+            </a>
+            <nav class="nav" aria-label="Primary">
+                <a href="../index.html#work"><i>01</i> Services</a>
+                <a href="../index.html#lab"><i>02</i> Lab</a>
+                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+                <a href="../index.html#experience"><i>04</i> Uptime</a>
+                <a href="../index.html#writing"><i>05</i> Logs</a>
+                <a href="../index.html#contact"><i>06</i> Channel</a>
+            </nav>
+            <a href="index.html" class="topbar-cta">All articles ↗</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="../index.html#work"><i>01</i> Services</a>
+        <a href="../index.html#lab"><i>02</i> Lab</a>
+        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+        <a href="../index.html#experience"><i>04</i> Uptime</a>
+        <a href="../index.html#writing"><i>05</i> Logs</a>
+        <a href="../index.html#contact"><i>06</i> Channel</a>
+    </div>
+
+    <main class="article">
+        <div class="wrap">
+            <header class="article-header">
+                <p class="breadcrumb"><a href="index.html">Articles</a> <span>/</span> MCP &amp; Agentic Ops</p>
+                <span class="article-cat" style="margin-top:14px">MCP · Protocol Analysis</span>
+                <h1 class="article-title">MCP Just Went Stateless</h1>
+                <p class="article-sub">The 2026-07-28 revision removes the handshake, kills sessions, deprecates two founding features, and quietly turns MCP into something a platform team can actually load-balance. Here's what changed, why, and what it means if you run MCP in production.</p>
+                <div class="article-meta">
+                    <span class="who">Suryaprakash Lakshmanan</span>
+                    <span class="sep">·</span><span>August 2026</span>
+                    <span class="sep">·</span><span>Protocol analysis · animated</span>
+                </div>
+                <div class="article-tags">
+                    <span>MCP</span><span>Model Context Protocol</span><span>Stateless</span><span>MRTR</span><span>Platform Engineering</span><span>Agentic AI</span>
+                </div>
+
+                <div class="mcp-hero">
+                    <div class="mcp-hero-stat">
+                        <span class="mcp-hero-num">0</span>
+                        <span class="mcp-hero-cap">sessions &amp; handshakes — <code>initialize</code> and <code>Mcp-Session-Id</code> are gone</span>
+                    </div>
+                    <div class="mcp-hero-stat">
+                        <span class="mcp-hero-num term">MRTR</span>
+                        <span class="mcp-hero-cap">the new pattern — mid-request state travels sealed with the request, not on the server</span>
+                    </div>
+                    <div class="mcp-hero-stat">
+                        <span class="mcp-hero-num">2</span>
+                        <span class="mcp-hero-cap">founding features deprecated: sampling &amp; roots</span>
+                    </div>
+                </div>
+                <p class="mcp-caption">Model Context Protocol revision <strong>2026-07-28</strong> · the fifth revision, and its first true architectural rewrite. Primary sources linked at the foot of this piece.</p>
+            </header>
+
+            <article class="article-body">
+                <p>On July 28, 2026, the Model Context Protocol shipped its fifth revision — and its first true architectural rewrite. Every previous version (2024-11-05 → 2025-03-26 → 2025-06-18 → 2025-11-25) evolved the same core design: a stateful session, opened by an <code>initialize</code> handshake, in which client and server negotiated capabilities once and remembered them for the life of the connection.</p>
+                <p><strong>2026-07-28 deletes that design.</strong> No handshake. No sessions. No server-initiated requests. Two of the protocol's original client features — sampling and roots — deprecated in the same release.</p>
+                <p>If that sounds drastic, it is. It's also, from where I sit running governed MCP platforms, the most operationally sensible thing the spec has ever done. Let me walk through it the way I'd explain it to my own team.</p>
+
+                <h2><span class="h2-no">01</span>One tool call, two protocol eras</h2>
+                <p>Abstract descriptions of statelessness tend to slide off. So here is a single, boring, entirely ordinary job, run under both versions.</p>
+                <p>A user asks an agent to check their pending invoices. The server needs one more detail before it can answer: <em>for which date?</em> The user says 2026-08-02. The server replies: three invoices pending. Then, in the same chat, the user asks a follow-up — <em>and for next week?</em> Between those two turns, a routine deploy restarts one replica.</p>
+                <p>That deploy is the whole story. It's the thing that happens on any given Tuesday, and it's where the two eras come apart.</p>
+                <p><strong>Under 2025-11-25, that job takes nine messages.</strong> Client sends <code>initialize</code>. Server replies with its capabilities and mints <code>Mcp-Session-Id: 7f3a…</code>. Client sends <code>notifications/initialized</code>. Only now the real request: <code>tools/call check_pending_invoices</code>, carrying the session id. The server can't answer yet, so it calls the client <em>back</em> — a server-initiated <code>elicitation/create</code> travelling backwards down a long-lived stream, asking for the date. The client answers. The server returns the result. It works.</p>
+                <p>But all of that context lives inside Replica A's memory, keyed to that session. The load balancer must pin every subsequent request there. So when the deploy restarts Replica A and the follow-up question routes to Replica B, the answer is <strong>HTTP 404 — session not found</strong>, and the client starts over from the handshake. Sticky sessions weren't a tuning preference. They were mandatory.</p>
+                <p><strong>Under 2026-07-28, the same job takes four messages.</strong> The <code>tools/call</code> goes out carrying its own protocol version and capabilities. The server needs the date, so it returns <code>resultType: "input_required"</code> along with an HMAC-sealed <code>requestState</code> blob — and then forgets the exchange entirely. The client retries with a brand-new request id, attaching the answer and the sealed blob. The retry lands on Replica B, which has never seen this conversation, verifies the seal, and finishes the job.</p>
+                <p>Then the deploy happens. Then the follow-up arrives. Nothing notices, because there is no session to lose.</p>
+                <p>Nine messages became four. One server-side session became none.</p>
+
+                <div class="mcp-fig">
+                    <video controls preload="metadata" playsinline muted loop poster="../images/mcp-stateless/mcp-stateless-poster.png">
+                        <source src="../images/mcp-stateless/mcp-stateless.mp4" type="video/mp4">
+                        Your browser doesn't support embedded video — <a href="../images/mcp-stateless/mcp-stateless.mp4">download the comparison (MP4)</a>.
+                    </video>
+                </div>
+                <p class="mcp-figcap">The same job under both eras, side by side — watch the 404 happen on the left and not happen on the right.</p>
+
+                <h2><span class="h2-no">02</span>The old world: a session protocol wearing HTTP clothes</h2>
+                <p>Until this revision, everything after the handshake leaned on connection memory. On Streamable HTTP, the server could mint an <code>Mcp-Session-Id</code> the client had to echo on every request. Servers could push their <em>own</em> JSON-RPC requests back at clients over a long-lived GET/SSE stream — that's how <code>sampling/createMessage</code> (server borrows the client's LLM) and <code>elicitation/create</code> (server asks the user something) worked. Broken streams were resumable with <code>Last-Event-ID</code>. There was even a <code>ping</code>.</p>
+                <p>Elegant on a whiteboard. Painful behind a load balancer. Session state forced sticky routing or a shared session store. The GET stream meant every server replica had to be able to reach the specific connection a client was listening on. List results could vary per connection, so caching was fraught. And "the server sends the client a request" inverts everything HTTP infrastructure assumes — try explaining to your API gateway that the response stream may contain <em>inbound RPCs</em>.</p>
+                <p>None of this is hypothetical. If you've deployed a remote MCP server across more than one replica, you've met each of these problems personally.</p>
+
+                <h2><span class="h2-no">03</span>The new world: every request stands alone</h2>
+                <p>The 2026-07-28 model fits in one sentence: <strong>every request carries everything needed to process it.</strong></p>
+                <p>Concretely, each request's <code>_meta</code> block now carries the protocol version and the client's capabilities (required), plus its identity (recommended):</p>
+                <div class="mcp-pre"><code>{
+  <span class="k">"jsonrpc"</span>: "2.0",
+  <span class="k">"id"</span>: 7,
+  <span class="k">"method"</span>: "tools/call",
+  <span class="k">"params"</span>: {
+    <span class="k">"name"</span>: "check_pending_invoices",
+    <span class="k">"arguments"</span>: { "date": "2026-08-02" },
+    <span class="k">"_meta"</span>: {
+      <span class="k">"io.modelcontextprotocol/protocolVersion"</span>: "2026-07-28",
+      <span class="k">"io.modelcontextprotocol/clientCapabilities"</span>: { "elicitation": {} },
+      <span class="k">"io.modelcontextprotocol/clientInfo"</span>: { "name": "my-client", "version": "1.0.0" }
+    }
+  }
+}</code></div>
+                <p>Omit <code>protocolVersion</code> or <code>clientCapabilities</code> and you get <code>-32602</code> with an HTTP 400 — they are not optional decoration. The server processes the request with zero connection history. A different replica can serve the next one. A restarted stdio process just picks up where nothing was, because there was never a "where."</p>
+                <p>Capability discovery didn't disappear; it inverted. A new <code>server/discover</code> request — which servers <strong>must</strong> implement and clients <strong>may</strong> call — returns supported versions, capabilities, identity, and instructions in one cacheable response. And "cacheable" is now a first-class concept: discovery and the list/read operations must return <code>ttlMs</code> and <code>cacheScope</code> (<code>public</code>/<code>private</code>) hints, HTTP-cache semantics brought inside the protocol. Version mismatch? The server answers any request with <code>UnsupportedProtocolVersionError</code> (-32022) listing what it supports, and the client simply retries with a mutual version. Negotiation without a handshake.</p>
+
+                <h2><span class="h2-no">04</span>The cleverest part: MRTR</h2>
+                <p>Here's the puzzle statelessness had to solve. Mid-request, servers legitimately need things from the client's side: user input, an LLM completion, a folder list. The old answer was server-initiated requests over that troublesome stream. The new answer is the <strong>Multi Round-Trip Request</strong> pattern, and it's the most design-relevant piece of the revision:</p>
+                <ol>
+                    <li>Client: <code>tools/call</code> (id: 1)</li>
+                    <li>Server: instead of a final result, returns <code>resultType: "input_required"</code> carrying <code>inputRequests</code> (what it needs) and/or <code>requestState</code> (an opaque blob encoding everything the server needs to resume)</li>
+                    <li>Client gathers the input, then <strong>retries the original request with a new id</strong>, attaching <code>inputResponses</code> and echoing <code>requestState</code> byte-for-byte</li>
+                    <li>Any replica verifies <code>requestState</code>, reconstitutes context, finishes the job</li>
+                </ol>
+                <p>MRTR is allowed on exactly three operations — <code>tools/call</code>, <code>resources/read</code>, and <code>prompts/get</code> — and the retry must use a fresh JSON-RPC id, because it is a genuinely independent request.</p>
+                <p>The server kept <em>no</em> state between those two requests. It mailed its state to the client and got it back. If that reminds you of encrypted JWT session tokens or continuation-passing style, you have exactly the right intuition. And the spec is refreshingly paranoid about the obvious risk: <code>requestState</code> round-trips through an untrusted party, so servers <strong>must</strong> treat it as attacker-controlled — integrity-protect it (HMAC/AEAD), bind it to the principal and originating request, give it a TTL.</p>
+                <p>The flip side: server→client JSON-RPC requests are <em>gone</em>. A modern MCP server never initiates. Which brings us to the deprecations.</p>
+
+                <h2><span class="h2-no">05</span>Sampling and roots: deprecated, and honestly, correctly</h2>
+                <p>Sampling was one of MCP's founding ideas — servers could stay LLM-agnostic by borrowing the client's model. Roots let clients scope servers to workspace folders. Both are now formally deprecated (removal eligible from 2027-07-28), alongside the logging utility and, over in OAuth-land, Dynamic Client Registration (replaced by Client ID Metadata Documents).</p>
+                <p>The stated migrations tell you the real story: <em>integrate directly with LLM provider APIs</em> instead of sampling; <em>pass paths as tool parameters or configuration</em> instead of roots; <em>log to stderr or OpenTelemetry</em> instead of <code>notifications/message</code>. In practice, adoption data made the call — hosts rarely implemented sampling well, servers couldn't rely on it, and a feature nobody can rely on is worse than no feature.</p>
+                <p>There's a real trade here worth naming: sampling's "bring your own model" promise was philosophically lovely, and its loss makes servers a bit less portable and a bit more key-laden. The spec chose operational honesty over architectural romance. As someone who has to run these things: correct call, small tear shed.</p>
+                <p>One nuance platform teams should note: <strong>deprecated is not removed.</strong> These features remain fully specified for at least twelve months. Legacy interop is a first-class part of the revision — the spec defines "modern," "legacy," and "dual-era" implementations, detection recipes, and a compatibility matrix. Your 2025-11-25 servers don't stop working; they just stopped being the future.</p>
+
+                <h2><span class="h2-no">06</span>What this buys you at scale</h2>
+                <p>The scaling story is why this revision exists, so let's be concrete about what changes behind a load balancer:</p>
+                <p><strong>Any replica can serve any request.</strong> No sticky sessions, no shared session store, no draining ceremony on deploys. MCP servers become the same shape as every other stateless service you already run — horizontal scaling is a replica count, not an architecture project. Your replicas share a <em>signing key</em>, not a <em>session store</em>.</p>
+                <p><strong>Caching becomes real.</strong> <code>tools/list</code> no longer varies per connection, must be deterministically ordered, and carries explicit TTL and scope. A <code>cacheScope: "public"</code> tool list can sit in your CDN. (Corollary: scope it wrong and you've built a cross-tenant data leak — the spec's security notes on this are worth reading twice.)</p>
+                <p><strong>Gateways can finally see.</strong> New required headers mirror the body — <code>MCP-Protocol-Version</code>, <code>Mcp-Method</code>, <code>Mcp-Name</code>, and optional <code>Mcp-Param-*</code> from annotated tool parameters — so L7 infrastructure can route, rate-limit, and observe per-method and per-tool <em>without parsing JSON bodies</em>. Header/body mismatch is a protocol error (-32020, HTTP 400) precisely so intermediaries and servers can't be split-brained by an attacker. Add first-class OpenTelemetry trace-context keys in <code>_meta</code>, and MCP traffic finally looks like something an SRE can operate.</p>
+                <p><strong>Failure is boring again.</strong> A broken SSE stream just means re-issue the request. A dead stdio process just means restart and retry. Cancellation on HTTP is closing the stream. The recovery story fits on an index card.</p>
+                <p>The cost? Notifications needed a new home — that's the <code>subscriptions/listen</code> pattern, an opt-in filtered stream with acknowledged subscriptions and best-effort delivery. Per-request <code>_meta</code> adds bytes. And everyone's muscle memory from four spec versions needs retraining. Speaking as someone whose muscle memory includes shipping the old handshake in three languages: the retraining is real, and worth it.</p>
+
+                <h2><span class="h2-no">07</span>The governance footnote that isn't a footnote</h2>
+                <p>There's a detail easy to skim past. This is the first full revision published since MCP stopped being a single vendor's protocol.</p>
+                <p>Anthropic open-sourced MCP in November 2024. On December 9, 2025, the Linux Foundation announced the Agentic AI Foundation, with MCP contributed alongside Block's goose and OpenAI's AGENTS.md, putting the protocol under vendor-neutral stewardship. The 2025-11-25 revision landed two weeks before that. 2026-07-28 is the first one shipped from the other side of the line.</p>
+                <p>I don't think that's a coincidence, and not because a foundation writes better specs. It's that the constituency changed. A protocol maintained by the company that ships the flagship client optimizes for what that client can do. A protocol maintained across a foundation with more than ten thousand published servers in the wild optimizes for what everyone else has to <em>operate</em>. Deleting sessions is a change that costs the client implementers something and pays the platform teams back. That trade is much easier to make when the platform teams are in the room.</p>
+
+                <h2><span class="h2-no">08</span>If you run MCP today: a short field guide</h2>
+                <p>Audit which of your servers assume session identity, and start treating any cross-request state as an explicit, integrity-protected handle. If you built on sampling, begin the provider-API migration now — twelve months evaporates. Put <code>server/discover</code> on your roadmap; it's a server MUST. Decide your era story per service: dual-era for anything with existing clients, modern-only for anything new. And if you're a gateway or platform team, the new headers are your early win — method-level routing and rate-limiting with zero body parsing is the feature you've been simulating with regex.</p>
+
+                <div class="takeaways">
+                    <h4>The strategic read</h4>
+                    <p>MCP started as a protocol for connecting a desktop app to local tools, and its architecture said so. This revision is the protocol admitting what it became — enterprise infrastructure serving many clients from many replicas behind real load balancers. Stateless, cacheable, observable, boring to operate.</p>
+                    <p style="margin-bottom:0">In protocol design, <em>boring to operate</em> is the highest compliment there is.</p>
+                </div>
+
+                <p><em>Primary sources: the <a href="https://modelcontextprotocol.io/specification/2026-07-28" target="_blank" rel="noopener">2026-07-28 specification</a>, its <a href="https://modelcontextprotocol.io/specification/2026-07-28/changelog" target="_blank" rel="noopener">changelog</a>, the <a href="https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture" target="_blank" rel="noopener">architecture overview</a>, and the Linux Foundation's <a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation" target="_blank" rel="noopener">AAIF formation announcement</a>.</em></p>
+            </article>
+
+            <section class="discussion">
+                <span class="eyebrow">Discussion</span>
+                <h3>Take it apart with me</h3>
+                <p>Run MCP in production? I'd like to hear where the stateless model helps you and where it bites. The conversation happens on LinkedIn and X.</p>
+                <div class="share-row">
+                    <a class="li-button" href="https://www.linkedin.com/in/suryaprakash-lakshmanan-068a7684/recent-activity/all/" target="_blank" rel="noopener">
+                        <span class="li-badge">in</span> Join the discussion on LinkedIn
+                    </a>
+                    <a class="li-button x-button" href="https://x.com/suryaagentic" target="_blank" rel="noopener">
+                        <span class="li-badge">𝕏</span> Follow @suryaagentic on X
+                    </a>
+                </div>
+            </section>
+
+            <section class="related">
+                <span class="eyebrow">Keep reading</span>
+                <div class="related-grid">
+                    <a class="rel-card" href="principal-propagation-mcp.html">
+                        <span class="rc-cat">Security · MCP · Identity</span>
+                        <h4>MCP Access to a Database — as the User</h4>
+                        <p>Carrying the end user's verified identity to the data source through MCP — authn, authz, and audit enforced where the data lives.</p>
+                        <span class="rc-go">Read the case study →</span>
+                    </a>
+                    <a class="rel-card" href="mcp-summit-mumbai-2026.html">
+                        <span class="rc-cat">MCP &amp; Agentic Ops</span>
+                        <h4>Agents Fail at the Seams</h4>
+                        <p>Field notes from MCP Dev Summit Mumbai 2026 — every multi-agent failure is a missing contract.</p>
+                        <span class="rc-go">Read the field notes →</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
+                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body>
+</html>

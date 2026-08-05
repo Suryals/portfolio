@@ -7,7 +7,15 @@
     <description>Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization.</description>
     <language>en-us</language>
     <managingEditor>suryal.k90@gmail.com (Suryaprakash Lakshmanan)</managingEditor>
-    <lastBuildDate>Sun, 20 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 05 Aug 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>MCP Just Went Stateless — and It's the Biggest Redesign Since the Protocol Launched</title>
+      <link>https://suryal.dev/articles/mcp-went-stateless.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/mcp-went-stateless.html</guid>
+      <pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+      <description>The 2026-07-28 Model Context Protocol revision removes the handshake, kills sessions, and stops servers from ever calling clients back — the same tool call goes from nine messages to four. A production engineer's walkthrough of MCP's first true architectural rewrite: statelessness, the Multi Round-Trip Request pattern, the sampling and roots deprecations, and the Agentic AI Foundation governance angle.</description>
+    </item>
 
     <item>
       <title>Inside the Forward Pass — What Actually Happens When an LLM Answers You</title>
