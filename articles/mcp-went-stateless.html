@@ -220,6 +220,7 @@
                     <p style="margin-bottom:0">In protocol design, <em>boring to operate</em> is the highest compliment there is.</p>
                 </div>
 
+                <p>I built a runnable old-vs-new comparison — <strong>one Python file, zero dependencies</strong> — where you can watch the 404 happen in the legacy era and not happen in the new one, complete with the HMAC-sealed <code>requestState</code> and the tampered-blob rejection. Clone it, run <code>python3 compare.py</code>, read the colored message log: <a href="https://github.com/Suryals/mcp-stateless-demo" target="_blank" rel="noopener">github.com/Suryals/mcp-stateless-demo</a>.</p>
                 <p><em>Primary sources: the <a href="https://modelcontextprotocol.io/specification/2026-07-28" target="_blank" rel="noopener">2026-07-28 specification</a>, its <a href="https://modelcontextprotocol.io/specification/2026-07-28/changelog" target="_blank" rel="noopener">changelog</a>, the <a href="https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture" target="_blank" rel="noopener">architecture overview</a>, and the Linux Foundation's <a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation" target="_blank" rel="noopener">AAIF formation announcement</a>.</em></p>
             </article>
 
@@ -240,17 +241,17 @@
             <section class="related">
                 <span class="eyebrow">Keep reading</span>
                 <div class="related-grid">
+                    <a class="rel-card" href="https://github.com/Suryals/mcp-stateless-demo" target="_blank" rel="noopener">
+                        <span class="rc-cat">The code</span>
+                        <h4>mcp-stateless-demo on GitHub</h4>
+                        <p>One Python file, zero dependencies — run both protocol eras and watch the 404 happen on failover, then not happen.</p>
+                        <span class="rc-go">View the repo →</span>
+                    </a>
                     <a class="rel-card" href="principal-propagation-mcp.html">
                         <span class="rc-cat">Security · MCP · Identity</span>
                         <h4>MCP Access to a Database — as the User</h4>
                         <p>Carrying the end user's verified identity to the data source through MCP — authn, authz, and audit enforced where the data lives.</p>
                         <span class="rc-go">Read the case study →</span>
-                    </a>
-                    <a class="rel-card" href="mcp-summit-mumbai-2026.html">
-                        <span class="rc-cat">MCP &amp; Agentic Ops</span>
-                        <h4>Agents Fail at the Seams</h4>
-                        <p>Field notes from MCP Dev Summit Mumbai 2026 — every multi-agent failure is a missing contract.</p>
-                        <span class="rc-go">Read the field notes →</span>
                     </a>
                 </div>
             </section>
