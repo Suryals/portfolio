@@ -44,7 +44,7 @@
     position: relative; transition: padding .4s var(--ease), background .35s;
 }
 .art-row:hover { padding-left: 16px; padding-right: 16px; }
-.art-row.featured { background: transparent; color: var(--ink); border-radius: 16px; border: 1px solid var(--line); border-left: 3px solid var(--accent); margin-bottom: 1px; padding: clamp(30px, 4vw, 52px) clamp(26px, 3.5vw, 46px); }
+.art-row.featured { background: transparent; color: var(--ink); border-radius: 16px; border: 1px solid var(--line); margin-bottom: 1px; padding: clamp(30px, 4vw, 52px) clamp(26px, 3.5vw, 46px); }
 .art-row.featured .art-flag { background: var(--accent); color: var(--paper); }
 
 .art-main { min-width: 0; }
