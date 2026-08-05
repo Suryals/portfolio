@@ -28,7 +28,7 @@
     .mcp-hero-stat{background:var(--paper-2);padding:26px 24px;display:flex;flex-direction:column;gap:8px}
     .mcp-hero-num{font-family:var(--serif);font-size:clamp(34px,5.2vw,50px);line-height:.95;color:var(--ink)}
     .mcp-hero-num i{font-size:.42em;font-style:normal;color:var(--ink-faint);font-family:var(--mono)}
-    .mcp-hero-num.term{font-family:var(--mono);font-weight:600;font-size:clamp(26px,3.6vw,36px);letter-spacing:.02em;color:var(--accent-deep)}
+    .mcp-hero-num.term{font-family:var(--mono);font-weight:600;font-size:clamp(20px,2.5vw,28px);letter-spacing:.01em;color:var(--accent-deep)}
     .mcp-hero-cap code{font-family:var(--mono);font-size:.92em;color:var(--ink-soft)}
     .mcp-hero-cap{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;
         text-transform:uppercase;color:var(--ink-faint)}
@@ -117,16 +117,16 @@
 
                 <div class="mcp-hero">
                     <div class="mcp-hero-stat">
-                        <span class="mcp-hero-num">0</span>
-                        <span class="mcp-hero-cap">sessions &amp; handshakes — <code>initialize</code> and <code>Mcp-Session-Id</code> are gone</span>
+                        <span class="mcp-hero-num term">STATELESS</span>
+                        <span class="mcp-hero-cap">no handshake, no sessions, no server-initiated requests</span>
                     </div>
                     <div class="mcp-hero-stat">
                         <span class="mcp-hero-num term">MRTR</span>
-                        <span class="mcp-hero-cap">the new pattern — mid-request state travels sealed with the request, not on the server</span>
+                        <span class="mcp-hero-cap">mid-request state travels sealed with the request, not on the server</span>
                     </div>
                     <div class="mcp-hero-stat">
-                        <span class="mcp-hero-num">2</span>
-                        <span class="mcp-hero-cap">founding features deprecated: sampling &amp; roots</span>
+                        <span class="mcp-hero-num term">DEPRECATIONS</span>
+                        <span class="mcp-hero-cap">sampling &amp; roots retired — servers no longer call clients back</span>
                     </div>
                 </div>
                 <p class="mcp-caption">Model Context Protocol revision <strong>2026-07-28</strong> · the fifth revision, and its first true architectural rewrite. Primary sources linked at the foot of this piece.</p>
@@ -143,7 +143,7 @@
                 <p>That deploy is the whole story. It's the thing that happens on any given Tuesday, and it's where the two eras come apart.</p>
                 <p><strong>Under 2025-11-25, that job takes nine messages.</strong> Client sends <code>initialize</code>. Server replies with its capabilities and mints <code>Mcp-Session-Id: 7f3a…</code>. Client sends <code>notifications/initialized</code>. Only now the real request: <code>tools/call check_pending_invoices</code>, carrying the session id. The server can't answer yet, so it calls the client <em>back</em> — a server-initiated <code>elicitation/create</code> travelling backwards down a long-lived stream, asking for the date. The client answers. The server returns the result. It works.</p>
                 <p>But all of that context lives inside Replica A's memory, keyed to that session. The load balancer must pin every subsequent request there. So when the deploy restarts Replica A and the follow-up question routes to Replica B, the answer is <strong>HTTP 404 — session not found</strong>, and the client starts over from the handshake. Sticky sessions weren't a tuning preference. They were mandatory.</p>
-                <p><strong>Under 2026-07-28, the same job takes four messages.</strong> The <code>tools/call</code> goes out carrying its own protocol version and capabilities. The server needs the date, so it returns <code>resultType: "input_required"</code> along with an HMAC-sealed <code>requestState</code> blob — and then forgets the exchange entirely. The client retries with a brand-new request id, attaching the answer and the sealed blob. The retry lands on Replica B, which has never seen this conversation, verifies the seal, and finishes the job.</p>
+                <p><strong>Under 2026-07-28, the same job takes four messages.</strong> The <code>tools/call</code> goes out carrying its own protocol version and capabilities. The server needs the date, so it returns <code>resultType: "input_required"</code> along with a cryptographically sealed <code>requestState</code> blob — and then forgets the exchange entirely. The client retries with a brand-new request id, attaching the answer and the sealed blob. The retry lands on Replica B, which has never seen this conversation, verifies the seal, and finishes the job.</p>
                 <p>Then the deploy happens. Then the follow-up arrives. Nothing notices, because there is no session to lose.</p>
                 <p>Nine messages became four. One server-side session became none.</p>
 
