@@ -7,6 +7,12 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://suryal.dev/articles/qwen3-8-27b-vs-claude-opus-4-6.html</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://suryal.dev/articles/</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>

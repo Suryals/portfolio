@@ -10,6 +10,14 @@
     <lastBuildDate>Wed, 05 Aug 2026 00:00:00 +0000</lastBuildDate>
 
     <item>
+      <title>Qwen3.8-27B dropped, and the AI community claims it beats the OG — Opus 4.6</title>
+      <link>https://suryal.dev/articles/qwen3-8-27b-vs-claude-opus-4-6.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/qwen3-8-27b-vs-claude-opus-4-6.html</guid>
+      <pubDate>Sat, 16 Aug 2026 00:00:00 +0000</pubDate>
+      <description>The agentic claim independently tested on 24 real on-call tasks: a 27B open model running locally in 18GB matched Claude Opus 4.6 task for task — including failing the same trap — for a total API bill of $1.61. Reproducible harness, deterministic scoring, adversarial tier authored by a third model.</description>
+    </item>
+
+    <item>
       <title>MCP Just Went Stateless — and It's the Biggest Redesign Since the Protocol Launched</title>
       <link>https://suryal.dev/articles/mcp-went-stateless.html</link>
       <guid isPermaLink="true">https://suryal.dev/articles/mcp-went-stateless.html</guid>

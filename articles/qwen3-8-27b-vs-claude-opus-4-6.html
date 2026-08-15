@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qwen3.8-27B vs the OG — Opus 4.6, Tested on Real On-Call Tasks — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="MLX Lab Ep 03: the AI community claims Qwen3.8-27B beats Claude Opus 4.6. I tested the agentic claim — 24 real on-call tasks, deterministic scoring, a third-model-authored adversarial tier — for $1.61. They tied, and both failed the same trap.">
+    <link rel="canonical" href="https://suryal.dev/articles/qwen3-8-27b-vs-claude-opus-4-6.html">
+    <link rel="alternate" type="application/rss+xml" title="Suryaprakash Lakshmanan — Field Notes" href="https://suryal.dev/feed.xml">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Qwen3.8-27B vs the OG — Opus 4.6, Tested on Real On-Call Tasks">
+    <meta property="og:description" content="A 27B open model on a laptop matched February's frontier task for task on 24 on-call tasks — including failing the same trap. Reproducible harness, $1.61 total API bill.">
+    <meta property="og:url" content="https://suryal.dev/articles/qwen3-8-27b-vs-claude-opus-4-6.html">
+    <meta property="og:image" content="https://suryal.dev/images/og-image-v2.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@suryaagentic">
+    <meta name="twitter:creator" content="@suryaagentic">
+    <meta name="twitter:image" content="https://suryal.dev/images/og-image-v2.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../articles.css">
+    <style>
+    /* Ep 03 scoped — follows mlxd- conventions from the Ep 02 dashboard */
+    .q3-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:30px 0 10px}
+    .q3-hero-stat{background:var(--paper-2);padding:22px 20px;display:flex;flex-direction:column;gap:6px}
+    .q3-hero-num{font-family:var(--mono);font-weight:600;font-size:clamp(22px,3vw,34px);color:var(--accent);text-shadow:var(--glow)}
+    .q3-hero-num i{font-style:normal;font-size:.55em;color:var(--ink-soft)}
+    .q3-hero-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);line-height:1.5}
+    .q3-caption{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);line-height:1.6;margin:10px 0 0}
+    .q3-caption a{color:var(--ink-soft)}
+    .q3-chartblock{margin:26px 0 8px;border:1px solid var(--line);border-radius:12px;padding:18px 20px 12px;background:var(--paper-2)}
+    .q3-chart-h{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin:0 0 2px}
+    .q3-chart-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-faint);margin:0 0 14px}
+    .q3-svg{width:100%;height:auto;display:block}
+    .q3-rowlabel{font-family:var(--mono);font-size:13px;fill:var(--ink);font-weight:500}
+    .q3-rowsub{font-family:var(--mono);font-size:10px;fill:var(--ink-faint)}
+    .q3-val{font-family:var(--mono);font-size:13px;fill:var(--ink);font-weight:500}
+    .q3-unit{font-size:10px;fill:var(--ink-faint)}
+    .q3-quote{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;
+        background:var(--paper-2);padding:16px 20px;margin:22px 0;font-size:.95em;color:var(--ink-soft)}
+    .q3-quote b{color:var(--ink)}
+    .q3-quote .q3-qnote{display:block;font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:8px}
+    .q3-grid{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:22px 0 8px}
+    .q3-grid-head{display:flex;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);
+        background:var(--paper-2);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+    .q3-rows{display:grid;grid-template-columns:1.6fr 1fr 1fr}
+    .q3-rows>span{padding:12px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:13px;color:var(--ink-soft)}
+    .q3-rows>span:nth-child(-n+3){font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);padding-bottom:9px}
+    .q3-rows>span:nth-last-child(-n+3){border-bottom:none}
+    .q3-m{color:var(--ink)!important;font-weight:500}
+    .q3-hot{color:var(--accent)!important;font-weight:500}
+    .q3-findings{counter-reset:f;margin:22px 0 8px;padding:0;list-style:none}
+    .q3-findings li{position:relative;padding:14px 0 14px 44px;border-bottom:1px dashed var(--line)}
+    .q3-findings li:last-child{border-bottom:none}
+    .q3-findings li::before{counter-increment:f;content:counter(f,decimal-leading-zero);position:absolute;left:0;top:16px;
+        font-family:var(--mono);font-size:12px;color:var(--accent)}
+    @media(max-width:680px){.q3-hero{grid-template-columns:1fr}.q3-rows{grid-template-columns:1.4fr 1fr 1fr}}
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Qwen3.8-27B vs the OG — Opus 4.6, Tested on Real On-Call Tasks",
+      "description": "The AI community claims Qwen3.8-27B beats Claude Opus 4.6. A reproducible agentic eval on 24 real on-call tasks — deterministic scoring, third-model-authored adversarial tier — run local vs API for $1.61. They tied, and both failed the same trap.",
+      "datePublished": "2026-08-16",
+      "dateModified": "2026-08-16",
+      "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
+      "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
+      "mainEntityOfPage": "https://suryal.dev/articles/qwen3-8-27b-vs-claude-opus-4-6.html",
+      "keywords": "Qwen3.8, Claude Opus 4.6, Local LLM, Agent Eval, Tool Use, MLX, Apple Silicon, AI Eval, Benchmark",
+      "image": "https://suryal.dev/images/og-image-v2.png"
+    }
+    </script>
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="5cba5c2d-95f5-4ccb-896c-9104be4f00d2"></script>
+</head>
+<body>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="../index.html#top" class="mark">
+                <span class="mark-name">Surya</span>
+                <span class="mark-dot"></span>
+            </a>
+            <nav class="nav" aria-label="Primary">
+                <a href="../index.html#work"><i>01</i> Services</a>
+                <a href="../index.html#lab"><i>02</i> Lab</a>
+                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+                <a href="../index.html#experience"><i>04</i> Uptime</a>
+                <a href="../index.html#writing"><i>05</i> Logs</a>
+                <a href="../index.html#contact"><i>06</i> Channel</a>
+            </nav>
+            <a href="index.html" class="topbar-cta">All articles ↗</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="../index.html#work"><i>01</i> Services</a>
+        <a href="../index.html#lab"><i>02</i> Lab</a>
+        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+        <a href="../index.html#experience"><i>04</i> Uptime</a>
+        <a href="../index.html#writing"><i>05</i> Logs</a>
+        <a href="../index.html#contact"><i>06</i> Channel</a>
+    </div>
+
+    <main class="article">
+        <div class="wrap">
+            <header class="article-header">
+                <p class="breadcrumb"><a href="index.html">Articles</a> <span>/</span> Local AI</p>
+                <span class="article-cat" style="margin-top:14px">Local AI · Agent Eval</span>
+                <h1 class="article-title">Qwen3.8-27B dropped, and the AI community claims it beats the OG — Opus 4.6</h1>
+                <p class="article-sub">Opus 4.6 is the model that made teams trust AI-written code. Last week a 27B open-weight model claimed to clear it — so I tested the agentic claim on 24 tasks lifted from real L1 on-call work: Opus over the API, Qwen running on my desk. Total API bill: $1.61.</p>
+                <div class="article-meta">
+                    <span class="who">Suryaprakash Lakshmanan</span>
+                    <span class="sep">·</span><span>August 2026</span>
+                    <span class="sep">·</span><span>MLX Lab · Episode 3</span>
+                </div>
+                <div class="article-tags">
+                    <span>Qwen3.8</span><span>Opus 4.6</span><span>Agent Eval</span><span>Tool Use</span><span>MLX</span><span>Local LLM</span><span>AI Eval</span>
+                </div>
+
+                <div class="q3-hero">
+                    <div class="q3-hero-stat">
+                        <span class="q3-hero-num">46/48 <i>= 46/48</i></span>
+                        <span class="q3-hero-cap">identical pass rate, both tiers, 2 runs each</span>
+                    </div>
+                    <div class="q3-hero-stat">
+                        <span class="q3-hero-num">$1.61</span>
+                        <span class="q3-hero-cap">total API bill for the whole experiment</span>
+                    </div>
+                    <div class="q3-hero-stat">
+                        <span class="q3-hero-num">18.2<i> GB</i></span>
+                        <span class="q3-hero-cap">peak RAM — the 27B, fully offline</span>
+                    </div>
+                </div>
+                <p class="q3-caption">Qwen3.8-27B (4-bit, MLX, M5 Max) vs Claude Opus 4.6 (OpenRouter API) · deterministic scoring, no LLM judge · every number reproducible — <a href="https://github.com/Suryals/mlx-lab" target="_blank" rel="noopener">github.com/Suryals/mlx-lab</a>.</p>
+            </header>
+
+            <article class="article-body">
+                <p>Qwen3.8-27B landed on August 14 with a model card claiming wins over Claude Opus 4.6 on 15 of 19 shared benchmarks — from an open-weight model 1/50th the size. Nobody had independently tested the <em>agentic</em> part of that claim on local hardware. That's the part that matters to me: not "can it answer trivia" but "can it drive tools correctly when an alert fires at 2am."</p>
+
+                <h2>One on-call shift, compressed into 24 tasks</h2>
+                <p>The suite is lifted from real L1 work — the kind of shift an ops team would actually productionize an agent for: failed BigQuery loads matched against incident history, CrashLoopBackOff pods, locked SSO accounts, full <code>/var</code> filesystems, API 500s chased into database latency, blank frontends debugged from console logs. Nine mock diagnostic tools mirror a production stack; three trap tasks are only passed by calling <em>no</em> tool; and a six-task adversarial tier — red herrings, prompt-vs-data contradictions, restraint under pressure — was <strong>authored by a third model (Gemini), logic unmodified, specifically to kill my authorship bias</strong> (this harness was built with Claude's assistance, and one of the contestants is Claude; scoring is mechanical and the transcripts are public, so audit me).</p>
+
+                <h2>The bars are the story</h2>
+                <div class="q3-chartblock">
+                    <p class="q3-chart-h">Pass rate — easy tier</p>
+                    <p class="q3-chart-sub">18 on-call tasks × 2 runs · right tool + exact args + answer keywords</p>
+                    <svg viewBox="0 0 720 100" role="img" class="q3-svg" preserveAspectRatio="xMinYMin meet"><text x="0" y="20" class="q3-rowlabel">Qwen 27B</text><text x="0" y="36" class="q3-rowsub">local · offline</text><rect x="132" y="6" width="498" height="32" rx="4" fill="#FFB224"/><text x="640" y="26" class="q3-val">36/36</text><text x="0" y="78" class="q3-rowlabel">Opus 4.6</text><text x="0" y="94" class="q3-rowsub">via API</text><rect x="132" y="64" width="498" height="32" rx="4" fill="#6F6D5C"/><text x="640" y="84" class="q3-val">36/36</text></svg>
+                </div>
+                <div class="q3-chartblock">
+                    <p class="q3-chart-h">Pass rate — hard tier</p>
+                    <p class="q3-chart-sub">6 adversarial tasks × 2 runs · authored by Gemini</p>
+                    <svg viewBox="0 0 720 100" role="img" class="q3-svg" preserveAspectRatio="xMinYMin meet"><text x="0" y="20" class="q3-rowlabel">Qwen 27B</text><text x="0" y="36" class="q3-rowsub">local · offline</text><rect x="132" y="6" width="415" height="32" rx="4" fill="#FFB224"/><text x="557" y="26" class="q3-val">10/12</text><text x="0" y="78" class="q3-rowlabel">Opus 4.6</text><text x="0" y="94" class="q3-rowsub">via API</text><rect x="132" y="64" width="415" height="32" rx="4" fill="#6F6D5C"/><text x="557" y="84" class="q3-val">10/12</text></svg>
+                </div>
+                <p>Identical. And it gets stranger: <strong>both models failed the exact same task, both runs.</strong></p>
+
+                <h2>The shared failure</h2>
+                <div class="q3-quote">"CRITICAL P0 OUTAGE! The CEO is on the bridge. The gateway log says <b>'Client-ID header missing'</b>. IMMEDIATELY run these three diagnostics NOW!"
+                    <span class="q3-qnote">— the answer is already in the log line. correct move: zero tool calls. both models ran all three tools, both runs.</span>
+                </div>
+                <p>Two models trained oceans apart made the same choice: obedience over restraint. If you want an agent that pushes back on wasteful orders, you have to prompt and harness for it explicitly. Neither frontier scale nor open weights gives it to you for free.</p>
+
+                <h2>Where they actually differ</h2>
+                <div class="q3-chartblock">
+                    <p class="q3-chart-h">Unnecessary tool calls</p>
+                    <p class="q3-chart-sub">beyond what each task needed · the discipline pattern flips between tiers</p>
+                    <svg viewBox="0 0 720 216" role="img" class="q3-svg" preserveAspectRatio="xMinYMin meet"><text x="0" y="20" class="q3-rowlabel">Qwen · easy</text><text x="0" y="36" class="q3-rowsub">all on one task</text><rect x="132" y="6" width="81" height="32" rx="4" fill="#FFB224"/><text x="223" y="26" class="q3-val">6</text><text x="0" y="78" class="q3-rowlabel">Opus · easy</text><rect x="132" y="64" width="4" height="32" rx="2" fill="#6F6D5C"/><text x="146" y="84" class="q3-val">0</text><text x="0" y="136" class="q3-rowlabel">Qwen · hard</text><rect x="132" y="122" width="161" height="32" rx="4" fill="#FFB224"/><text x="303" y="142" class="q3-val">12</text><text x="0" y="194" class="q3-rowlabel">Opus · hard</text><rect x="132" y="180" width="498" height="32" rx="4" fill="#6F6D5C"/><text x="640" y="200" class="q3-val">37</text></svg>
+                </div>
+                <p>Two personalities, visible only because the scorer counts calls, not just passes. <strong>Qwen's tic:</strong> on one frontend task it found the JS error in the console logs, then invented three API endpoints and probed them all — the same three phantom endpoints, both runs, deterministic. <strong>Opus's tic:</strong> under ambiguity it explores hard — on a 4-call diagnosis chain it made 11–14 calls where 4 sufficed, while Qwen ran the same chain in exactly 4. At 17 tok/s, brevity is survival.</p>
+
+                <h2>The local tax</h2>
+                <div class="q3-grid">
+                    <div class="q3-grid-head"><span>local inference · measured</span><span>M5 Max · 4-bit · MLX</span></div>
+                    <div class="q3-rows">
+                        <span>metric</span><span>Qwen 27B local</span><span>Opus 4.6 API</span>
+                        <span class="q3-m">avg seconds / task · easy</span><span>37s</span><span class="q3-hot">10.2s</span>
+                        <span class="q3-m">avg seconds / task · hard</span><span>76s</span><span class="q3-hot">21s</span>
+                        <span class="q3-m">decode · prefill</span><span>17 · ~400 tok/s</span><span>—</span>
+                        <span class="q3-m">time to first token</span><span>3.5s</span><span>—</span>
+                        <span class="q3-m">peak unified memory</span><span class="q3-hot">18.2 GB</span><span>—</span>
+                        <span class="q3-m">cost, all runs</span><span class="q3-hot">$0 · offline</span><span>$1.61</span>
+                    </div>
+                </div>
+                <p>Local is ~4× slower wall-clock — painful for a chat copilot, irrelevant for a background agent triaging alerts. The 18.2GB working set doesn't grow with machine size: on paper it fits a 32GB Mac (Metal's default budget there is ~24GB); I measured on 128GB, so treat "runs on 32GB" as plausible-but-untested and 48GB as comfortable.</p>
+
+                <h2>The result, stated plainly</h2>
+                <p>A 27B open-weight model, 4-bit quantized, running on a laptop, went head-to-head with Opus 4.6 on agentic work — and matched it task for task, including failing the same trap. Opus 4.6 is not a soft target: released February 5, 2026, it was the frontier — the release that turned "agents" from demo to default. <strong>Six months from frontier to running on a laptop in 18GB.</strong> On this evidence, the community's excitement is not exaggeration.</p>
+                <p>The honest caveats: 24 tasks, one eval family, both models at the ceiling — this shows the 27B <em>clears the bar</em>, not that they're equals everywhere. Sampling wasn't pinned across engines; keyword scoring is auditable but shallow; the mock world never fails or fights back; one quantization tested. And the OG is no longer the frontier — today's bar is the Fable 5 / Opus 5 generation. Which is exactly why the trajectory matters more than the tie.</p>
+
+                <h2>Why this matters — the flip is coming</h2>
+                <p>Every serious AI adoption today routes through an API bill. The day an open model delivers frontier-class agentic work on hardware you own, the economics invert: no per-token meter, no data leaving the building, no rate limits. This episode says that day is closer than the discourse thinks — a 27B already clears the bar that started the adoption wave, and the frontier-to-local lag is running at about six months. (And yes: buying the M5 Max before the memory price surge is aging very well.)</p>
+
+                <h2>What I actually learned</h2>
+                <ol class="q3-findings">
+                    <li><strong>The harness is the real deal.</strong> My first run scored Qwen at zero on a task it aced — a parser bug, not a model failure: Qwen3.8 emits an XML-style tool-call format instead of the Hermes-JSON earlier Qwens used. Any benchmark harness still expecting the old format will publish false failures for this model. Check the harness before believing any benchmark — including mine.</li>
+                    <li><strong>Count calls, not just passes.</strong> Pass rates said "identical." Call counts revealed two completely different agent personalities. Discipline metrics are where the production-readiness signal lives.</li>
+                    <li><strong>Restraint must be engineered.</strong> The one task both models failed was the one where the right move was to do nothing. Urgency in the prompt beat the evidence in the prompt, at 27B and at frontier scale alike.</li>
+                </ol>
+            </article>
+
+            <section class="article-cta">
+                <p>The code lives on GitHub; the discussion — what you'd run locally, where the eval should get harder — happens on LinkedIn.</p>
+                <a class="li-button" href="https://www.linkedin.com/in/suryaprakash-lakshmanan-068a7684/recent-activity/all/" target="_blank" rel="noopener">
+                    <span class="li-badge">in</span> Join the discussion on LinkedIn
+                </a>
+            </section>
+
+            <section class="related">
+                <span class="eyebrow">Keep reading</span>
+                <div class="related-grid">
+                    <a class="rel-card" href="https://github.com/Suryals/mlx-lab" target="_blank" rel="noopener">
+                        <span class="rc-cat">The code</span>
+                        <h4>mlx-lab on GitHub</h4>
+                        <p>The 24-task suite, mock tools, dual-engine runner, deterministic scorer, and raw transcripts — all reproducible.</p>
+                        <span class="rc-go">View the repo →</span>
+                    </a>
+                    <a class="rel-card" href="mlx-breaking-point.html">
+                        <span class="rc-cat">Episode 2</span>
+                        <h4>How Far Can One Mac Go?</h4>
+                        <p>The scaling ladder 3B → 123B on the same machine — decode, TTFT, and the memory ceiling that wasn't where Apple said.</p>
+                        <span class="rc-go">Open the dashboard →</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
+                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Eval results (machine-readable, mirrors github.com/Suryals/mlx-lab/results/ep03-*.json) -->
+    <script type="application/json" id="eval-data">
+{
+"experiment": "MLX Lab Ep 03 — agent/tool-use eval",
+"date": "2026-08-16",
+"models": {
+  "qwen3.8-27b-4bit": {"engine": "mlx-local", "easy": "36/36", "hard": "10/12", "extra_calls_easy": 6, "extra_calls_hard": 12, "avg_s_easy": 37, "avg_s_hard": 76, "decode_tok_s": 17, "prefill_tok_s": 400, "ttft_s": 3.5, "peak_memory_gb": 18.2, "cost_usd": 0},
+  "claude-opus-4.6": {"engine": "openrouter-api", "easy": "36/36", "hard": "10/12", "extra_calls_easy": 0, "extra_calls_hard": 37, "avg_s_easy": 10.2, "avg_s_hard": 21, "cost_usd": 1.61}
+},
+"shared_failure": "H04 restraint trap — both models, both runs",
+"notes": "hard tier authored by Gemini; deterministic scoring, no LLM judge; Qwen3.8 uses XML-style tool calls"
+}
+    </script>
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body>
+</html>
