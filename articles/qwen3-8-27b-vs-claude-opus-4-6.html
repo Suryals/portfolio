@@ -40,6 +40,9 @@
     .q3-rowsub{font-family:var(--mono);font-size:10px;fill:var(--ink-faint)}
     .q3-val{font-family:var(--mono);font-size:13px;fill:var(--ink);font-weight:500}
     .q3-unit{font-size:10px;fill:var(--ink-faint)}
+    .q3-anno{font-family:var(--mono);font-size:11px;fill:var(--ink-soft)}
+    .q3-annobold{font-family:var(--mono);font-size:12px;fill:var(--ink);font-weight:600}
+    .q3-annohot{font-family:var(--mono);font-size:11px;fill:var(--accent);font-weight:600}
     .q3-quote{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;
         background:var(--paper-2);padding:16px 20px;margin:22px 0;font-size:.95em;color:var(--ink-soft)}
     .q3-quote b{color:var(--ink)}
@@ -196,6 +199,29 @@
                 <p>The honest caveats: 24 tasks, one eval family, both models at the ceiling — this shows the 27B <em>clears the bar</em>, not that they're equals everywhere. Sampling wasn't pinned across engines; keyword scoring is auditable but shallow; the mock world never fails or fights back; one quantization tested. And the OG is no longer the frontier — today's bar is the Fable 5 / Opus 5 generation. Which is exactly why the trajectory matters more than the tie.</p>
 
                 <h2>Why this matters — the flip is coming</h2>
+                <div class="q3-chartblock">
+                    <p class="q3-chart-h">Local model capability — the trajectory</p>
+                    <p class="q3-chart-sub">measured points solid · projection dashed · frontier → laptop lag now ~6 months</p>
+                    <svg viewBox="0 0 720 250" role="img" class="q3-svg" preserveAspectRatio="xMinYMin meet" aria-label="Local model capability rising from toys in 2025 through Ep 02 (123B runs on one Mac, June 2026) to Ep 03 (27B matches Opus 4.6, August 2026), with a dashed projection toward frontier-class local models that flip the adoption economics">
+                        <line x1="36" y1="204" x2="700" y2="204" stroke="#3A382E" stroke-width="1"/>
+                        <path d="M 54 194 C 186 190, 262 160, 328 136 S 414 106, 452 98" fill="none" stroke="#FFB224" stroke-width="2.5"/>
+                        <path d="M 452 98 C 528 82, 584 62, 634 44" fill="none" stroke="#FFB224" stroke-width="2.5" stroke-dasharray="6 6" opacity="0.7"/>
+                        <circle cx="140" cy="187" r="5" fill="#FFB224" stroke="#14130E" stroke-width="2"/>
+                        <circle cx="312" cy="142" r="5" fill="#FFB224" stroke="#14130E" stroke-width="2"/>
+                        <circle cx="452" cy="98" r="6" fill="#FFB224" stroke="#14130E" stroke-width="2"/>
+                        <circle cx="640" cy="42" r="7" fill="none" stroke="#FFB224" stroke-width="2.5"/>
+                        <text x="140" y="224" text-anchor="middle" class="q3-rowsub">2025</text>
+                        <text x="312" y="224" text-anchor="middle" class="q3-rowsub">Jun 2026</text>
+                        <text x="452" y="224" text-anchor="middle" class="q3-rowsub">Aug 2026</text>
+                        <text x="640" y="224" text-anchor="middle" class="q3-rowsub">next?</text>
+                        <text x="140" y="170" text-anchor="middle" class="q3-anno">local = toys</text>
+                        <text x="312" y="122" text-anchor="middle" class="q3-anno">Ep 02: 123B runs on one Mac</text>
+                        <text x="452" y="64" text-anchor="middle" class="q3-annobold">Ep 03: 27B matches the OG</text>
+                        <text x="452" y="80" text-anchor="middle" class="q3-anno">frontier → laptop in 6 months</text>
+                        <text x="640" y="16" text-anchor="middle" class="q3-annobold">Opus 4.8 / 5-class, local</text>
+                        <text x="640" y="62" text-anchor="middle" class="q3-annohot">→ the adoption game flips</text>
+                    </svg>
+                </div>
                 <p>Every serious AI adoption today routes through an API bill. The day an open model delivers frontier-class agentic work on hardware you own, the economics invert: no per-token meter, no data leaving the building, no rate limits. This episode says that day is closer than the discourse thinks — a 27B already clears the bar that started the adoption wave, and the frontier-to-local lag is running at about six months. (And yes: buying the M5 Max before the memory price surge is aging very well.)</p>
 
                 <h2>What I actually learned</h2>
