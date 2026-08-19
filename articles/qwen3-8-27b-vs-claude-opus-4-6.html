@@ -54,6 +54,9 @@
     .q3-rows>span{padding:12px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:13px;color:var(--ink-soft)}
     .q3-rows>span:nth-child(-n+3){font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);padding-bottom:9px}
     .q3-rows>span:nth-last-child(-n+3){border-bottom:none}
+    .q3-rows4{grid-template-columns:1.4fr 1fr 1.2fr 1fr}
+    .q3-rows4>span:nth-child(-n+4){font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);padding-bottom:9px}
+    .q3-rows4>span:nth-last-child(-n+4){border-bottom:none}
     .q3-m{color:var(--ink)!important;font-weight:500}
     .q3-hot{color:var(--accent)!important;font-weight:500}
     .q3-findings{counter-reset:f;margin:22px 0 8px;padding:0;list-style:none}
@@ -70,7 +73,7 @@
       "headline": "Qwen3.8-27B vs the OG — Opus 4.6, Tested on Real On-Call Tasks",
       "description": "The AI community claims Qwen3.8-27B beats Claude Opus 4.6. A reproducible agentic eval on 24 real on-call tasks — deterministic scoring, third-model-authored adversarial tier — run local vs API for $1.61. They tied, and both failed the same trap.",
       "datePublished": "2026-08-16",
-      "dateModified": "2026-08-16",
+      "dateModified": "2026-08-19",
       "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
       "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
       "mainEntityOfPage": "https://suryal.dev/articles/qwen3-8-27b-vs-claude-opus-4-6.html",
@@ -193,6 +196,33 @@
                     </div>
                 </div>
                 <p>Local is ~4× slower wall-clock — painful for a chat copilot, irrelevant for a background agent triaging alerts. The 18.2GB working set doesn't grow with machine size: on paper it fits a 32GB Mac (Metal's default budget there is ~24GB); I measured on 128GB, so treat "runs on 32GB" as plausible-but-untested and 48GB as comfortable.</p>
+
+                <h2>Update: the 8-bit question, answered</h2>
+                <p>A reader asked the right question: why not at least 8-bit — aren't there marginal
+                percentage points left in the quantization? So I ran the ladder: same 24 tasks, same
+                scorer, two runs per rung. Q8 via MLX (clean apples-to-apples with the 4-bit baseline);
+                Q6_K as GGUF through LM Studio's server.</p>
+                <div class="q3-grid">
+                    <div class="q3-grid-head"><span>quant ladder · 24 tasks × 2 runs each</span><span>same harness, same scorer</span></div>
+                    <div class="q3-rows q3-rows4">
+                        <span>metric</span><span>Q4 · MLX</span><span>Q6_K · LM Studio</span><span>Q8 · MLX</span>
+                        <span class="q3-m">easy tier</span><span class="q3-hot">36/36</span><span>36/36</span><span class="q3-hot">36/36</span>
+                        <span class="q3-m">hard tier</span><span class="q3-hot">10/12</span><span>8/12</span><span class="q3-hot">10/12</span>
+                        <span class="q3-m">failed tasks</span><span>H04 ×2</span><span>H04 ×2, H01, H03</span><span>H04 ×2</span>
+                        <span class="q3-m">extra tool calls</span><span>18</span><span>19</span><span>28</span>
+                        <span class="q3-m">decode tok/s</span><span class="q3-hot">17</span><span>n/a (server)</span><span>10.5</span>
+                        <span class="q3-m">peak memory</span><span class="q3-hot">18.2 GB</span><span>~24 GB</span><span>31.7 GB</span>
+                    </div>
+                </div>
+                <p><strong>8-bit bought zero correctness.</strong> Q8 reproduced the 4-bit result exactly —
+                46/48, same lone failure, identical runs — at +13.5GB of RAM and 38% slower decode. The
+                marginal % didn't materialize on this suite. Two bonus findings: the H04 restraint trap has
+                now failed at <em>every</em> quantization, on two runtimes, and on Opus over the API — ten
+                out of ten attempts; obedience-over-restraint is trained in, not a precision artifact. And
+                the Q6 rung's one weak run traced to LM Studio's server applying its own sampling defaults
+                rather than the weights — a measured demonstration of the rule this article keeps landing
+                on: <strong>the eval must own the entire request path.</strong> Full data:
+                <a href="https://github.com/Suryals/mlx-lab/blob/main/results/ep03.5-quant-robustness.md" target="_blank" rel="noopener">results/ep03.5-quant-robustness.md</a>.</p>
 
                 <h2>The result, stated plainly</h2>
                 <p>A 27B open-weight model, 4-bit quantized, running on a laptop, went head-to-head with Opus 4.6 on agentic work — and matched it task for task, including failing the same trap. Opus 4.6 is not a soft target: released February 5, 2026, it was the frontier — the release that turned "agents" from demo to default. <strong>Six months from frontier to running on a laptop in 18GB.</strong> On this evidence, the community's excitement is not exaggeration.</p>
