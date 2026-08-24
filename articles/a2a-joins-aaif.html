@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2A Joins AAIF: The Agentic Stack Settles — and Identity Is Next — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="Agent2Agent is now an AAIF project. The five-layer open agentic stack, why the A2A-vs-MCP debate was a category error, a full retail–finance transaction run through every layer, and why identity &amp; trust is the layer to watch.">
+    <link rel="canonical" href="https://suryal.dev/articles/a2a-joins-aaif.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="A2A Joins AAIF: The Agentic Stack Settles — and Identity Is Next">
+    <meta property="og:description" content="Five layers, five jobs, one neutral home — plus one real order run through the whole stack, and the identity layer that still isn't there.">
+    <meta property="og:url" content="https://suryal.dev/articles/a2a-joins-aaif.html">
+    <meta property="og:image" content="https://suryal.dev/images/a2a/a2a-flow-light.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@suryaagentic">
+    <meta name="twitter:creator" content="@suryaagentic">
+    <meta name="twitter:image" content="https://suryal.dev/images/a2a/a2a-flow-light.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../articles.css">
+    <style>
+    /* ---- A2A / AAIF (scoped) ---- */
+    .a2a-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:34px 0 8px}
+    .a2a-hero-stat{background:var(--paper-2);padding:26px 24px;display:flex;flex-direction:column;gap:8px}
+    .a2a-hero-num{font-family:var(--mono);font-weight:600;font-size:clamp(20px,2.5vw,28px);letter-spacing:.01em;color:var(--accent-deep)}
+    .a2a-hero-cap{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;
+        text-transform:uppercase;color:var(--ink-faint)}
+    .a2a-caption{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-top:10px}
+    .a2a-caption a{color:var(--ink-soft)}
+    /* figure: the flow diagram is dark-canvas, sits directly on the page */
+    .a2a-fig{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:30px auto 6px;max-width:760px;background:#0a0d14}
+    .a2a-fig img{display:block;width:100%;height:auto}
+    .a2a-figcap{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin:8px 0 26px;text-align:center}
+    /* code blocks */
+    .a2a-pre{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;
+        padding:18px 20px;margin:0 0 1.6em;overflow-x:auto}
+    .a2a-pre code{font-family:var(--mono);font-size:13px;line-height:1.6;color:var(--ink-soft);
+        background:none;border:none;padding:0;white-space:pre;display:block}
+    /* layer list */
+    .a2a-layers{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:8px 0 26px}
+    .a2a-layer{display:grid;grid-template-columns:170px 1fr;gap:14px;padding:13px 18px;border-bottom:1px solid var(--line);font-size:15px}
+    .a2a-layer:last-child{border-bottom:none}
+    .a2a-layer b{font-family:var(--mono);font-size:13px;color:var(--accent)}
+    .a2a-layer span{color:var(--ink-soft)}
+    @media(max-width:680px){
+        .a2a-hero{grid-template-columns:1fr}
+        .a2a-layer{grid-template-columns:1fr;gap:4px}
+        .a2a-pre code{font-size:11px}
+    }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "A2A Joins AAIF: The Agentic Stack Settles — and Identity Is Next",
+      "description": "Agent2Agent is now an AAIF project. The five-layer open agentic stack, why A2A-vs-MCP was a category error, a full retail–finance transaction run through every layer, and why identity & trust is the layer to watch.",
+      "datePublished": "2026-08-24",
+      "dateModified": "2026-08-24",
+      "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
+      "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
+      "mainEntityOfPage": "https://suryal.dev/articles/a2a-joins-aaif.html",
+      "keywords": "A2A, Agent2Agent, AAIF, MCP, agentgateway, goose, AGENTS.md, AP2, Agent Identity, Agentic AI, Linux Foundation",
+      "image": "https://suryal.dev/images/a2a/a2a-flow-light.png"
+    }
+    </script>
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="5cba5c2d-95f5-4ccb-896c-9104be4f00d2"></script>
+</head>
+<body>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="../index.html#top" class="mark">
+                <span class="mark-name">Surya</span>
+                <span class="mark-dot"></span>
+            </a>
+            <nav class="nav" aria-label="Primary">
+                <a href="../index.html#work"><i>01</i> Services</a>
+                <a href="../index.html#lab"><i>02</i> Lab</a>
+                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+                <a href="../index.html#experience"><i>04</i> Uptime</a>
+                <a href="../index.html#writing"><i>05</i> Logs</a>
+                <a href="../index.html#contact"><i>06</i> Channel</a>
+            </nav>
+            <a href="index.html" class="topbar-cta">All articles ↗</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="../index.html#work"><i>01</i> Services</a>
+        <a href="../index.html#lab"><i>02</i> Lab</a>
+        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+        <a href="../index.html#experience"><i>04</i> Uptime</a>
+        <a href="../index.html#writing"><i>05</i> Logs</a>
+        <a href="../index.html#contact"><i>06</i> Channel</a>
+    </div>
+
+    <main class="article">
+        <div class="wrap">
+            <header class="article-header">
+                <p class="breadcrumb"><a href="index.html">Articles</a> <span>/</span> MCP &amp; Agentic Ops</p>
+                <span class="article-cat" style="margin-top:14px">Agentic AI · Ecosystem Analysis</span>
+                <h1 class="article-title">A2A Joins AAIF: The Agentic Stack Settles</h1>
+                <p class="article-sub">Agent2Agent is now an AAIF project — the moment the open agentic stack became a stack in the real sense: five layers, distinct responsibilities, one neutral home. Here's what each layer does, one real order run through all of them, and the layer that still isn't there.</p>
+                <div class="article-meta">
+                    <span class="who">Suryaprakash Lakshmanan</span>
+                    <span class="sep">·</span><span>August 2026</span>
+                    <span class="sep">·</span><span>Analysis + end-to-end walkthrough</span>
+                </div>
+                <div class="article-tags">
+                    <span>A2A</span><span>AAIF</span><span>MCP</span><span>agentgateway</span><span>AP2</span><span>Agent Identity</span>
+                </div>
+
+                <div class="a2a-hero">
+                    <div class="a2a-hero-stat">
+                        <span class="a2a-hero-num">5 LAYERS</span>
+                        <span class="a2a-hero-cap">instructions · runtime · context · operations · interop — one neutral home</span>
+                    </div>
+                    <div class="a2a-hero-stat">
+                        <span class="a2a-hero-num">INTEROP</span>
+                        <span class="a2a-hero-cap">A2A wires agents to each other — MCP wires an agent to its context. Never a fight.</span>
+                    </div>
+                    <div class="a2a-hero-stat">
+                        <span class="a2a-hero-num">IDENTITY</span>
+                        <span class="a2a-hero-cap">the layer that isn't there yet — and the one that decides enterprise adoption</span>
+                    </div>
+                </div>
+                <p class="a2a-caption">Agent2Agent joined the Agentic AI Foundation on <strong>August 17, 2026</strong> — alongside MCP, goose, AGENTS.md, and agentgateway. Sources at the foot of this piece.</p>
+            </header>
+
+            <article class="article-body">
+                <p>On August 17, the Agentic AI Foundation announced that Agent2Agent (A2A) — the open standard for inter-agent communication — is joining AAIF as a hosted project. It would be easy to read this as governance paperwork: a protocol moving from one Linux Foundation shelf to another. It isn't. This is the moment the open agentic stack stopped being a collection of adjacent projects and became a stack in the real sense — five layers, distinct responsibilities, one neutral home.</p>
+                <p>I want to walk through what A2A actually is, how we got from the "A2A vs MCP" flame wars of April 2025 to this announcement, what each layer of the stack now does — and then, because layer diagrams are cheap, run a real transaction through the whole thing and watch what each layer does when money is on the line. I'll close with the part I care most about: the layer that still isn't there.</p>
+
+                <h2><span class="h2-no">01</span>The problem A2A exists to solve</h2>
+                <p>Teams deploying multi-agent systems in production kept hitting the same wall, and it wasn't the agents. An agent built on one framework couldn't hand work to an agent built on another without custom integration code written for that specific pairing. Every new vendor relationship meant repeating the integration work from scratch. It's the classic N×M problem: N frameworks times M vendors, each seam hand-soldered.</p>
+                <p>Anyone who lived through the pre-standard era of enterprise integration will recognize the shape of this. We solved agent-to-tool sprawl with MCP. Agent-to-agent sprawl needed its own answer.</p>
+                <p>A2A's answer is structurally simple. An agent publishes an <em>agent card</em> — a structured, machine-readable description of what it can do and how to reach it. Other agents read the card, discover capabilities, negotiate the interaction, and delegate tasks. No human brokers the handoff. The exchange is structured, observable, and — crucially — framework-agnostic. Your agent doesn't need to know or care what mine is built on.</p>
+
+                <h2><span class="h2-no">02</span>Sixteen months from launch to layer</h2>
+                <p>Google launched A2A in April 2025, and the immediate reaction from a big chunk of the timeline was to frame it as a competitor to MCP. I understand why it happened — two protocols, both about agents talking to things, arriving within months of each other — but it was always a category error. MCP is a vertical connection: it wires an agent into its tools, data sources, applications, and services. A2A is a horizontal connection: it wires independent agents to each other. One is about capability access; the other is about peer interoperability. You need both, in the same system, doing different jobs.</p>
+                <p>What settled the debate wasn't argument. It was a sequence of consolidation moves:</p>
+                <p>Google donated A2A to the Linux Foundation in June 2025, with AWS, Cisco, Microsoft, Salesforce, SAP, and ServiceNow among the founding organizations. Direct competitors co-governing a protocol on day one is the strongest signal a standard can send.</p>
+                <p>In August 2025, IBM's Agent Communication Protocol merged into A2A. When a serious alternative folds itself into the standard rather than competing with it, the field is telling you it wants one answer, not a format war.</p>
+                <p>In March 2026, A2A v1.0 shipped — the first stable specification. It brought multi-protocol bindings and version negotiation, multi-tenancy, and signed agent cards for cryptographic identity verification. That last item matters more than its bullet-point billing suggests, and I'll come back to it.</p>
+                <p>And now, August 2026: A2A joins AAIF, sitting alongside MCP, goose, AGENTS.md, and agentgateway. The two protocols people once pitted against each other are now roommates, with their roles stated plainly in the same document.</p>
+
+                <h2><span class="h2-no">03</span>Production is the argument</h2>
+                <p>The strongest case for A2A isn't the spec — it's where the spec is already running.</p>
+                <p>Huawei has standardized A2A as the protocol between Celia, its OS-level assistant, and in-app agents across the HarmonyOS developer platform. The supported scenarios are genuinely agentic: Celia handing long-running tasks to an app's agent, driving app UI through an agent, requesting contextual recommendations from an application agent. That is OS-scale agent-to-agent communication, shipping on consumer devices.</p>
+                <p>Tencent's WeChat is among the first major apps integrating with Huawei and other Android OEM assistants over A2A — messages, voice calls, and video calls initiated through an assistant, with dual authorization flowing through the protocol itself.</p>
+                <p>All three hyperscalers support it as a first-class citizen: Google Cloud through ADK, Agent Engine, Cloud Run, and GKE; Microsoft through Azure AI Foundry's A2A endpoints and standard discovery; AWS through Bedrock AgentCore hosting A2A servers. Agents built on different frameworks, hosted in different clouds, speaking the same protocol.</p>
+                <p>And the commerce direction is taking shape: A2A is being extended into agentic commerce through the Agent Payments Protocol (AP2, carried as an A2A extension rather than an AAIF project), with shopping and merchant agents communicating over A2A through discovery, pricing, and fulfilment, and AP2 supplying the payment authorization layer.</p>
+                <p>Backed — per the AAIF announcement — by more than 150 organizations, running in supply chain, financial services, and mobile platforms — this is not a whiteboard protocol. It got productionized while people were still arguing about it.</p>
+
+                <h2><span class="h2-no">04</span>Five layers, five jobs</h2>
+                <p>With A2A in place, AAIF's projects now map cleanly onto distinct layers of an agentic system. It's worth being precise about what each one actually does, because the names undersell some of them.</p>
+                <div class="a2a-layers">
+                    <div class="a2a-layer"><b>AGENTS.md</b><span><strong>The instruction layer.</strong> The least glamorous project in the stack and one of the most quietly important: it standardizes how a project communicates its expectations, conventions, and operating instructions to any AI agent that touches it. The difference between an agent guessing at your norms and an agent reading them. OpenAI introduced it in 2025; it's now the de facto convention across coding agents.</span></div>
+                    <div class="a2a-layer"><b>goose</b><span><strong>The runtime layer.</strong> The loop itself: the environment in which an agent reasons about a goal, plans a sequence of actions, invokes capabilities, observes results, and carries the work through to completion. Born at Block, battle-tested internally before it was a foundation project, MCP-native from day one — its extension model <em>is</em> MCP servers.</span></div>
+                    <div class="a2a-layer"><b>MCP</b><span><strong>The context layer.</strong> Two numbers tell the story: more than 10,000 published servers, and on the order of 97 million monthly SDK downloads as of early 2026 — roughly a year after release. "Tool-calling protocol" is too narrow: MCP standardizes how agents connect to tools, data sources, applications, and services — the full context an agent reasons over. The anchor contribution when AAIF formed in December 2025.</span></div>
+                    <div class="a2a-layer"><b>agentgateway</b><span><strong>The operations layer.</strong> The one most people forget until production forces them to remember. It sits at the boundary between agent systems and infrastructure — routing, policy enforcement, observability. If you've operated API gateways or service meshes, you know why this exists: the interesting operational problems live at the boundary, not inside the workload.</span></div>
+                    <div class="a2a-layer"><b>A2A</b><span><strong>The interop layer.</strong> How independent agents discover one another, communicate, delegate tasks, and exchange results across systems and organizational boundaries. The layer that turns a collection of agentic silos into something that can behave like an ecosystem.</span></div>
+                </div>
+
+                <h2><span class="h2-no">05</span>One order, every layer</h2>
+                <p>Layer diagrams are cheap. So here's a real transaction, end to end — deliberately ordinary, because ordinary is where standards earn their keep: a retail chain needs stock, a supplier has it, and finance controls the money. Every protocol and project named is shipping today; where I show message shapes, they're simplified for readability, not invented.</p>
+
+                <div class="a2a-fig"><img src="../images/a2a/a2a-flow-dark.png" alt="Flow diagram: NorthCart Retail's replenishment and finance agents (AGENTS.md, goose, MCP servers) transact with two supplier sales agents over A2A through agentgateway, paying via an AP2 mandate — eight numbered steps from detect to trace" loading="lazy"></div>
+                <p class="a2a-figcap">One order through all five layers — eight steps, two organizations, zero point-to-point integrations.</p>
+
+                <h3>The cast</h3>
+                <p><strong>NorthCart Retail</strong> (the buyer) runs two agents. A <em>replenishment agent</em> owns inventory health: it watches stock levels and demand forecasts, and sources product when risk crosses a threshold. A <em>finance agent</em> owns the money: budgets, supplier credit exposure, payment terms, and payment execution. Each agent is an agentic loop of the kind goose exists to run — reason, plan, invoke, observe — and each carries its own operating charter in AGENTS.md form. Their connections to company systems (inventory, demand forecasting, the ERP, treasury) are MCP servers. Everything that crosses the company boundary passes through agentgateway.</p>
+                <p><strong>Supplier A and Supplier B</strong> (the sellers) each expose a <em>sales agent</em> to the outside world, published as a signed A2A agent card: quoting, availability checks, order placement. Behind their boundary, those agents have their own runtimes and their own MCP connections into pricing engines and warehouse systems. NorthCart doesn't know or care what framework they're built on. That's the point.</p>
+                <p><strong>The payment rail</strong> is AP2 — the Agent Payments Protocol, an extension carried on top of A2A (adjacent to the stack, not an AAIF-hosted project) — running between NorthCart's finance agent and Supplier A's merchant side, so that payment happens as verifiable, mandate-based authorization rather than credentials in a prompt.</p>
+
+                <h3>The rules before the run</h3>
+                <p>Nothing interesting in agentic systems starts with a model call. It starts with the charter. The replenishment agent's AGENTS.md-style instructions say, roughly:</p>
+                <div class="a2a-pre"><code>## Sourcing charter — replenishment agent
+- Source only from suppliers in the approved-supplier master.
+- Collect at least two quotes for any order above ₹2,00,000.
+- Orders above ₹5,00,000 require category-manager approval.
+- Budget and payment terms are validated by the finance agent —
+  never self-approve spend.
+- Forecast rationale is internal. Share quantities and dates with
+  suppliers; never share demand models or margins.</code></div>
+                <p>The finance agent has its own: budget lines it may draw against, per-supplier credit exposure caps, acceptable payment terms, and the rule that payment mandates above a ceiling need a human co-sign. These files are boring, and they matter — but be precise about what they are: advisory instructions the model reads, not enforcement. Nothing in an AGENTS.md file can deny a request; a budget cap that lives only in an instruction file is a suggestion. So every limit above also exists somewhere that can say no — the approval caps are configured as policy at agentgateway, and the payment ceiling is cryptographic inside the AP2 mandate. Instructions shape the agent's intent; the gateway and the mandate bound its authority.</p>
+
+                <h3>The run</h3>
+                <p><strong>1 · Detect — context over MCP.</strong> The replenishment agent's loop wakes on schedule and pulls context through two MCP servers: current stock by SKU and the demand forecast for the region.</p>
+                <div class="a2a-pre"><code>{ "method": "tools/call",
+  "params": {
+    "name": "forecast.stockout_risk",
+    "arguments": { "horizon_days": 7, "region": "TN-South" } } }</code></div>
+                <p>The forecast says a festival-weekend demand spike will stock-out twelve SKUs in five days. No email chain noticed this; a loop reading standardized context did. This is MCP doing its actual job — not "tool calling" as a party trick, but the context layer that lets an agent see the business.</p>
+                <p><strong>2 · Discover — signed agent cards.</strong> The plan the runtime produces is unremarkable, which is the compliment: get quotes, validate budget, select, order, pay, track. First external step: who can supply these SKUs? The approved-supplier master yields two candidates, and the agent fetches each supplier's A2A agent card:</p>
+                <div class="a2a-pre"><code>{ "name": "supplier-a-sales-agent",
+  "description": "Quoting, availability (ATP) and order placement",
+  "url": "https://agents.supplier-a.example/a2a",
+  "version": "2.4.0",
+  "protocolVersion": "1.0",
+  "skills": [
+    { "id": "rfq.quote",   "name": "Request for quotation" },
+    { "id": "order.place", "name": "Place purchase order" } ],
+  "signatures": [ { "...": "JWS object — verifiable, per A2A v1.0" } ] }</code></div>
+                <p>The card's signatures are verified before anything else happens. Since v1.0, that check answers "is this really Supplier A's agent, unaltered?" — which sounds small until you imagine the alternative: procurement decisions steered by a spoofed capability description.</p>
+                <p><strong>3 · RFQ — delegation over A2A, through the gateway.</strong> The agent delegates a quotation task to both suppliers. The A2A task carries structure, not vibes: SKUs, quantities, required delivery date, terms — and, per charter, nothing about <em>why</em> NorthCart wants them. On the way out, agentgateway earns its place in the diagram. Egress policy says: A2A traffic only to approved supplier domains; strip any field tagged internal-only; log the hop with a trace ID.</p>
+                <div class="a2a-pre"><code>ALLOW a2a:tasks.create → agents.supplier-a.example
+      policy=approved-suppliers  redacted=[forecast_rationale]
+      trace=7f3a91…</code></div>
+                <p>Supplier B's agent replies within minutes. Supplier A's agent parks the task in a long-running state — its own charter requires a human pricing desk to approve festival-season discounts — and completes it an hour later with a better quote. That asynchronous task lifecycle is native A2A behavior, and it quietly handles the most human thing in the flow: the other side's approval process, without either org writing a line of integration code for it.</p>
+                <p><strong>4 · Validate — the internal seam is still a seam.</strong> Here's a design choice worth pausing on: the replenishment agent does <em>not</em> check budget itself. It delegates to the finance agent — over A2A, inside the same company. Same protocol inside the boundary as across it, because a seam between two agents with different authority is a seam regardless of whose network it's on. The finance agent runs its own loop: pulls the open-to-buy budget line and Supplier A's current credit exposure over its MCP connections into the ERP and treasury, checks the quoted terms against policy, and returns a structured verdict: approved at quoted price, net-30, exposure cap intact.</p>
+                <p><strong>5 · Approve — the human the charter asked for.</strong> The order totals ₹6.8 lakh — above the approval cap, which is written in the charter and, crucially, enforced as policy at the gateway. The runtime does what its instructions say: escalate. Had it tried to proceed anyway, the gateway would have refused the hop — advisory intent, backed by an enforcement point that can say no. The category manager sees a compact decision package — SKUs, both quotes, finance's verdict, delivery risk — and approves. One human, one decision, at exactly the point the organization decided a human belongs. Not a human babysitting every step; not a human discovering the order after the fact.</p>
+                <p>This is also where the delegation chain gets real. The order will proceed under the <em>intersection</em> of authorities: an agent permitted to source, a finance agent that cleared the spend, and a named human who approved this specific order. Hold that thought — it's the thread I'll pull at the end.</p>
+                <p><strong>6 · Commit — PO via MCP, order via A2A.</strong> Two writes, two layers. The purchase order is created in NorthCart's own ERP over MCP — a write-capable server, with the end user's authority attached, authorization enforced by the ERP itself. Then the order is confirmed to Supplier A over A2A, referencing the PO. Supplier A's agent books it against warehouse availability through its own internal MCP connections and returns confirmation with logistics milestones.</p>
+                <p><strong>7 · Pay — a mandate, not a credential.</strong> The finance agent settles via AP2: a cryptographically signed payment mandate — payer, payee, amount ceiling, expiry, and a reference binding it to the approved order and its delegation chain. Supplier A's merchant side presents it to the payment processor; funds move under an authorization that is <em>verifiable</em> and <em>scoped</em>. Notice what's absent: no card number pasted into a prompt, no shared credential with god-mode scope, no agent "remembering" payment details. The mandate authorizes this payment, up to this amount, until this expiry, on behalf of this approval — and nothing else.</p>
+                <p><strong>8 · Trace — the audit story writes itself.</strong> Weeks later, an internal auditor asks the eternal question: who authorized this? The answer is not archaeology. Every cross-boundary hop carries a trace ID from agentgateway; every A2A task has a structured lifecycle; the PO write names its authority; the payment mandate embeds its approval reference. The chain reconstructs mechanically: forecast → charter → quotes → finance verdict → named human approval → PO → mandate → settlement.</p>
+                <p>One honest caveat on scope: as drawn, the internal MCP calls run direct from agent to system, so the gateway's trace covers the cross-org hops. In a stricter deployment, agentgateway proxies MCP traffic too — it speaks both protocols — extending the same trace ID to every tool call, not just every boundary crossing.</p>
+
+                <h2><span class="h2-no">06</span>Remove a layer, watch it fail</h2>
+                <p>The composition argument is easiest to see in reverse. Take one layer out and observe the failure mode — every one of these is a system that exists in the wild today.</p>
+                <p>Without <strong>AGENTS.md</strong>, the agent's intent and escalation playbook live in prompt soup — pasted into system prompts, drifting per agent, unreviewable by the people who own them. The enforcement wouldn't vanish — that was never this file's job — but the behavior turns erratic and unauditable at the source.</p>
+                <p>Without a real <strong>runtime</strong> (the goose layer), the loop degrades into brittle scripted automation: a workflow that handles the happy path and shatters when Supplier A's quote comes back an hour late or a field changes shape. Reason-plan-act is precisely what absorbs that variance.</p>
+                <p>Without <strong>MCP</strong>, every arrow into inventory, forecasting, ERP, and treasury is a bespoke connector — the N×M integration tax we already paid once, per company, forever.</p>
+                <p>Without <strong>agentgateway</strong>, egress is invisible and the approval cap has no enforcement point. The forecast rationale leaks because nothing stripped it; the audit trail is whatever each agent felt like logging; and security's only control is asking nicely.</p>
+                <p>Without <strong>A2A</strong>, the two companies talk the old ways: portal scraping, EDI ceremonies, or a human copy-pasting between systems while two "autonomous" agents wait on either side.</p>
+                <p>And without <strong>AP2</strong>, payment happens the way it happens in too many demos right now: a stored card and a prayer.</p>
+
+                <h2><span class="h2-no">07</span>Why the neutral home is the feature</h2>
+                <p>There's a reason the Linux Foundation model keeps winning for infrastructure. When a foundational component is owned by one vendor, every downstream team inherits that vendor's roadmap constraints and release cadence. When it's governed openly, the community shapes what gets built.</p>
+                <p>A2A's partner list includes direct competitors — the hyperscalers alone compete on exactly the agent platforms this protocol connects. That breadth only holds under governance no single participant controls. And with A2A inside AAIF, the <em>entire</em> stack — instructions, runtime, context, operations, interop — is governed the same way, in the same place. For anyone making a five-year architecture bet on multi-agent systems, that removes a whole category of risk: the protocol your agents depend on is no longer subject to one company's product decisions.</p>
+
+                <h2><span class="h2-no">08</span>The layer that isn't there yet: identity &amp; trust</h2>
+                <p>Here's where I stop summarizing and start editorializing.</p>
+                <p>My standing thesis is that multi-agent systems fail at the seams — the places where one protocol, one system, or one trust domain hands off to another. A2A standardizes the <em>mechanics</em> of the seam: discovery, delegation, exchange. What it doesn't yet fully standardize is the <em>trust</em> of the seam, and that's the layer I think decides whether cross-organizational agent systems get real enterprise adoption.</p>
+                <p>Signed agent cards in v1.0 are a genuine step: cryptographic verification that an agent card is authentic and unaltered. But authenticating the card answers "is this agent who it claims to be?" — it doesn't answer the harder questions that show up the moment agents act on behalf of people across trust boundaries. Who is this agent acting <em>for</em>? What happens to that delegation when the agent spawns a sub-agent, or hands work to a peer over A2A? Should the effective permission be the agent's authority, the delegating user's authority, or the intersection of both? How does revocation propagate mid-task? And who reconstructs the decision chain when an auditor asks?</p>
+                <p>Trace the authority through the run above and the strain is visible: an agent acting under a charter, delegating to a peer agent with different authority, escalating to a human whose approval covers one order, then issuing a payment mandate that must bind all of it together — across three organizations. The run worked because the seams were few and the mandate scoped. If the category manager's approval is rescinded after the PO but before settlement, how does revocation propagate across the boundary mid-task? A2A's signed cards authenticate <em>agents</em>; AP2's mandates scope <em>payments</em>; agentgateway enforces at <em>the boundary</em> — but the portable, cross-domain delegation chain connecting a human's authority to an agent's action three hops away is precisely the gap.</p>
+                <p>Anyone building MCP servers against enterprise systems of record hits a version of this immediately: the end user's identity has to propagate all the way to the source system, with authorization enforced <em>at the source</em>, or you've built a confused deputy with good manners. A2A extends that same problem horizontally, across organizational boundaries, at machine speed.</p>
+                <p>The encouraging part: AAIF clearly knows this. Alongside the hosted projects, the foundation runs working groups including Identity &amp; Trust — chartered around portable identity, delegation protocols, cross-domain identity, and how permissions flow across agent-to-agent interactions — plus Governance, Risk &amp; Regulatory Alignment, Observability &amp; Traceability, and Security &amp; Privacy. The primitives are landing in the projects (signed agent cards in A2A, policy enforcement in agentgateway), and the conceptual work is happening in the WGs.</p>
+                <p>The external pressure is arriving on schedule too. NIST's Center for AI Standards and Innovation launched a dedicated AI Agent Standards Initiative in February 2026, and NIST's NCCoE has proposed adapting OAuth extensions and Zero Trust architecture guidance to agent identity and authorization. OWASP published its first Top 10 for Agentic Applications, with identity abuse and rogue agents as named risk classes. The EU AI Act's high-risk obligations take effect this month. Regulators, standards bodies, and security researchers are all converging on the same gap.</p>
+                <p>So my prediction, and my wishlist item: the Identity &amp; Trust work graduates from working group to first-class hosted project — a real specification for portable agent identity, delegation chains, and permission flow, sitting in the stack as its own layer. When that happens, the diagram gets a sixth box, and cross-organizational agent systems become something a security team can approve rather than merely tolerate.</p>
+
+                <h2><span class="h2-no">09</span>The map we're going to need</h2>
+                <p>One more AAIF detail that got my attention: there's a Taxonomy &amp; Landscape working group. If you've ever used the CNCF landscape to make sense of the cloud-native ecosystem — hundreds of projects, categorized, mapped, comparable at a glance — you know why this matters. The agentic ecosystem is sprawling faster than cloud-native did, and the same confusion is setting in: which projects overlap, which compose, which category a given vendor actually belongs to. An interactive, CNCF-style landscape for agentic AI would be one of the highest-leverage artifacts the foundation could ship. I'm hoping that's exactly where this WG is heading.</p>
+
+                <h2><span class="h2-no">10</span>What I'd do as a builder</h2>
+                <p>If you're building agent systems today, a few practical conclusions fall out of all this.</p>
+                <p>Design your internal agent boundaries as if they were A2A seams, even if everything is single-vendor right now. Structured task delegation with explicit capability descriptions is a better architecture regardless, and it means the day you need to interoperate externally, the seam already exists.</p>
+                <p>Treat agent identity as first-class from day one. Distinct identities per agent, no shared credentials, no long-lived broadly-scoped tokens, and end-user identity propagated to the systems of record. The standards for this are still forming, but the anti-patterns are already well documented — don't build them in while waiting for the spec.</p>
+                <p>Put policy at the gateway, not inside the agents. Agents change fast; policy enforcement points shouldn't. The agentgateway placement in the stack is the right instinct — enforce at the boundary.</p>
+                <p>And watch the working groups, not just the projects. In a foundation this young, the WGs are where the next layer of the stack is being decided. Identity &amp; Trust and Taxonomy &amp; Landscape are the two I'd follow closely — or better, contribute to.</p>
+
+                <div class="takeaways">
+                    <h4>The takeaway</h4>
+                    <p>Count what the walkthrough took: zero bespoke point-to-point integrations between two companies — each side implemented open protocols once instead of pairwise connectors — one human decision placed exactly where policy wanted it, and a cross-org audit chain as a by-product rather than a project. That's what "productionized" means, and why five layers landing in one neutral foundation is an architecture event, not a governance press release.</p>
+                    <p style="margin-bottom:0">Sixteen months ago, A2A launched into a debate about whether it was an MCP killer. This month it moved in next door to MCP. The protocol wars ended the way infrastructure arguments usually end — not with a winner, but with a layer diagram. The stack is settling. The next fight — the interesting one — is trust.</p>
+                </div>
+
+                <p><em>Message shapes above are simplified for illustration; see the <a href="https://a2a-protocol.org/latest/" target="_blank" rel="noopener">A2A specification</a>, the <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP specification</a>, and the AP2 documentation for exact schemas.</em></p>
+                <p><em>Sources: <a href="https://aaif.io/blog/a2a-joins-aaif" target="_blank" rel="noopener">AAIF — "A2A joins AAIF's open agentic stack"</a> (timeline, production adoption, 150+ organizations) · <a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation" target="_blank" rel="noopener">Linux Foundation AAIF formation announcement</a> · <a href="https://aaif.io/" target="_blank" rel="noopener">AAIF working groups</a> · <a href="https://a2a-protocol.org/latest/" target="_blank" rel="noopener">A2A specification and SDKs</a> · MCP SDK download figures (~97M monthly, early 2026) per Cloud Security Alliance coverage, March 2026 · NIST CAISI AI Agent Standards Initiative and NCCoE agent identity concept paper (Feb 2026) · OWASP Top 10 for Agentic Applications (Dec 2025).</em></p>
+            </article>
+
+            <section class="discussion">
+                <span class="eyebrow">Discussion</span>
+                <h3>Take it apart with me</h3>
+                <p>Building multi-agent systems across trust boundaries? I'd like to hear where your seams are — and what you'd want an agent-identity standard to cover. The conversation happens on LinkedIn and X.</p>
+                <div class="share-row">
+                    <a class="li-button" href="https://www.linkedin.com/in/suryaprakash-lakshmanan-068a7684/recent-activity/all/" target="_blank" rel="noopener">
+                        <span class="li-badge">in</span> Join the discussion on LinkedIn
+                    </a>
+                    <a class="li-button x-button" href="https://x.com/suryaagentic" target="_blank" rel="noopener">
+                        <span class="li-badge">𝕏</span> Follow @suryaagentic on X
+                    </a>
+                </div>
+            </section>
+
+            <section class="related">
+                <span class="eyebrow">Keep reading</span>
+                <div class="related-grid">
+                    <a class="rel-card" href="mcp-went-stateless.html">
+                        <span class="rc-cat">MCP · Protocol Analysis</span>
+                        <h4>MCP Just Went Stateless</h4>
+                        <p>The 2026-07-28 revision deleted the handshake and sessions — the context layer of this same stack, rebuilt for scale.</p>
+                        <span class="rc-go">Read the analysis →</span>
+                    </a>
+                    <a class="rel-card" href="mcp-summit-mumbai-2026.html">
+                        <span class="rc-cat">MCP &amp; Agentic Ops</span>
+                        <h4>Agents Fail at the Seams</h4>
+                        <p>Field notes from MCP Dev Summit Mumbai 2026 — the standing thesis this piece builds on.</p>
+                        <span class="rc-go">Read the field notes →</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
+                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body>
+</html>

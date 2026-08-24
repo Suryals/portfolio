@@ -7,7 +7,15 @@
     <description>Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization.</description>
     <language>en-us</language>
     <managingEditor>suryal.k90@gmail.com (Suryaprakash Lakshmanan)</managingEditor>
-    <lastBuildDate>Wed, 05 Aug 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 24 Aug 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>A2A Joins AAIF: The Agentic Stack Settles — and Identity Is Next</title>
+      <link>https://suryal.dev/articles/a2a-joins-aaif.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/a2a-joins-aaif.html</guid>
+      <pubDate>Mon, 24 Aug 2026 00:00:00 +0000</pubDate>
+      <description>Agent2Agent is now an AAIF project, alongside MCP, goose, AGENTS.md, and agentgateway. Why the A2A-vs-MCP debate was a category error, what each of the five layers actually does, a full retail–finance transaction run through every layer — signed agent cards, A2A delegation through agentgateway, an AP2 payment mandate, and an audit chain by construction — and why identity &amp; trust is the layer to watch next.</description>
+    </item>
 
     <item>
       <title>Qwen3.8-27B dropped, and the AI community claims it beats the OG — Opus 4.6</title>
