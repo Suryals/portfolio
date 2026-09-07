@@ -7,7 +7,15 @@
     <description>Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization.</description>
     <language>en-us</language>
     <managingEditor>suryal.k90@gmail.com (Suryaprakash Lakshmanan)</managingEditor>
-    <lastBuildDate>Mon, 24 Aug 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 07 Sep 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Zero Token Architecture, seen from MCP</title>
+      <link>https://suryal.dev/articles/zero-token-architecture-mcp.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/zero-token-architecture-mcp.html</guid>
+      <pubDate>Mon, 07 Sep 2026 00:00:00 +0000</pubDate>
+      <description>Kelsey Hightower's Zero Token Architecture is usually read as a cost argument. Read it as a design rule and it describes exactly what separates a good MCP server from an API wrapper: at runtime the export is the curated tool, at build time the export is the SDK. Not zero tokens — zero re-inference of logic you have already solved.</description>
+    </item>
 
     <item>
       <title>A2A Joins AAIF: The Agentic Stack Settles — and Identity Is Next</title>

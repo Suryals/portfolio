@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Token Architecture, seen from MCP — Suryaprakash Lakshmanan</title>
+    <meta name="description" content="Kelsey Hightower's Zero Token Architecture is usually read as a cost argument. Read it as a design rule and it describes exactly what separates a good MCP server from an API wrapper — at runtime, where the tool is the export, and at build time, where the SDK is.">
+    <link rel="canonical" href="https://suryal.dev/articles/zero-token-architecture-mcp.html">
+    <link rel="alternate" type="application/rss+xml" title="Suryaprakash Lakshmanan — Field Notes" href="https://suryal.dev/feed.xml">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Zero Token Architecture, seen from MCP">
+    <meta property="og:description" content="Infer once. Export the logic. Run without inference. ZTA as a design rule for MCP: the tool is the export at runtime, the SDK is the export at build time — and most MCP servers are API wrappers with a nicer schema.">
+    <meta property="og:url" content="https://suryal.dev/articles/zero-token-architecture-mcp.html">
+    <meta property="og:image" content="https://suryal.dev/images/zta-mcp-mapping-dark.png">
+    <meta property="og:image:width" content="3200">
+    <meta property="og:image:height" content="1920">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://suryal.dev/images/zta-mcp-mapping-dark.png">
+    <meta name="theme-color" content="#0B0D0A">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../articles.css">
+    <style>
+    /* ---- ZTA × MCP article (scoped) ---- */
+    .zta-fig{margin:clamp(26px,4vh,44px) 0 8px}
+    .zta-fig a{display:block}
+    .zta-fig img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+    .zta-cap{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-top:12px;line-height:1.6}
+    .zta-cap b{color:var(--accent-deep);font-weight:500}
+
+    .zta-code{max-width:var(--measure);margin:1.6em auto 2em;background:var(--paper-2);border:1px solid var(--line);
+        border-radius:12px;padding:clamp(18px,2.4vw,26px);overflow-x:auto}
+    .zta-code pre{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.7;color:var(--ink);white-space:pre}
+    .zta-code .c{color:var(--ink-faint);font-style:italic}
+    .zta-code .k{color:var(--accent)}
+    .zta-code .s{color:var(--ok)}
+
+    .zta-verbs{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:24px auto 8px;max-width:var(--measure)}
+    .zta-verb{background:var(--paper-2);padding:22px 20px;display:flex;flex-direction:column;gap:9px}
+    .zta-verb .k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-deep)}
+    .zta-verb h4{font-family:var(--serif);font-weight:400;font-size:21px;color:var(--ink);margin:0}
+    .zta-verb p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.6}
+
+    .zta-stages{list-style:none;padding:0;margin:0 auto 1.5em;max-width:var(--measure);display:grid;gap:12px}
+    .zta-stages li{position:relative;padding:18px 20px 18px 64px;border:1px solid var(--line);border-radius:12px;
+        background:color-mix(in srgb, var(--paper-2) 55%, transparent);font-size:16.5px;line-height:1.65;color:var(--read);margin:0}
+    .zta-stages li b{display:block;font-family:var(--serif);font-weight:400;font-size:22px;color:var(--ink);margin-bottom:4px}
+    .zta-stages li i{position:absolute;left:20px;top:20px;font-style:normal;font-family:var(--mono);font-size:12px;color:var(--accent)}
+
+    @media(max-width:760px){
+        .zta-verbs{grid-template-columns:1fr}
+        .zta-code pre{font-size:12px}
+    }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Zero Token Architecture, seen from MCP",
+      "description": "Kelsey Hightower's Zero Token Architecture read as a design rule for MCP: infer once, export the logic, run without inference. At runtime the export is the curated tool; at build time the export is the SDK.",
+      "datePublished": "2026-09-07",
+      "dateModified": "2026-09-07",
+      "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
+      "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
+      "mainEntityOfPage": "https://suryal.dev/articles/zero-token-architecture-mcp.html",
+      "keywords": "Zero Token Architecture, ZTA, MCP, Model Context Protocol, Platform Engineering, Agentic AI, Tool Design, SDK, Kelsey Hightower, PlatformCon",
+      "image": "https://suryal.dev/images/zta-mcp-mapping-dark.png"
+    }
+    </script>
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="5cba5c2d-95f5-4ccb-896c-9104be4f00d2"></script>
+</head>
+<body>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="../index.html#top" class="mark"><span class="mark-name">Surya</span><span class="mark-dot"></span></a>
+            <nav class="nav" aria-label="Primary">
+                <a href="../index.html#work"><i>01</i> Services</a>
+                <a href="../index.html#lab"><i>02</i> Lab</a>
+                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+                <a href="../index.html#experience"><i>04</i> Uptime</a>
+                <a href="../index.html#writing"><i>05</i> Logs</a>
+                <a href="../index.html#contact"><i>06</i> Channel</a>
+            </nav>
+            <a href="index.html" class="topbar-cta">← All articles</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="../index.html#work"><i>01</i> Services</a>
+        <a href="../index.html#lab"><i>02</i> Lab</a>
+        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
+        <a href="../index.html#experience"><i>04</i> Uptime</a>
+        <a href="../index.html#writing"><i>05</i> Logs</a>
+        <a href="../index.html#contact"><i>06</i> Channel</a>
+    </div>
+
+    <main class="article">
+        <div class="wrap">
+            <header class="article-header">
+                <p class="breadcrumb"><a href="../index.html#top">Home</a> <span>/</span> <a href="index.html">Articles</a> <span>/</span> Zero Token Architecture</p>
+                <span class="article-cat" style="margin-top:14px">MCP &amp; Agentic Ops · Architecture</span>
+                <h1 class="article-title">Zero Token Architecture, <em>seen from MCP.</em></h1>
+                <p class="article-sub">Kelsey Hightower's ZTA is usually read as a cost argument. Read it as a design rule and it describes exactly what separates a good MCP server from an API wrapper — at runtime, and again at build time.</p>
+                <div class="article-meta">
+                    <span class="who">Suryaprakash Lakshmanan</span>
+                    <span class="sep">·</span><span>September 2026</span>
+                    <span class="sep">·</span><span>11 min read</span>
+                    <span class="sep">·</span><span>Architecture note</span>
+                </div>
+                <div class="article-tags">
+                    <span>Zero Token Architecture</span><span>MCP</span><span>Platform Engineering</span><span>Agentic AI</span><span>Tool Design</span><span>SDK</span>
+                </div>
+
+                <figure class="zta-fig">
+                    <a href="../images/zta-mcp-mapping-dark.png" target="_blank" rel="noopener">
+                        <img src="../images/zta-mcp-mapping-dark.svg" width="1600" height="960" alt="Zero Token Architecture mapped onto MCP. Three columns — infer, export, run — across two rows. Runtime: the model loops on execute_sql with retries, the export is a curated get_stuck_invoices tool, and production runs one deterministic call. Build time: three servers each solve auth differently, the export is a shared GovernedServer SDK, and new servers inherit the fix.">
+                    </a>
+                    <figcaption class="zta-cap">ZTA's three verbs across the top, MCP's two layers down the side. The <b>export</b> column is where the work should live. <b>Not zero tokens — zero re-inference of logic you have already solved.</b></figcaption>
+                </figure>
+            </header>
+
+            <article class="article-body">
+                <p>I re-listened to Kelsey Hightower's Zero Token Architecture talk from PlatformCon this week. On first listen, back in June, it registered as a cost argument: stop burning tokens on things that don't need a model. On second listen a different thing stuck, the idea he kept returning to in one form or another. <strong>Infer once. Export the logic. Run it without further inference.</strong></p>
+                <p>That is a description of a well-built MCP server. It is also, in reverse, a description of most of the MCP servers I have seen, and a few I have built.</p>
+                <p>One thing to settle before going further, because the name invites the wrong reading. ZTA is not anti-LLM. The model is still the only component in the system that can take "find the vendor invoices stuck in approval and tell me why" and decide what to do about it. Nothing deterministic does that. What ZTA is against is having no architecture around the model, so that tokens end up doing the job a design should have done. Every time an agent reasons its way through a problem you have already solved, that is not intelligence at work. That is a missing export.</p>
+                <p>This piece is about what that missing export looks like in MCP, because it turns out there are two of them.</p>
+
+                <h2><span class="h2-no">01</span>What ZTA actually says</h2>
+                <p>Three verbs.</p>
+                <div class="zta-verbs">
+                    <div class="zta-verb">
+                        <span class="k">Infer</span>
+                        <h4>Work it out</h4>
+                        <p>Use the model to work through a problem you do not yet understand, where the shape of the answer is unknown.</p>
+                    </div>
+                    <div class="zta-verb">
+                        <span class="k">Export</span>
+                        <h4>Capture it as a thing</h4>
+                        <p>Once you understand it, capture the answer as something that exists outside the model — code, config, a binary, a library, a schema.</p>
+                    </div>
+                    <div class="zta-verb">
+                        <span class="k">Run</span>
+                        <h4>Execute without the model</h4>
+                        <p>Execute the export without going back to the model. Software does the repetition.</p>
+                    </div>
+                </div>
+                <p>Kelsey's own example is deliberately unglamorous. A company receives customer CSV files in every format imaginable and points an agent at them. After enough runs the team notices that five formats cover almost everything. So they write a plain importer for those five and send only the unknown ones to the agent. The model did the discovery. Software does the repetition. The agent is still there, but it is now a consultant brought in for new problems, not a permanent component in the hot path.</p>
+                <p>Greg Herlein put the economics well in a follow-up post: <strong>tokens should be NRE, not COGS.</strong> In hardware, non-recurring engineering is the expensive one-time work that produces a reusable asset, a jig, a mask, a library. Cost of goods sold is what you pay per unit, forever. Software's whole advantage is zero marginal cost per copy. Spending inference on every request to regenerate a solution you already have turns that advantage back into a bill of materials.</p>
+                <p>Look at MCP through that lens and the pattern applies twice. Once at runtime, where the export is the tool. Once at build time, where the export is the SDK.</p>
+
+                <h2><span class="h2-no">02</span>Where the tokens actually go in an MCP call</h2>
+                <p>Before the two layers, it helps to be precise about what a tool call costs, because "zero token" is a phrase that invites overclaiming, and I would rather the argument survive contact with someone who has looked at their own usage dashboard.</p>
+                <p>Every MCP tool call spends tokens in four places. The tool's schema sits in the context window, on every turn, whether or not that tool is used. The model spends output tokens constructing the call: choosing the tool, filling the arguments. The result comes back into context as input tokens. And if the result was wrong, incomplete, or shaped badly, the model spends another round of reasoning and another call fixing it.</p>
+                <p>Curated tools do not eliminate any of those four. The schema is still in context, the call is still inference, the result still comes back. What they change is the size of each and the count of the fourth. A tool that returns exactly the shape the model needs means a smaller result and no retry. A tool whose arguments are two typed fields instead of a free-text query means a shorter, more reliable call. Fewer tokens per outcome, not zero tokens.</p>
+                <p>What they do eliminate entirely is <strong>re-inference of solved logic</strong>. That is the ZTA claim, and it is the one worth making.</p>
+
+                <h2><span class="h2-no">03</span>Runtime: the tool is the export</h2>
+                <p>In an MCP-backed agent the model's job is to understand the intent and pick the right tool with the right arguments. The tool's job is everything else. Whether that division actually holds depends entirely on how the tool is designed, and there are two ways to design it.</p>
+                <p>A <strong>generic tool</strong> hands the model a capability and leaves the thinking to it. <code>execute_sql(query)</code>. <code>http_get(url)</code>. <code>run_command(cmd)</code>. The tool does exactly what it says and nothing more. Everything above it, working out which tables, which joins, which columns, what a good result looks like, is the model's problem, and it is the model's problem again on the next call, and the one after that. The reasoning never leaves the context window, so it never becomes an asset. You are paying for the same discovery on every invocation.</p>
+                <p>A <strong>curated tool</strong> has already done the reasoning. <code>get_stuck_invoices(older_than_days, approver)</code>. Someone, or the agent itself, once, in a discovery environment, worked out which tables hold invoices, which join gets you the approval chain, which status codes actually mean "stuck" as opposed to merely "pending", and what shape the answer needs to be in for the model to finish the job without a second look. All of that is baked into the backend as a deterministic function. The model reads a short schema, supplies two arguments, and gets back exactly what it needs.</p>
+                <p>"Curated" is doing real work in that sentence, so here is what it means concretely. The arguments are typed and named for the intent, not the implementation: <code>older_than_days</code>, not <code>where_clause</code>. The result is shaped for consumption, not dumped: the fields the model will actually reason about, in an order that reads, with anything derived (days stuck, next approver) already computed. Errors are semantic: "approver not found" rather than a stack trace the model then has to interpret. And the description tells the model <em>when</em> to use it, not <em>how</em> it works, because the how is no longer the model's concern.</p>
+                <p>None of this is new. It is the difference between an API and a good API, applied to a consumer that pays per token to read your response.</p>
+
+                <h2><span class="h2-no">04</span>The uncomfortable part</h2>
+                <blockquote class="pullquote">Most MCP servers are API wrappers with a nicer schema.</blockquote>
+                <p>I mean that literally. One tool per endpoint. Parameters passed straight through. Raw JSON back, with every field the upstream system happened to return. The server author took the OpenAPI spec, generated tool definitions, and shipped. That is the generic-tool pattern with a protocol around it, and the protocol does not fix it. The model is still doing the reasoning about which of the forty tools to call, in what order, with what identifiers pulled out of which previous response.</p>
+                <p>MCP gives you the seam where deterministic logic belongs. It does not force you to put any there. When a team says "we have MCP" and is still watching token spend climb on every run, this is usually why: <strong>they built the seam and left it empty.</strong></p>
+
+                <h2><span class="h2-no">05</span>Build time: the SDK is the export</h2>
+                <p>The runtime argument is the one people can see, because it shows up in the usage dashboard. The build-time version is quieter and it is where I have personally wasted the most.</p>
+                <p>Every MCP server that sits in front of an enterprise system has the same cross-cutting work to do before a single tool runs. Take the incoming token and validate it. Extract the subject. Propagate that identity downstream, so the source system enforces its own authorisation instead of trusting the server's word for it. Decide what is safe to cache and for how long, usually the length of the session. Emit an audit record that says who called what, with which arguments, and what came back. Register the tool manifest somewhere a registry can see it.</p>
+                <p>None of that is specific to the system behind the server. The Ariba server needs it. The ServiceNow server needs it. The internal ticketing server needs it. It is the same problem every time.</p>
+                <p>In my earlier servers, every one of these was implemented fresh. Not because anyone decided it should be. Each server was built by a coding agent working from a spec, and each time the agent solved the problem from scratch, competently, and differently. The <code>sub</code> extraction lived inline in the handler in one server, in a middleware layer in the second, in a helper module in the third. One cached the resolved identity per session, one per request, one did not cache at all. Downstream propagation was a forwarded header in two of them and a token exchange in the third.</p>
+                <p>Three servers. Three working solutions to the same problem. All slightly different. When one of them needed a fix, an edge case in token validation, it was a fix I had to rediscover three times, in three codebases, in three shapes.</p>
+                <p>That is the ZTA loop run three times when it should have run once. Every one of those coding-agent sessions was inference spent re-deriving an answer that already existed in the server next door. The export is an SDK, and the shape of it is roughly this:</p>
+                <div class="zta-code"><pre><span class="k">from</span> mcp_platform <span class="k">import</span> GovernedServer, Identity, oidc, token_exchange
+
+server = GovernedServer(
+    name=<span class="s">"procurement"</span>,
+    auth=oidc(issuer=ISSUER),
+    downstream=token_exchange(audience=<span class="s">"procurement-api"</span>),
+)
+
+<span class="k">@server.tool()</span>
+<span class="k">def</span> get_stuck_invoices(
+    ctx: Identity,
+    older_than_days: int,
+    approver: str | None = None,
+):
+    <span class="c"># ctx.sub, ctx.downstream_token and ctx.session are already resolved.</span>
+    <span class="c"># Audit and manifest registration happen in the framework, not here.</span>
+    <span class="k">return</span> procurement.query_stuck(ctx.downstream_token, older_than_days, approver)</pre></div>
+                <p>The line to notice is the division of labour. The server author writes the tool: the arguments, the backend call, the result shape. That is the part that is specific to this system and this intent, and it is the part worth a human's attention. Identity, propagation, session caching, audit, and manifest registration are the framework's problem, <strong>solved once and fixed once</strong>.</p>
+                <p>The coding agent still builds the server. That is not the part to give up. It just builds on top of the export instead of re-deriving the export, which means its spec is now three lines about the tool rather than a page about OAuth, and the surface where it can invent something subtly wrong is a lot smaller.</p>
+
+                <h2><span class="h2-no">06</span>When to run the loop again</h2>
+                <p>ZTA does not say never infer. It says know when you are inferring, and make it a decision rather than a default. For MCP that turns into a lifecycle with four stages.</p>
+                <ul class="zta-stages">
+                    <li><i>01</i><b>Discovery</b>The agent gets generic tools, in a non-production environment, against non-production data. <code>execute_sql</code>, <code>http_get</code>, whatever it needs to explore. It constructs queries, fails, retries, finds what works. You watch what it does repeatedly. This is the CSV company noticing that five formats cover almost everything. It is also the only stage where generic tools belong.</li>
+                    <li><i>02</i><b>Export</b>The recurring patterns get hardened into curated tools with proper schemas, semantic errors, and shaped results. The tool manifest is pinned at registration, so the thing that was reviewed is the thing that ships.</li>
+                    <li><i>03</i><b>Run</b>Production gets the curated tools only. The generic ones do not ship. If the model needs something that is not there, that is a signal to go back to discovery, not a reason to hand production a SQL prompt.</li>
+                    <li><i>04</i><b>Change</b>When the source system changes, or the intent changes, the manifest changes with it. The deployment gate compares the new manifest against the pinned one and blocks the rollout until someone has looked. Then you run discovery again, for that one tool, and export again.</li>
+                </ul>
+                <p>This is also where governance stops looking like bureaucracy. The registry, manifest pinning, and CI quality gates are not overhead on top of the architecture. They are the mechanism that decides which side of the infer/run line a tool sits on, and that catches it when a tool drifts across without anyone deciding it should.</p>
+
+                <h2><span class="h2-no">07</span>Where this breaks</h2>
+                <p><strong>Over-curate and you get tool sprawl.</strong> Hundreds of narrow tools, a context window full of schemas, and a model that cannot find the right one among them, which brings back the retry loop you were trying to remove, now at the tool-selection layer instead of the query layer. The long tail of intents still needs the model's flexibility. The point is not to pay inference for the head of the distribution, and to be honest about where the head ends.</p>
+                <p><strong>Harden too early and you export the wrong thing.</strong> The CSV company waited until five formats were clearly recurring. If they had built the importer after the first file, they would have built it for one format and rebuilt it four times. Discovery has to run long enough to be sure what is actually recurring.</p>
+                <p>And everything above applies to skills and system prompts as much as it does to tools. They get regenerated, re-pasted, and re-derived every time, and almost never exported into something versioned and shared. That is the same problem one layer up, and it is a separate post.</p>
+
+                <h2><span class="h2-no">08</span>Which side of the line is your tool on</h2>
+                <p>A short test I now apply to any tool before it ships to production.</p>
+                <div class="takeaways">
+                    <h4>Four questions</h4>
+                    <ul>
+                        <li>Does the model have to work out <strong>how</strong> to use it, or only <strong>when</strong>?</li>
+                        <li>Does the result come back in the shape the model will reason about, or in the shape the <strong>upstream</strong> system happened to return?</li>
+                        <li>Would a second call with the same intent produce the same tool call, or does the model <strong>re-derive</strong> it each time?</li>
+                        <li>Is the auth in this server code the same auth as in the last server, or a <strong>new</strong> solution to the same problem?</li>
+                    </ul>
+                </div>
+                <p>If the answers are "how", "upstream", "re-derives", and "new", the tool is still in the infer column. It works. It just costs you every time.</p>
+
+                <h2><span class="h2-no">09</span>Fundamentals</h2>
+                <p>Kelsey's one-line abstract for the talk was that the fundamentals still matter and burning tokens is not a requirement. The fundamental in MCP is knowing which part of the job is intent and which part is just work. <strong>Intent goes to the model, because nothing else can do it. Work gets exported</strong>, into a tool at runtime and into an SDK at build time, and runs without asking again.</p>
+
+                <div class="references">
+                    <h4>References</h4>
+                    <ol>
+                        <li>Kelsey Hightower, "ZTA: Zero Token Architecture", PlatformCon 2026, NYC Live Day, 25 June 2026 — <a href="https://2026.platformcon.com/sessions/zta-zero-token-architecture-nyc" target="_blank" rel="noopener">session</a>, <a href="https://www.youtube.com/watch?v=A7WFt2JQ5sg" target="_blank" rel="noopener">recording</a>.</li>
+                        <li>Greg Herlein, <a href="https://blog.herlein.com/post/tokens-are-nre-not-cogs/" target="_blank" rel="noopener">"Tokens Should be NRE, Not COGS"</a>.</li>
+                    </ol>
+                </div>
+            </article>
+
+            <section class="discussion">
+                <span class="eyebrow">Discussion</span>
+                <h3>Which column are your tools in?</h3>
+                <p>The runtime/build-time mapping above is the short version of this piece. If your MCP servers are API wrappers with a nicer schema, or you have built the SDK export and it worked, I would like to hear it — the conversation is on LinkedIn.</p>
+                <a class="li-button" href="https://www.linkedin.com/in/suryaprakash-lakshmanan-068a7684/recent-activity/all/" target="_blank" rel="noopener">
+                    <span class="li-badge">in</span> Join the discussion on LinkedIn
+                </a>
+            </section>
+
+            <section class="related">
+                <span class="eyebrow">Keep reading</span>
+                <div class="related-grid">
+                    <a class="rel-card" href="principal-propagation-mcp.html">
+                        <span class="rc-cat">Lab · exp-004</span>
+                        <h4>MCP Access to a Database — as the User</h4>
+                        <p>The build-time export, worked in code: identity propagation, token exchange, and audit enforced at the data source.</p>
+                        <span class="rc-go">Read the case study →</span>
+                    </a>
+                    <a class="rel-card" href="mcp-summit-mumbai-2026.html">
+                        <span class="rc-cat">Field notes</span>
+                        <h4>Agents Fail at the Seams</h4>
+                        <p>MCP Dev Summit Mumbai 2026 — the tool surface as the product, and every failure a missing contract.</p>
+                        <span class="rc-go">Read the field notes →</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
+                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> — All rights reserved</span>
+                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body>
+</html>
