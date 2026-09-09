@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zero Token Architecture, seen from MCP — Suryaprakash Lakshmanan</title>
+    <title>Zero Token Architecture, seen from MCP — Surya</title>
     <meta name="description" content="Kelsey Hightower's Zero Token Architecture is usually read as a cost argument. Read it as a design rule and it describes exactly what separates a good MCP server from an API wrapper — at runtime, where the tool is the export, and at build time, where the SDK is.">
     <link rel="canonical" href="https://suryal.dev/articles/zero-token-architecture-mcp.html">
     <link rel="alternate" type="application/rss+xml" title="Suryaprakash Lakshmanan — Field Notes" href="https://suryal.dev/feed.xml">
@@ -17,7 +17,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://suryal.dev/images/zta-mcp-mapping.png">
     <meta name="theme-color" content="#FBFAF7">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%2317160F%22/><text x=%2250%22 y=%2271%22 font-size=%2262%22 font-family=%22Georgia,serif%22 font-weight=%22500%22 text-anchor=%22middle%22 fill=%22%23FBFAF7%22>S</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23FBFAF7%22 stroke=%22%2317160F%22 stroke-width=%226%22/><text x=%2250%22 y=%2271%22 font-size=%2262%22 font-family=%22Georgia,serif%22 font-weight=%22500%22 text-anchor=%22middle%22 fill=%22%2317160F%22>S</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -63,7 +63,7 @@
       "headline": "Zero Token Architecture, seen from MCP",
       "description": "Kelsey Hightower's Zero Token Architecture read as a design rule for MCP: infer once, export the logic, run without inference. At runtime the export is the curated tool; at build time the export is the SDK.",
       "datePublished": "2026-09-07",
-      "dateModified": "2026-09-07",
+      "dateModified": "2026-09-09",
       "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
       "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
       "mainEntityOfPage": "https://suryal.dev/articles/zero-token-architecture-mcp.html",
@@ -78,7 +78,7 @@
 
     <header class="topbar" id="topbar">
         <div class="bar">
-            <a href="../index.html" class="mark">Suryaprakash Lakshmanan</a>
+            <a href="../index.html" class="mark">Surya</a>
             <nav class="nav" aria-label="Primary">
                 <a href="../index.html#work">Work</a>
                 <a href="../index.html#writing">Writing</a>
@@ -228,7 +228,13 @@ server = GovernedServer(
                 </div>
                 <p>If the answers are "how", "upstream", "re-derives", and "new", the tool is still in the infer column. It works. It just costs you every time.</p>
 
-                <h2><span class="h2-no">09</span>Fundamentals</h2>
+                <h2><span class="h2-no">09</span>Turning the test into a gate</h2>
+                <p>Four questions on a checklist are still a person inferring, one tool at a time, usually the week before a release. So the next thing I am building is an inspector: a step in the pipeline that scores an MCP server against the line above and fails the build when a tool sits on the wrong side of it.</p>
+                <p>Most of it is deterministic, which is the point. Argument names checked against a list of implementation smells (<code>query</code>, <code>sql</code>, <code>where_clause</code>, <code>payload</code>) and against the intent words in the description. Result schemas checked for size, and for whether derived fields exist or the model is expected to compute them. Descriptions checked for "when" language versus "how" language. Tool-call stability measured directly: replay the same intent through the same model a dozen times and count the distinct tool calls that come back. A curated tool converges to one; a generic tool does not. Retry rate per tool, from the traces you already have. And at build time, a plain diff of the auth, propagation, and audit code across every server in the registry, so a third bespoke <code>sub</code> extractor cannot land without someone seeing it.</p>
+                <p>Two of those checks need a model. Whether a description says <em>when</em> rather than <em>how</em> is a judgement call, and so is whether a result is shaped for the model or merely dumped. I am aware of the irony of spending tokens to check whether a tool spends too many tokens, and I expect Kelsey would enjoy pointing it out. But it is the ZTA loop applied to itself: infer at review time, once per tool version, and export the verdict into the manifest as a pinned score. Production never runs the judge. The judge runs when the tool changes, which is exactly when a decision is being made.</p>
+                <p>Whether that ends up as a checklist that grew a CI step or an eval harness in its own right, I will find out by building it. It is the natural next stage of the lifecycle above: the Change gate stops asking "did someone look?" and starts asking "which column is it in?"</p>
+
+                <h2><span class="h2-no">10</span>Fundamentals</h2>
                 <p>Kelsey's one-line abstract for the talk was that the fundamentals still matter and burning tokens is not a requirement. The fundamental in MCP is knowing which part of the job is intent and which part is just work. <strong>Intent goes to the model, because nothing else can do it. Work gets exported</strong>, into a tool at runtime and into an SDK at build time, and runs without asking again.</p>
 
                 <div class="references">
@@ -272,7 +278,7 @@ server = GovernedServer(
     <footer class="footer">
         <div class="wrap footer-inner">
             <div class="footer-col">
-                <span class="footer-mark">Suryaprakash Lakshmanan</span>
+                <span class="footer-mark">Surya</span>
                 <p>Staff Engineer, AI Enablement &amp; Cloud · Chennai, India</p>
             </div>
             <div class="footer-col footer-colophon">
