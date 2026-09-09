@@ -51,10 +51,47 @@
     .zta-stages li b{display:block;font-family:var(--serif);font-weight:400;font-size:22px;color:var(--ink);margin-bottom:4px}
     .zta-stages li i{position:absolute;left:20px;top:20px;font-style:normal;font-family:var(--mono);font-size:12px;color:var(--accent)}
 
+    /* section 02: where the tokens go */
+    .zta-cost{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);
+        border-radius:12px;overflow:hidden;margin:24px auto 10px;max-width:var(--measure)}
+    .zta-cost>div{background:var(--paper-2);padding:20px 18px;display:flex;flex-direction:column;gap:8px}
+    .zta-cost .n{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent-deep)}
+    .zta-cost h4{font-family:var(--serif);font-weight:500;font-size:20px;color:var(--ink);margin:0;line-height:1.15}
+    .zta-cost p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.55;flex:1}
+    .zta-cost .d{font-family:var(--mono);font-size:11.5px;line-height:1.5;padding-top:10px;border-top:1px solid var(--line);color:var(--ink-faint)}
+    .zta-cost .d b{color:var(--ink);font-weight:500}
+    .zta-cost .d i{font-style:normal;color:var(--accent-deep)}
+    .zta-cost .zero .d i{color:var(--ok)}
+    .article-body .zta-note{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);line-height:1.6;max-width:100%;margin:0 0 1.8em}
+
+    /* section 09: the gate */
+    .zta-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:stretch;gap:8px;
+        margin:24px auto 14px;max-width:var(--measure)}
+    .zta-flow .node{border:1px solid var(--line);border-radius:10px;padding:14px 14px;background:var(--paper-2);display:flex;flex-direction:column;gap:4px}
+    .zta-flow .node.hot{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--paper))}
+    .zta-flow .node .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+    .zta-flow .node b{font-family:var(--serif);font-weight:500;font-size:17px;color:var(--ink);line-height:1.2}
+    .zta-flow .node span{font-size:12.5px;color:var(--ink-soft);line-height:1.45}
+    .zta-flow .arrow{align-self:center;color:var(--ink-faint);font-family:var(--mono);font-size:16px}
+    .zta-checks{width:100%;border-collapse:collapse;margin:0 0 10px;max-width:100%;font-size:14px}
+    .zta-checks th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);
+        font-weight:500;padding:8px 10px;border-bottom:1.5px solid var(--line-strong)}
+    .zta-checks td{padding:11px 10px;border-bottom:1px solid var(--line);color:var(--ink-soft);vertical-align:top;line-height:1.5}
+    .zta-checks td:first-child{color:var(--ink);width:38%}
+    .zta-checks .tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:4px;border:1px solid var(--line);white-space:nowrap;color:var(--ink-soft)}
+    .zta-checks .tag.lint{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
+    .zta-checks .tag.judge{color:var(--accent-deep);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+    .zta-checks .tag.replay{color:var(--ink);border-color:var(--line-strong)}
+
     @media(max-width:760px){
         .zta-verbs{grid-template-columns:1fr}
         .zta-code pre{font-size:12px}
+        .zta-cost{grid-template-columns:1fr 1fr}
+        .zta-flow{grid-template-columns:1fr}
+        .zta-flow .arrow{transform:rotate(90deg);justify-self:center}
+        .zta-checks td:first-child{width:auto}
     }
+    @media(max-width:480px){.zta-cost{grid-template-columns:1fr}}
     </style>
     <script type="application/ld+json">
     {
@@ -63,7 +100,7 @@
       "headline": "Zero Token Architecture, seen from MCP",
       "description": "Kelsey Hightower's Zero Token Architecture read as a design rule for MCP: infer once, export the logic, run without inference. At runtime the export is the curated tool; at build time the export is the SDK.",
       "datePublished": "2026-09-07",
-      "dateModified": "2026-09-09",
+      "dateModified": "2026-09-10",
       "author": { "@type": "Person", "name": "Suryaprakash Lakshmanan", "url": "https://suryal.dev/" },
       "publisher": { "@type": "Person", "name": "Suryaprakash Lakshmanan" },
       "mainEntityOfPage": "https://suryal.dev/articles/zero-token-architecture-mcp.html",
@@ -157,7 +194,34 @@
 
                 <h2><span class="h2-no">02</span>Where the tokens actually go in an MCP call</h2>
                 <p>Before the two layers, it helps to be precise about what a tool call costs, because "zero token" is a phrase that invites overclaiming, and I would rather the argument survive contact with someone who has looked at their own usage dashboard.</p>
-                <p>Every MCP tool call spends tokens in four places. The tool's schema sits in the context window, on every turn, whether or not that tool is used. The model spends output tokens constructing the call: choosing the tool, filling the arguments. The result comes back into context as input tokens. And if the result was wrong, incomplete, or shaped badly, the model spends another round of reasoning and another call fixing it.</p>
+                <p>Every MCP tool call spends tokens in four places.</p>
+                <div class="zta-cost">
+                    <div>
+                        <span class="n">01 · SCHEMA</span>
+                        <h4>Sits in context</h4>
+                        <p>The tool's definition is in the context window on every turn, whether or not the tool is used.</p>
+                        <div class="d"><b>generic</b> forty endpoint schemas<br><i>curated</i> a handful, tighter</div>
+                    </div>
+                    <div>
+                        <span class="n">02 · CALL</span>
+                        <h4>Output tokens</h4>
+                        <p>The model constructs the call: picks the tool, fills the arguments.</p>
+                        <div class="d"><b>generic</b> a free-text query to write<br><i>curated</i> two typed fields</div>
+                    </div>
+                    <div>
+                        <span class="n">03 · RESULT</span>
+                        <h4>Input tokens</h4>
+                        <p>The result comes back into context and the model has to read all of it.</p>
+                        <div class="d"><b>generic</b> raw upstream JSON<br><i>curated</i> shaped, derived fields done</div>
+                    </div>
+                    <div class="zero">
+                        <span class="n">04 · RETRY</span>
+                        <h4>The multiplier</h4>
+                        <p>Wrong, incomplete, or badly shaped result: another round of reasoning, another call.</p>
+                        <div class="d"><b>generic</b> × N, every time<br><i>curated</i> × 0</div>
+                    </div>
+                </div>
+                <p class="zta-note">Curated tools shrink 01 to 03 and remove 04. That fourth box is where re-inference of solved logic lives.</p>
                 <p>Curated tools do not eliminate any of those four. The schema is still in context, the call is still inference, the result still comes back. What they change is the size of each and the count of the fourth. A tool that returns exactly the shape the model needs means a smaller result and no retry. A tool whose arguments are two typed fields instead of a free-text query means a shorter, more reliable call. Fewer tokens per outcome, not zero tokens.</p>
                 <p>What they do eliminate entirely is <strong>re-inference of solved logic</strong>. That is the ZTA claim, and it is the one worth making.</p>
 
@@ -230,8 +294,29 @@ server = GovernedServer(
 
                 <h2><span class="h2-no">09</span>Turning the test into a gate</h2>
                 <p>Four questions on a checklist are still a person inferring, one tool at a time, usually the week before a release. So the next thing I am building is an inspector: a step in the pipeline that scores an MCP server against the line above and fails the build when a tool sits on the wrong side of it.</p>
-                <p>Most of it is deterministic, which is the point. Argument names checked against a list of implementation smells (<code>query</code>, <code>sql</code>, <code>where_clause</code>, <code>payload</code>) and against the intent words in the description. Result schemas checked for size, and for whether derived fields exist or the model is expected to compute them. Descriptions checked for "when" language versus "how" language. Tool-call stability measured directly: replay the same intent through the same model a dozen times and count the distinct tool calls that come back. A curated tool converges to one; a generic tool does not. Retry rate per tool, from the traces you already have. And at build time, a plain diff of the auth, propagation, and audit code across every server in the registry, so a third bespoke <code>sub</code> extractor cannot land without someone seeing it.</p>
-                <p>Two of those checks need a model. Whether a description says <em>when</em> rather than <em>how</em> is a judgement call, and so is whether a result is shaped for the model or merely dumped. The irony of spending tokens to check whether a tool spends too many tokens is not lost on me. But it is the ZTA loop applied to itself: infer at review time, once per tool version, and export the verdict into the manifest as a pinned score. Production never runs the judge. The judge runs when the tool changes, which is exactly when a decision is being made.</p>
+                <div class="zta-flow">
+                    <div class="node"><span class="k">input</span><b>Tool manifest</b><span>schemas, descriptions, result shapes, plus the server's auth code</span></div>
+                    <div class="arrow">→</div>
+                    <div class="node hot"><span class="k">once per tool version</span><b>Inspector</b><span>seven checks, most deterministic, two model-judged</span></div>
+                    <div class="arrow">→</div>
+                    <div class="node"><span class="k">export</span><b>Score pinned to manifest</b><span>the verdict travels with the version that was reviewed</span></div>
+                    <div class="arrow">→</div>
+                    <div class="node"><span class="k">change gate</span><b>Ship, or back to discovery</b><span>production never runs the judge</span></div>
+                </div>
+                <table class="zta-checks">
+                    <thead><tr><th>Check</th><th>What it catches</th><th>Kind</th></tr></thead>
+                    <tbody>
+                        <tr><td>Argument names vs implementation smells</td><td><code>query</code>, <code>sql</code>, <code>where_clause</code>, <code>payload</code>: the model is being handed the how</td><td><span class="tag lint">lint</span></td></tr>
+                        <tr><td>Result schema size and derived fields</td><td>Raw upstream dumps; fields the model will have to compute itself</td><td><span class="tag lint">lint</span></td></tr>
+                        <tr><td>Description says <em>when</em>, not <em>how</em></td><td>Descriptions that explain internals instead of intent</td><td><span class="tag judge">model judge</span></td></tr>
+                        <tr><td>Result shaped for the model, or merely dumped</td><td>Technically complete results the model still has to interpret</td><td><span class="tag judge">model judge</span></td></tr>
+                        <tr><td>Tool-call stability</td><td>Replay the same intent a dozen times; a curated tool converges to one call, a generic tool does not</td><td><span class="tag replay">replay</span></td></tr>
+                        <tr><td>Retry rate per tool</td><td>Box 04 above, measured from the traces you already have</td><td><span class="tag lint">traces</span></td></tr>
+                        <tr><td>Auth, propagation, audit diffed across servers</td><td>A third bespoke <code>sub</code> extractor landing without anyone seeing it</td><td><span class="tag lint">lint</span></td></tr>
+                    </tbody>
+                </table>
+                <p class="zta-note">Five of seven need no model at all. Two do. Which makes this an eval harness for Zero Token Architecture that is not, itself, zero token. Sit with that for a second; I had to.</p>
+                <p>Two of those checks need a model. Whether a description says <em>when</em> rather than <em>how</em> is a judgement call, and so is whether a result is shaped for the model or merely dumped. So yes: I am proposing to spend tokens on a judge whose job is to catch tools that spend too many tokens, and I wrote eight sections arguing against exactly that kind of thing before getting here. In my defence, it is the ZTA loop applied to itself. Infer at review time, once per tool version, and export the verdict into the manifest as a pinned score. Production never runs the judge. The judge runs when the tool changes, which is exactly when a decision is being made. If that still sounds like a rationalisation, the deterministic five will happily ship without it.</p>
                 <p>Whether that ends up as a checklist that grew a CI step or an eval harness in its own right, I will find out by building it. It is the natural next stage of the lifecycle above: the Change gate stops asking "did someone look?" and starts asking "which column is it in?"</p>
 
                 <h2><span class="h2-no">10</span>Fundamentals</h2>
