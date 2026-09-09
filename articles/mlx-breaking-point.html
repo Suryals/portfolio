@@ -15,7 +15,8 @@
     <meta name="twitter:site" content="@suryaagentic">
     <meta name="twitter:creator" content="@suryaagentic">
     <meta name="twitter:image" content="https://suryal.dev/images/og-image-v2.png">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%2317160F%22/><text x=%2250%22 y=%2271%22 font-size=%2262%22 font-family=%22Georgia,serif%22 font-weight=%22500%22 text-anchor=%22middle%22 fill=%22%23FBFAF7%22>S</text></svg>">
+    <meta name="theme-color" content="#FBFAF7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -97,35 +98,30 @@
 </head>
 <body>
     <div class="progress" id="progress" aria-hidden="true"></div>
-    <div class="cursor" id="cursor" aria-hidden="true"></div>
 
     <header class="topbar" id="topbar">
         <div class="bar">
-            <a href="../index.html#top" class="mark">
-                <span class="mark-name">Surya</span>
-                <span class="mark-dot"></span>
-            </a>
+            <a href="../index.html" class="mark">Suryaprakash Lakshmanan</a>
             <nav class="nav" aria-label="Primary">
-                <a href="../index.html#work"><i>01</i> Services</a>
-                <a href="../index.html#lab"><i>02</i> Lab</a>
-                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
-                <a href="../index.html#experience"><i>04</i> Uptime</a>
-                <a href="../index.html#writing"><i>05</i> Logs</a>
-                <a href="../index.html#contact"><i>06</i> Channel</a>
+                <a href="../index.html#work">Work</a>
+                <a href="../index.html#writing">Writing</a>
+                <a href="../index.html#opensource">Open source</a>
+                <a href="../index.html#experience">Experience</a>
+                <a href="../index.html#contact">Contact</a>
             </nav>
-            <a href="index.html" class="topbar-cta">All articles ↗</a>
-            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+            <a href="index.html" class="topbar-cta">All articles</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
                 <span></span><span></span>
             </button>
         </div>
     </header>
     <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-        <a href="../index.html#work"><i>01</i> Services</a>
-        <a href="../index.html#lab"><i>02</i> Lab</a>
-        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
-        <a href="../index.html#experience"><i>04</i> Uptime</a>
-        <a href="../index.html#writing"><i>05</i> Logs</a>
-        <a href="../index.html#contact"><i>06</i> Channel</a>
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#opensource">Open source</a>
+        <a href="../index.html#experience">Experience</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="index.html">All articles</a>
     </div>
 
     <main class="article">
@@ -169,14 +165,14 @@
                 <div class="mlxd-chartblock">
                     <p class="mlxd-chart-h">Decode throughput</p>
                     <p class="mlxd-chart-sub">tokens / second · higher is better · all 4-bit quantized</p>
-                    <svg viewBox="0 0 720 340" role="img" class="mlxd-svg" preserveAspectRatio="xMinYMin meet"><text x="0" y="20" class="mlxd-rowlabel">3.2B</text><text x="0" y="36" class="mlxd-rowsub">Llama 3.2</text><rect x="132" y="6" width="498.0" height="32" rx="4" fill="#FFB224"/><text x="640.0" y="26" class="mlxd-val">226.7<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="78" class="mlxd-rowlabel">7.6B</text><text x="0" y="94" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="64" width="257.5" height="32" rx="4" fill="#FFB224"/><text x="399.5" y="84" class="mlxd-val">117.2<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="136" class="mlxd-rowlabel">14B</text><text x="0" y="152" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="122" width="131.2" height="32" rx="4" fill="#FFB224"/><text x="273.2" y="142" class="mlxd-val">59.7<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="194" class="mlxd-rowlabel">32B</text><text x="0" y="210" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="180" width="59.9" height="32" rx="4" fill="#FFB224"/><text x="201.9" y="200" class="mlxd-val">27.3<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="252" class="mlxd-rowlabel">70B</text><text x="0" y="268" class="mlxd-rowsub">Llama 3.3</text><rect x="132" y="238" width="23.9" height="32" rx="4" fill="#FFB224"/><text x="165.9" y="258" class="mlxd-val">10.9<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="310" class="mlxd-rowlabel">123B</text><text x="0" y="326" class="mlxd-rowsub">Mistral Large</text><rect x="132" y="296" width="13.9" height="32" rx="4" fill="#FFB224"/><text x="155.9" y="316" class="mlxd-val">6.3<tspan class="mlxd-unit"> tok/s</tspan></text></svg>
+                    <svg viewBox="0 0 720 340" role="img" class="mlxd-svg" preserveAspectRatio="xMinYMin meet"><text x="0" y="20" class="mlxd-rowlabel">3.2B</text><text x="0" y="36" class="mlxd-rowsub">Llama 3.2</text><rect x="132" y="6" width="498.0" height="32" rx="4" fill="#1F4BA8"/><text x="640.0" y="26" class="mlxd-val">226.7<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="78" class="mlxd-rowlabel">7.6B</text><text x="0" y="94" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="64" width="257.5" height="32" rx="4" fill="#1F4BA8"/><text x="399.5" y="84" class="mlxd-val">117.2<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="136" class="mlxd-rowlabel">14B</text><text x="0" y="152" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="122" width="131.2" height="32" rx="4" fill="#1F4BA8"/><text x="273.2" y="142" class="mlxd-val">59.7<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="194" class="mlxd-rowlabel">32B</text><text x="0" y="210" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="180" width="59.9" height="32" rx="4" fill="#1F4BA8"/><text x="201.9" y="200" class="mlxd-val">27.3<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="252" class="mlxd-rowlabel">70B</text><text x="0" y="268" class="mlxd-rowsub">Llama 3.3</text><rect x="132" y="238" width="23.9" height="32" rx="4" fill="#1F4BA8"/><text x="165.9" y="258" class="mlxd-val">10.9<tspan class="mlxd-unit"> tok/s</tspan></text><text x="0" y="310" class="mlxd-rowlabel">123B</text><text x="0" y="326" class="mlxd-rowsub">Mistral Large</text><rect x="132" y="296" width="13.9" height="32" rx="4" fill="#1F4BA8"/><text x="155.9" y="316" class="mlxd-val">6.3<tspan class="mlxd-unit"> tok/s</tspan></text></svg>
                 </div>
 
                 <p>The real cost of going big isn't throughput — it's <strong>time-to-first-token</strong>. TTFT explodes from 89ms at 3B to <strong>4.6 seconds</strong> at 123B, a 52× jump. Decode at 123B is a usable 6 tok/s; the 4.6 seconds you wait <em>before</em> it starts is what makes it batch-only. The practical cliff for interactive use is ~32B:</p>
                 <div class="mlxd-chartblock">
                     <p class="mlxd-chart-h">Time to first token</p>
                     <p class="mlxd-chart-sub">lower is better · the wait before generation starts · 70B/123B are sustained (hot-chassis) figures</p>
-                    <svg viewBox="0 0 720 340" role="img" class="mlxd-svg" preserveAspectRatio="xMinYMin meet"><text x="0" y="20" class="mlxd-rowlabel">3.2B</text><text x="0" y="36" class="mlxd-rowsub">Llama 3.2</text><rect x="132" y="6" width="9.6" height="32" rx="3" fill="#D99A1E"/><text x="151.6" y="26" class="mlxd-val">89<tspan class="mlxd-unit"> ms</tspan></text><text x="0" y="78" class="mlxd-rowlabel">7.6B</text><text x="0" y="94" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="64" width="12.4" height="32" rx="3" fill="#D99A1E"/><text x="154.4" y="84" class="mlxd-val">115<tspan class="mlxd-unit"> ms</tspan></text><text x="0" y="136" class="mlxd-rowlabel">14B</text><text x="0" y="152" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="122" width="16.2" height="32" rx="3" fill="#D99A1E"/><text x="158.2" y="142" class="mlxd-val">151<tspan class="mlxd-unit"> ms</tspan></text><text x="0" y="194" class="mlxd-rowlabel">32B</text><text x="0" y="210" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="180" width="35.0" height="32" rx="3" fill="#D99A1E"/><text x="177.0" y="200" class="mlxd-val">326<tspan class="mlxd-unit"> ms</tspan></text><text x="0" y="252" class="mlxd-rowlabel">70B</text><text x="0" y="268" class="mlxd-rowsub">Llama 3.3</text><rect x="132" y="238" width="197.2" height="32" rx="3" fill="#D99A1E"/><text x="339.2" y="258" class="mlxd-val">1.8<tspan class="mlxd-unit"> s</tspan></text><text x="0" y="310" class="mlxd-rowlabel">123B</text><text x="0" y="326" class="mlxd-rowsub">Mistral Large</text><rect x="132" y="296" width="498.0" height="32" rx="3" fill="#D99A1E"/><text x="640" y="316" class="mlxd-val">4.6<tspan class="mlxd-unit"> s</tspan></text></svg>
+                    <svg viewBox="0 0 720 340" role="img" class="mlxd-svg" preserveAspectRatio="xMinYMin meet"><text x="0" y="20" class="mlxd-rowlabel">3.2B</text><text x="0" y="36" class="mlxd-rowsub">Llama 3.2</text><rect x="132" y="6" width="9.6" height="32" rx="3" fill="#173B85"/><text x="151.6" y="26" class="mlxd-val">89<tspan class="mlxd-unit"> ms</tspan></text><text x="0" y="78" class="mlxd-rowlabel">7.6B</text><text x="0" y="94" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="64" width="12.4" height="32" rx="3" fill="#173B85"/><text x="154.4" y="84" class="mlxd-val">115<tspan class="mlxd-unit"> ms</tspan></text><text x="0" y="136" class="mlxd-rowlabel">14B</text><text x="0" y="152" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="122" width="16.2" height="32" rx="3" fill="#173B85"/><text x="158.2" y="142" class="mlxd-val">151<tspan class="mlxd-unit"> ms</tspan></text><text x="0" y="194" class="mlxd-rowlabel">32B</text><text x="0" y="210" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="180" width="35.0" height="32" rx="3" fill="#173B85"/><text x="177.0" y="200" class="mlxd-val">326<tspan class="mlxd-unit"> ms</tspan></text><text x="0" y="252" class="mlxd-rowlabel">70B</text><text x="0" y="268" class="mlxd-rowsub">Llama 3.3</text><rect x="132" y="238" width="197.2" height="32" rx="3" fill="#173B85"/><text x="339.2" y="258" class="mlxd-val">1.8<tspan class="mlxd-unit"> s</tspan></text><text x="0" y="310" class="mlxd-rowlabel">123B</text><text x="0" y="326" class="mlxd-rowsub">Mistral Large</text><rect x="132" y="296" width="498.0" height="32" rx="3" fill="#173B85"/><text x="640" y="316" class="mlxd-val">4.6<tspan class="mlxd-unit"> s</tspan></text></svg>
                 </div>
 
                 <h2>The breaking point that wasn't</h2>
@@ -184,7 +180,7 @@
                 <div class="mlxd-chartblock">
                     <p class="mlxd-chart-h">Peak unified memory</p>
                     <p class="mlxd-chart-sub">GB resident during generation · bar scale = 0 → 128GB</p>
-                    <svg viewBox="0 0 720 374" role="img" class="mlxd-svg" preserveAspectRatio="xMinYMin meet"><text x="577" y="12" text-anchor="end" class="mlxd-anno" fill="#6F6D5C">metal soft limit · 115GB</text><line x1="581" y1="20" x2="581" y2="356" stroke="#6F6D5C" stroke-width="1" stroke-dasharray="2 4"/><line x1="630" y1="20" x2="630" y2="356" stroke="#FFB224" stroke-width="1" stroke-dasharray="5 4" opacity="0.85"/><text x="626" y="370" text-anchor="end" class="mlxd-anno" fill="#FFB224">probed to 128GB · no refusal</text><text x="0" y="44" class="mlxd-rowlabel">3.2B</text><text x="0" y="60" class="mlxd-rowsub">Llama 3.2</text><rect x="132" y="30" width="8.0" height="32" rx="3" fill="#6F6D5C"/><text x="150.0" y="50" class="mlxd-val">2.1<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="102" class="mlxd-rowlabel">7.6B</text><text x="0" y="118" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="88" width="17.3" height="32" rx="3" fill="#6F6D5C"/><text x="159.3" y="108" class="mlxd-val">4.5<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="160" class="mlxd-rowlabel">14B</text><text x="0" y="176" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="146" width="33.0" height="32" rx="3" fill="#6F6D5C"/><text x="175.0" y="166" class="mlxd-val">8.5<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="218" class="mlxd-rowlabel">32B</text><text x="0" y="234" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="204" width="72.4" height="32" rx="3" fill="#6F6D5C"/><text x="214.4" y="224" class="mlxd-val">18.6<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="276" class="mlxd-rowlabel">70B</text><text x="0" y="292" class="mlxd-rowsub">Llama 3.3</text><rect x="132" y="262" width="155.2" height="32" rx="3" fill="#6F6D5C"/><text x="297.2" y="282" class="mlxd-val">39.9<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="334" class="mlxd-rowlabel">123B</text><text x="0" y="350" class="mlxd-rowsub">Mistral Large</text><rect x="132" y="320" width="269.1" height="32" rx="3" fill="#FFB224"/><text x="411.1" y="340" class="mlxd-val">69.2<tspan class="mlxd-unit"> GB</tspan></text></svg>
+                    <svg viewBox="0 0 720 374" role="img" class="mlxd-svg" preserveAspectRatio="xMinYMin meet"><text x="577" y="12" text-anchor="end" class="mlxd-anno" fill="#6F6D5C">metal soft limit · 115GB</text><line x1="581" y1="20" x2="581" y2="356" stroke="#6F6D5C" stroke-width="1" stroke-dasharray="2 4"/><line x1="630" y1="20" x2="630" y2="356" stroke="#1F4BA8" stroke-width="1" stroke-dasharray="5 4" opacity="0.85"/><text x="626" y="370" text-anchor="end" class="mlxd-anno" fill="#1F4BA8">probed to 128GB · no refusal</text><text x="0" y="44" class="mlxd-rowlabel">3.2B</text><text x="0" y="60" class="mlxd-rowsub">Llama 3.2</text><rect x="132" y="30" width="8.0" height="32" rx="3" fill="#6F6D5C"/><text x="150.0" y="50" class="mlxd-val">2.1<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="102" class="mlxd-rowlabel">7.6B</text><text x="0" y="118" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="88" width="17.3" height="32" rx="3" fill="#6F6D5C"/><text x="159.3" y="108" class="mlxd-val">4.5<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="160" class="mlxd-rowlabel">14B</text><text x="0" y="176" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="146" width="33.0" height="32" rx="3" fill="#6F6D5C"/><text x="175.0" y="166" class="mlxd-val">8.5<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="218" class="mlxd-rowlabel">32B</text><text x="0" y="234" class="mlxd-rowsub">Qwen2.5</text><rect x="132" y="204" width="72.4" height="32" rx="3" fill="#6F6D5C"/><text x="214.4" y="224" class="mlxd-val">18.6<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="276" class="mlxd-rowlabel">70B</text><text x="0" y="292" class="mlxd-rowsub">Llama 3.3</text><rect x="132" y="262" width="155.2" height="32" rx="3" fill="#6F6D5C"/><text x="297.2" y="282" class="mlxd-val">39.9<tspan class="mlxd-unit"> GB</tspan></text><text x="0" y="334" class="mlxd-rowlabel">123B</text><text x="0" y="350" class="mlxd-rowsub">Mistral Large</text><rect x="132" y="320" width="269.1" height="32" rx="3" fill="#1F4BA8"/><text x="411.1" y="340" class="mlxd-val">69.2<tspan class="mlxd-unit"> GB</tspan></text></svg>
                 </div>
 
                 <p>So I went looking for the actual wall with a probe that allocates GPU memory in 4GB chunks until Metal refuses. It never did:</p>
@@ -276,12 +272,12 @@
     <footer class="footer">
         <div class="wrap footer-inner">
             <div class="footer-col">
-                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
-                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+                <span class="footer-mark">Suryaprakash Lakshmanan</span>
+                <p>Staff Engineer, AI Enablement &amp; Cloud · Chennai, India</p>
             </div>
             <div class="footer-col footer-colophon">
-                <span>© <span id="year">2026</span> — All rights reserved</span>
-                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+                <span>© <span id="year">2026</span> Suryaprakash Lakshmanan</span>
+                <span><a href="../index.html">Home</a> · <a href="index.html">Articles</a> · <a href="../feed.xml">RSS</a></span>
             </div>
         </div>
     </footer>

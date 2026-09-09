@@ -15,8 +15,8 @@
     <meta name="twitter:site" content="@suryaagentic">
     <meta name="twitter:creator" content="@suryaagentic">
     <meta name="twitter:image" content="https://suryal.dev/images/og-image-v2.png">
-    <meta name="theme-color" content="#0B0D0A">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <meta name="theme-color" content="#FBFAF7">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%2317160F%22/><text x=%2250%22 y=%2271%22 font-size=%2262%22 font-family=%22Georgia,serif%22 font-weight=%22500%22 text-anchor=%22middle%22 fill=%22%23FBFAF7%22>S</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -46,10 +46,10 @@
     .pp-tier .badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);
         font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;padding:5px 11px;
         border:1px solid var(--line);border-radius:4px;color:var(--ink-soft)}
-    .pp-tier.live .badge{color:var(--ok);border-color:rgba(126,217,138,.3)}
-    .pp-tier.live .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px rgba(126,217,138,.7)}
-    .pp-tier.proven .badge{color:var(--accent);border-color:rgba(255,178,36,.35)}
-    .pp-tier.proven .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px rgba(255,178,36,.7)}
+    .pp-tier.live .badge{color:var(--ok);border-color:rgba(46,125,79,.35)}
+    .pp-tier.live .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px rgba(46,125,79,.45)}
+    .pp-tier.proven .badge{color:var(--accent);border-color:rgba(31,75,168,.35)}
+    .pp-tier.proven .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px rgba(31,75,168,.45)}
     .pp-tier h3{font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.4vw,28px);margin:14px 0 4px;color:var(--ink);letter-spacing:-.01em}
     .pp-tier .lede{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px}
     .pp-tier ul{list-style:none;padding:0;margin:0;display:grid;gap:9px}
@@ -100,38 +100,36 @@
 </head>
 <body>
     <div class="progress" id="progress" aria-hidden="true"></div>
-    <div class="cursor" id="cursor" aria-hidden="true"></div>
 
     <header class="topbar" id="topbar">
         <div class="bar">
-            <a href="../index.html#top" class="mark"><span class="mark-name">Surya</span><span class="mark-dot"></span></a>
+            <a href="../index.html" class="mark">Suryaprakash Lakshmanan</a>
             <nav class="nav" aria-label="Primary">
-                <a href="../index.html#work"><i>01</i> Services</a>
-                <a href="../index.html#lab"><i>02</i> Lab</a>
-                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
-                <a href="../index.html#experience"><i>04</i> Uptime</a>
-                <a href="../index.html#writing"><i>05</i> Logs</a>
-                <a href="../index.html#contact"><i>06</i> Channel</a>
+                <a href="../index.html#work">Work</a>
+                <a href="../index.html#writing">Writing</a>
+                <a href="../index.html#opensource">Open source</a>
+                <a href="../index.html#experience">Experience</a>
+                <a href="../index.html#contact">Contact</a>
             </nav>
-            <a href="../index.html#lab" class="topbar-cta">← Back to Lab</a>
-            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+            <a href="index.html" class="topbar-cta">All articles</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
                 <span></span><span></span>
             </button>
         </div>
     </header>
     <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-        <a href="../index.html#work"><i>01</i> Services</a>
-        <a href="../index.html#lab"><i>02</i> Lab</a>
-        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
-        <a href="../index.html#experience"><i>04</i> Uptime</a>
-        <a href="../index.html#writing"><i>05</i> Logs</a>
-        <a href="../index.html#contact"><i>06</i> Channel</a>
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#opensource">Open source</a>
+        <a href="../index.html#experience">Experience</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="index.html">All articles</a>
     </div>
 
     <main class="article">
         <div class="wrap">
             <header class="article-header">
-                <p class="breadcrumb"><a href="../index.html#lab">Lab</a> <span>/</span> exp-004</p>
+                <p class="breadcrumb"><a href="../index.html#opensource">Open source</a> <span>/</span> exp-004</p>
                 <span class="article-cat" style="margin-top:14px">Security · MCP · Identity</span>
                 <h1 class="article-title">MCP access to a database — as the <em>user</em>, not a service account.</h1>
                 <p class="article-sub">A reference pattern and working demo for <em>principal propagation</em>: an AI agent reaches a banking database through MCP carrying the end user's verified identity — with authentication, authorization, and audit enforced where the data lives.</p>
@@ -278,7 +276,7 @@
                         <p>Six local LLMs, 3B → 123B, on a 128GB M5 Max — the scaling curve, the memory ceiling, and the thermal tax.</p>
                         <span class="rc-go">Open the dashboard →</span>
                     </a>
-                    <a class="rel-card cta" href="../index.html#lab">
+                    <a class="rel-card cta" href="../index.html#opensource">
                         <span class="rc-cat">Building in public</span>
                         <h4>More from the Lab</h4>
                         <p>Experiments in the open — benchmarks, governed agent infra, and evals. Code on GitHub, every claim reproducible.</p>
@@ -292,12 +290,12 @@
     <footer class="footer">
         <div class="wrap footer-inner">
             <div class="footer-col">
-                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
-                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+                <span class="footer-mark">Suryaprakash Lakshmanan</span>
+                <p>Staff Engineer, AI Enablement &amp; Cloud · Chennai, India</p>
             </div>
             <div class="footer-col footer-colophon">
-                <span>© <span id="year">2026</span> — All rights reserved</span>
-                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+                <span>© <span id="year">2026</span> Suryaprakash Lakshmanan</span>
+                <span><a href="../index.html">Home</a> · <a href="index.html">Articles</a> · <a href="../feed.xml">RSS</a></span>
             </div>
         </div>
     </footer>

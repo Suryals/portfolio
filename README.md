@@ -1,60 +1,53 @@
 # suryal.dev — Suryaprakash Lakshmanan
 
-Personal portfolio for **Suryaprakash Lakshmanan**, Staff AI Platform & Cloud Engineer.
-Single-page static site (vanilla HTML/CSS/JS, no build step), live at **https://suryal.dev**.
+Personal site for **Suryaprakash Lakshmanan**, Staff Engineer, AI Enablement & Cloud.
+Static site (vanilla HTML/CSS/JS, no build step), live at **https://suryal.dev**.
+
+This is the revamped edition of the site: an editorial, content-first layout that
+leads with outcomes, operating principles, open-source work, and writing.
 
 ## Structure
 
 ```
-index.html      # the entire page
-style.css        # styles (editorial field-notes aesthetic)
-script.js        # nav, scroll reveals, project filter
-images/          # og-image, harness-mask, linkedin-posts/
+index.html       # home page
+style.css        # design system + home page + shared header/footer
+script.js        # header state, mobile navigation, footer year
+articles/        # long-form articles (index.html is the listing)
+articles.css     # article listing + reading styles (inherits tokens from style.css)
+articles.js      # reading progress, category filter
+images/          # article figures, social card
+feed.xml         # RSS
+sitemap.xml
+robots.txt
 CNAME            # custom domain for GitHub Pages (suryal.dev)
-docs/            # reference notes (LinkedIn embed guides)
-_archive/        # superseded earlier stylesheets
 ```
+
+## Editing
+
+- **Home page content** lives entirely in `index.html`. Sections: hero, selected work,
+  operating principles, open source, writing, experience, expertise, contact.
+- **Design tokens** (paper, ink, accent, type) are at the top of `style.css`. The
+  article pages use the same tokens, so a palette change applies everywhere.
+- **Adding an article**: copy an existing page in `articles/`, add a row to
+  `articles/index.html`, the writing list in `index.html`, `feed.xml`, and `sitemap.xml`.
 
 ## Local preview
 
-It's static — just open `index.html`, or serve it:
-
 ```bash
-python3 -m http.server 8000   # then visit http://localhost:8000
+python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
 ## Deployment
 
-Hosted on **GitHub Pages** from the `main` branch (root), repo
-[`Suryals/portfolio`](https://github.com/Suryals/portfolio). Any push to `main`
-redeploys automatically.
+Hosted on **GitHub Pages** from the `main` branch (root). DNS for `suryal.dev` lives in
+Cloudflare in "DNS only" mode so GitHub can issue and renew the TLS certificate:
 
-### Domain (suryal.dev, DNS on Cloudflare)
+| Type  | Name  | Value               |
+|-------|-------|---------------------|
+| A     | `@`   | `185.199.108.153`   |
+| A     | `@`   | `185.199.109.153`   |
+| A     | `@`   | `185.199.110.153`   |
+| A     | `@`   | `185.199.111.153`   |
+| CNAME | `www` | `suryals.github.io` |
 
-DNS lives in Cloudflare, **set to "DNS only" (grey cloud) — not proxied**, so GitHub
-can serve and renew the TLS certificate. `.dev` is HSTS-preloaded, so HTTPS is mandatory.
-
-| Type  | Name | Value                                              | Proxy    |
-|-------|------|----------------------------------------------------|----------|
-| A     | `@`  | `185.199.108.153`                                  | DNS only |
-| A     | `@`  | `185.199.109.153`                                  | DNS only |
-| A     | `@`  | `185.199.110.153`                                  | DNS only |
-| A     | `@`  | `185.199.111.153`                                  | DNS only |
-| CNAME | `www`| `suryals.github.io`                                | DNS only |
-
-GitHub Pages → **Enforce HTTPS: on**. The cert (`CN=suryal.dev`) covers both the apex
-and `www`; `www.suryal.dev` 301-redirects to the apex.
-
-> Do **not** switch the records to proxied (orange cloud) — it breaks GitHub's cert
-> issuance/renewal. The Cloudflare SSL/TLS "encryption mode" setting is irrelevant while
-> records are DNS-only.
-
-## Updating the site
-
-Edit `index.html` / `style.css` / `script.js`, then:
-
-```bash
-git add -A && git commit -m "your message" && git push
-```
-
-Live within a minute or two. The `images/og-image.png` (1200×630) is the social-share card.
+GitHub Pages → Enforce HTTPS: on.

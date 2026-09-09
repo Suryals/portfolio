@@ -15,7 +15,8 @@
     <meta name="twitter:site" content="@suryaagentic">
     <meta name="twitter:creator" content="@suryaagentic">
     <meta name="twitter:image" content="https://suryal.dev/images/a2a/a2a-flow-light.png">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230B0D0A%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 font-family=%22Georgia,serif%22 text-anchor=%22middle%22 fill=%22%23E9E6D8%22>S</text><circle cx=%2278%22 cy=%2228%22 r=%2210%22 fill=%22%23FFB224%22/></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%2317160F%22/><text x=%2250%22 y=%2271%22 font-size=%2262%22 font-family=%22Georgia,serif%22 font-weight=%22500%22 text-anchor=%22middle%22 fill=%22%23FBFAF7%22>S</text></svg>">
+    <meta name="theme-color" content="#FBFAF7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -71,35 +72,30 @@
 </head>
 <body>
     <div class="progress" id="progress" aria-hidden="true"></div>
-    <div class="cursor" id="cursor" aria-hidden="true"></div>
 
     <header class="topbar" id="topbar">
         <div class="bar">
-            <a href="../index.html#top" class="mark">
-                <span class="mark-name">Surya</span>
-                <span class="mark-dot"></span>
-            </a>
+            <a href="../index.html" class="mark">Suryaprakash Lakshmanan</a>
             <nav class="nav" aria-label="Primary">
-                <a href="../index.html#work"><i>01</i> Services</a>
-                <a href="../index.html#lab"><i>02</i> Lab</a>
-                <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
-                <a href="../index.html#experience"><i>04</i> Uptime</a>
-                <a href="../index.html#writing"><i>05</i> Logs</a>
-                <a href="../index.html#contact"><i>06</i> Channel</a>
+                <a href="../index.html#work">Work</a>
+                <a href="../index.html#writing">Writing</a>
+                <a href="../index.html#opensource">Open source</a>
+                <a href="../index.html#experience">Experience</a>
+                <a href="../index.html#contact">Contact</a>
             </nav>
-            <a href="index.html" class="topbar-cta">All articles ↗</a>
-            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">
+            <a href="index.html" class="topbar-cta">All articles</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
                 <span></span><span></span>
             </button>
         </div>
     </header>
     <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-        <a href="../index.html#work"><i>01</i> Services</a>
-        <a href="../index.html#lab"><i>02</i> Lab</a>
-        <a href="../index.html#capabilities"><i>03</i> Subsystems</a>
-        <a href="../index.html#experience"><i>04</i> Uptime</a>
-        <a href="../index.html#writing"><i>05</i> Logs</a>
-        <a href="../index.html#contact"><i>06</i> Channel</a>
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#writing">Writing</a>
+        <a href="../index.html#opensource">Open source</a>
+        <a href="../index.html#experience">Experience</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="index.html">All articles</a>
     </div>
 
     <main class="article">
@@ -174,7 +170,7 @@
                 <h2><span class="h2-no">05</span>One order, every layer</h2>
                 <p>Layer diagrams are cheap. So here's a real transaction, end to end — deliberately ordinary, because ordinary is where standards earn their keep: a retail chain needs stock, a supplier has it, and finance controls the money. Every protocol and project named is shipping today; where I show message shapes, they're simplified for readability, not invented.</p>
 
-                <div class="a2a-fig"><img src="../images/a2a/a2a-flow-dark.png" alt="Flow diagram: NorthCart Retail's replenishment and finance agents (AGENTS.md, goose, MCP servers) transact with two supplier sales agents over A2A through agentgateway, paying via an AP2 mandate — eight numbered steps from detect to trace" loading="lazy"></div>
+                <div class="a2a-fig"><img src="../images/a2a/a2a-flow-light.png" alt="Flow diagram: NorthCart Retail's replenishment and finance agents (AGENTS.md, goose, MCP servers) transact with two supplier sales agents over A2A through agentgateway, paying via an AP2 mandate — eight numbered steps from detect to trace" loading="lazy"></div>
                 <p class="a2a-figcap">One order through all five layers — eight steps, two organizations, zero point-to-point integrations.</p>
 
                 <h3>The cast</h3>
@@ -305,12 +301,12 @@
     <footer class="footer">
         <div class="wrap footer-inner">
             <div class="footer-col">
-                <span class="footer-mark">SURYAPRAKASH LAKSHMANAN<b>_</b></span>
-                <p>Staff AI Platform &amp; Cloud Engineer — Chennai, India</p>
+                <span class="footer-mark">Suryaprakash Lakshmanan</span>
+                <p>Staff Engineer, AI Enablement &amp; Cloud · Chennai, India</p>
             </div>
             <div class="footer-col footer-colophon">
-                <span>© <span id="year">2026</span> — All rights reserved</span>
-                <span><a href="index.html" style="color:inherit">Articles</a> · <a href="../index.html" style="color:inherit">Home</a></span>
+                <span>© <span id="year">2026</span> Suryaprakash Lakshmanan</span>
+                <span><a href="../index.html">Home</a> · <a href="index.html">Articles</a> · <a href="../feed.xml">RSS</a></span>
             </div>
         </div>
     </footer>
