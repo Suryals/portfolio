@@ -7,7 +7,15 @@
     <description>Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization.</description>
     <language>en-us</language>
     <managingEditor>suryal.k90@gmail.com (Suryaprakash Lakshmanan)</managingEditor>
-    <lastBuildDate>Mon, 07 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 15 Sep 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>RAG or fine-tuning? One agent, four configurations, one catalog change.</title>
+      <link>https://suryal.dev/articles/rag-or-fine-tuning.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/rag-or-fine-tuning.html</guid>
+      <pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate>
+      <description>MLX Lab Episode 04. A local Qwen3.5-4B triage agent built four ways: base, base + RAG, LoRA fine-tuned, and both. Fine-tuning alone scored 100% on the original facts; after one catalog change with no retraining it returned the old destination 0/4 while both retrieval configurations returned the new one 4/4. Why the sequence should be base + RAG first, a golden evaluation set, then fine-tuning only when it earns its place.</description>
+    </item>
 
     <item>
       <title>Zero Token Architecture, seen from MCP</title>
