@@ -7,7 +7,15 @@
     <description>Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization.</description>
     <language>en-us</language>
     <managingEditor>suryal.k90@gmail.com (Suryaprakash Lakshmanan)</managingEditor>
-    <lastBuildDate>Tue, 15 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 24 Sep 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Testing Jev: can a model that can't talk route my alerts?</title>
+      <link>https://suryal.dev/articles/jev-vs-qwen3-8-27b-vs-claude-sonnet-5.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/jev-vs-qwen3-8-27b-vs-claude-sonnet-5.html</guid>
+      <pubDate>Thu, 24 Sep 2026 00:00:00 +0000</pubDate>
+      <description>TypeSafe's Jev is a "System One" model: no text generation, just typed decisions with probabilities. A shadow-mode eval on 310 labeled AIOps alerts against two LLM yardsticks — a local Qwen3.8-27B and Claude Sonnet 5. Jev held 95% category accuracy at 331ms and ~$23 per million alerts, with calibration honest enough to gate on: a confidence-gated hybrid matched the LLMs at 97% while escalating only 15% of traffic. Includes the three Jev primitives (noul, choice, score), the TLS-handshake latency lesson, and where the thesis is weaker (paging decisions).</description>
+    </item>
 
     <item>
       <title>RAG or fine-tuning? One agent, four configurations, one catalog change.</title>
