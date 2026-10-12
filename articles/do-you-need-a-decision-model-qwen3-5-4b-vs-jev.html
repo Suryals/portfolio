@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Do you need a decision model? Qwen3.5-4B and Qwen3.8-27B vs Jev — Surya</title>
+<meta name="description" content="Reading a local LLM's label probabilities as a decision model, against TypeSafe's Jev on 310 alerts. A 4B matches Jev on category, loses on paging, ignores a rule that depends on a detail, and nobody is reliable on priority.">
+<link rel="canonical" href="https://suryal.dev/articles/do-you-need-a-decision-model-qwen3-5-4b-vs-jev.html">
+<link rel="alternate" type="application/rss+xml" title="Suryaprakash Lakshmanan — Field Notes" href="https://suryal.dev/feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Do you need a decision model? Qwen3.5-4B and Qwen3.8-27B vs Jev">
+<meta property="og:description" content="A 4B LLM read as a decision model matches Jev on alert category, loses on paging, and ignores a rule that depends on a detail in the alert. On priority, nobody is reliable, and the labels are part of why.">
+<meta property="og:url" content="https://suryal.dev/articles/do-you-need-a-decision-model-qwen3-5-4b-vs-jev.html">
+<meta property="og:image" content="https://suryal.dev/images/ldm-scorecard.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@suryaagentic">
+<meta name="twitter:creator" content="@suryaagentic">
+<meta name="twitter:image" content="https://suryal.dev/images/ldm-scorecard.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23FBFAF7%22 stroke=%22%2317160F%22 stroke-width=%226%22/><text x=%2250%22 y=%2271%22 font-size=%2262%22 font-family=%22Georgia,serif%22 font-weight=%22500%22 text-anchor=%22middle%22 fill=%22%2317160F%22>S</text></svg>">
+<meta name="theme-color" content="#FBFAF7">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../articles.css">
+<style>
+/* Decision-model article additions; shared typography and layout come from suryal.dev. */
+.skip-link{position:fixed;top:-80px;left:20px;z-index:300;background:var(--paper);padding:12px;border:1px solid var(--accent)}
+.skip-link:focus{top:10px}
+.article-body{min-width:0}
+.article-body h2{margin:1.5em 0 .55em;padding-top:.75em}
+.article-body h3{margin:1.4em 0 .5em;font-family:var(--serif);font-weight:500;font-size:1.25em}
+.article-body p:last-of-type{margin-bottom:1.2em}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:30px 0 6px}
+.tile{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px}
+.tile small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
+.tile b{display:block;font-family:var(--serif);font-size:24px;font-weight:500;line-height:1.1;color:var(--ink)}
+.tile span{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);margin-top:5px}
+@media(max-width:640px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.table-wrap{overflow-x:auto;margin:26px 0 30px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+table{width:100%;border-collapse:collapse;text-align:left;font-family:var(--mono);font-size:12px;line-height:1.65;font-variant-numeric:tabular-nums}
+th,td{padding:15px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2)}
+td{color:var(--ink-soft)}
+td:first-child{color:var(--ink);font-weight:500}
+tr:last-child td{border-bottom:0}
+.article-body figure{margin:36px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--paper)}
+.article-body figure img{display:block;width:100%;height:auto}
+.article-body figcaption{font-family:var(--mono);font-size:11.5px;line-height:1.6;color:var(--ink-soft);padding:16px 20px;border-top:1px solid var(--line)}
+.article-body figcaption a{display:inline}
+.callout{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;padding:18px 22px;margin:26px 0 30px}
+.callout p{margin:0 0 .6em}.callout p:last-child{margin:0}
+.callout ol,.callout ul{margin:.4em 0 0;padding-left:1.2em}
+.verdict{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin-left:6px;vertical-align:middle;color:var(--ink-soft)}
+@media(max-width:600px){table{min-width:540px}th,td{padding:12px}.article-body figure{margin:28px 0}.article-body p{overflow-wrap:break-word}}
+@media(prefers-reduced-motion:reduce){.progress{transition:none}}
+@media print{.progress,.skip-link{display:none}.article-body{max-width:none}h2{break-after:avoid}.table-wrap,figure{break-inside:avoid}p{orphans:3;widows:3}}
+</style>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="5cba5c2d-95f5-4ccb-896c-9104be4f00d2"></script>
+</head><body>
+<a class="skip-link" href="#article-body">Skip to article</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
+    <header class="topbar" id="topbar">
+        <div class="bar">
+            <a href="https://suryal.dev/" class="mark">Surya</a>
+            <nav class="nav" aria-label="Primary">
+                <a href="https://suryal.dev/#work">Work</a>
+                <a href="https://suryal.dev/#writing">Writing</a>
+                <a href="https://suryal.dev/#opensource">Open source</a>
+                <a href="https://suryal.dev/#experience">Experience</a>
+                <a href="https://suryal.dev/#contact">Contact</a>
+            </nav>
+            <a href="https://suryal.dev/articles/" class="topbar-cta">All articles</a>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+                <span></span><span></span>
+            </button>
+        </div>
+    </header>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="https://suryal.dev/#work">Work</a>
+        <a href="https://suryal.dev/#writing">Writing</a>
+        <a href="https://suryal.dev/#opensource">Open source</a>
+        <a href="https://suryal.dev/#experience">Experience</a>
+        <a href="https://suryal.dev/#contact">Contact</a>
+        <a href="https://suryal.dev/articles/">All articles</a>
+    </div>
+
+
+<main class="article"><div class="wrap">
+<header class="article-header">
+<p class="breadcrumb"><a href="https://suryal.dev/articles/">Articles</a><span>/</span>Agentic AIOps</p>
+<span class="article-cat" style="margin-top:14px">Agentic AIOps · Model Eval</span>
+<h1 class="article-title">Do you need a decision model? Qwen3.5-4B and Qwen3.8-27B vs Jev</h1>
+<p class="article-sub">I read a local LLM's label probabilities instead of its text, and ran it against TypeSafe's Jev on the same 310 alerts.</p>
+<div class="article-meta"><span class="who">Suryaprakash Lakshmanan</span><span class="sep">·</span><span>October 2026</span><span class="sep">·</span><span>Lab notebook</span></div>
+<div class="article-tags"><span>Jev</span><span>Qwen3.5-4B</span><span>Qwen3.8-27B</span><span>llama.cpp</span><span>AIOps</span><span>Agent Eval</span></div>
+<div class="tiles">
+    <div class="tile"><small>Tested</small><b>Qwen3.5-4B</b><span>on a laptop, vs Jev's API</span></div>
+    <div class="tile"><small>Data</small><b>310 alerts</b><span>3 decisions each</span></div>
+    <div class="tile"><small>How</small><b>1 forward pass</b><span>read the label odds, no text</span></div>
+    <div class="tile"><small>Verdict</small><b>1 of 3</b><span>decisions the 4B can take over</span></div>
+</div>
+</header>
+<article class="article-body" id="article-body">
+
+<div class="callout">
+<p><b>The question.</b> Jev is a dedicated "decision model": you ask it a
+typed question and it returns probabilities, never text. Can an ordinary small
+LLM do the same job if you read its probabilities directly?</p>
+<p><b>The test.</b> Qwen3.5-4B on my laptop (plus Qwen3.8-27B as a bigger
+reference) against Jev's API, on 310 synthetic ops alerts. Three decisions per
+alert: what type of alert is it, P1/P2/P3, and should it page a human?</p>
+<p><b>What you'll get.</b> Which decisions a small LLM can take over (one of
+the three), where it falls short and why, and five checks to run before you
+trust any model with decisions like these.</p>
+</div>
+
+<figure>
+  <img src="../images/ldm-scorecard.png" alt="Scorecard: can a small LLM replace a decision model? What type of alert is it: yes, same accuracy as Jev (94% vs 95%) and confident enough to auto-handle about 80% of alerts at 98%. Should it page a human: no, at the same false-page rate Jev misses 15 real pages and the 4B 32; a 27B matches Jev, 8x slower. P1, P2 or P3: nobody can, every model misses about 30% of P1s and the labels disagree with themselves. Will it follow a rule you add: not always, for days of runway to P3, Jev 7 of 7, the 27B 6, the 4B 0; all followed security to P1.">
+  <figcaption>The answer, one decision per row. The rest of the post is how I got there, and what I got wrong on the way.</figcaption>
+</figure>
+
+<p>Last month I <a href="https://suryal.dev/articles/jev-vs-qwen3-8-27b-vs-claude-sonnet-5.html">tested Jev</a>,
+TypeSafe's "System One" model. It can't write a sentence. You send it state
+plus typed questions, and it returns probabilities. It routed my alerts about
+as well as the LLMs I compared it with, at about a tenth of their latency. But
+those LLMs were a 27B and Claude Sonnet <em>generating text</em>, not a small
+model used the way Jev is.</p>
+
+<p>Since then I've seen people use ordinary LLMs for this job, and it makes
+sense: an LLM already computes a probability for every possible next token.
+Why not read those directly and skip the separate model?</p>
+
+<figure>
+  <img src="../images/ldm-concept.png" alt="Whiteboard diagram, three ways to get a decision out of a model, on one real alert. 1: ask an LLM to write, then parse the text, with no confidence score. 2: Jev writes nothing and returns probabilities, availability 0.99. 3: this experiment, Qwen3.5-4B in one forward pass writes nothing, and I keep the five label tokens and renormalize, availability 0.52, performance 0.41." loading="lazy">
+  <figcaption>One real alert. Way 1 is how most people put an LLM in a routing path. Way 3 is this experiment: Qwen never writes a word. Here the 4B is right but puts 0.41 on "performance", which a text answer would hide.</figcaption>
+</figure>
+
+<h2>What I thought</h2>
+
+<p>Three things, in the order I believed them:</p>
+<ol>
+  <li><b>A small local LLM, read this way, can replace Jev.</b> Same answer
+  shape, same latency, no API.</li>
+  <li><b>Priority is the hard one, and a written rubric fixes it.</b> One-line
+  definitions of P1/P2/P3 leave too much to guess.</li>
+  <li><em>(After seeing the errors.)</em> <b>The remaining priority errors are
+  a missing policy, not a weak model.</b> Write the two missing rules down and
+  every model improves.</li>
+</ol>
+<p>The first held for one decision out of three. The second helped a little.
+The third failed when I tested it.</p>
+
+<h2>What I did</h2>
+
+<figure>
+  <img src="../images/ldm-experiment.png" alt="Whiteboard diagram of the setup: 310 synthetic alerts, the same 3 questions (what type, P1/P2/P3, page a human), sent to Jev, Qwen3.8-27B, Qwen3.5-4B and a TF-IDF classifier; prompts tried: plain definitions, priority rubric, two rules from the errors, one sentence moved; scored on accuracy, honest confidence, missed pages at the same false-page rate, and rule-following." loading="lazy">
+</figure>
+
+<ul>
+  <li><b>Data:</b> the same 310 synthetic alerts as last time. 10 seed alerts
+  were written by hand for the first experiment; Claude generated and labeled
+  the other 300 in three batches (data platform, infrastructure, streaming).
+  The priority section shows why those labels need a hand check.</li>
+  <li><b>Questions:</b> category (5 types), priority (P1/P2/P3), and "page a
+  human?" (yes/no). Jev and Qwen get identical wording, from one file.</li>
+  <li><b>Routers:</b> Jev 1.13 over its API; Qwen3.5-4B and Qwen3.8-27B on a
+  local M5 Max through llama.cpp; and a TF-IDF + logistic regression
+  classifier as a no-LLM floor (5-fold cross-validation). The version numbers
+  are right: Qwen3.5 is the newest small Qwen, and 3.6 and 3.8 only ship at
+  27B and up.</li>
+  <li><b>Prompts:</b> plain definitions; a written priority rubric; the rubric
+  plus two rules taken from the errors; and one sentence moved, to test how
+  sensitive the small model is to wording.</li>
+</ul>
+
+<div class="callout">
+<p><b>How the probabilities are read.</b> Every label is a single token in
+Qwen's tokenizer (<code>capacity</code>, <code>security</code>,
+<code>yes</code>, <code>no</code>...), and the runner refuses to start if that
+isn't true. P1/P2/P3 tokenize as <code>P</code> + digit, so the prompt ends in
+<code>P</code> and I read the digit. I take the top-50 next-token
+probabilities, keep the allowed labels (summing <code>yes</code>/<code>Yes</code>
+and <code>no</code>/<code>No</code>), and renormalize. On average over 99% of
+the probability already sits on a valid label, and never less than 84% for
+any decision.</p>
+</div>
+
+<h2>What I found</h2>
+
+<div class="table-wrap"><table>
+<thead><tr><th>rubric prompt, n=310</th><th>category</th><th>priority</th><th>page a human</th><th>p50 per alert</th></tr></thead>
+<tbody>
+<tr><td>Jev 1.13 (API)</td><td>95%</td><td>76%</td><td>79%</td><td>264ms</td></tr>
+<tr><td>Qwen3.8-27B (local)</td><td><b>96%</b></td><td><b>79%</b></td><td><b>85%</b></td><td>2,274ms</td></tr>
+<tr><td>Qwen3.5-4B (local)</td><td>94%</td><td>68%*</td><td>79%</td><td>255–446ms</td></tr>
+<tr><td>TF-IDF + logistic regression</td><td>80%</td><td>57%</td><td>69%</td><td>&lt;1ms</td></tr>
+</tbody></table></div>
+
+<figure>
+  <img src="../images/ldm-accuracy.png" alt="Dumbbell chart of accuracy per decision for Jev, Qwen3.8-27B and Qwen3.5-4B, plain definitions vs rubric. Category is 94 to 96% for all. Priority moves most with the rubric. Page-a-human is 79 to 85%." loading="lazy">
+  <figcaption>Hollow dot = plain definitions, solid = with the rubric. *The rubric puts its tie-break sentence before the P1/P2/P3 list, the same structure Jev gets. With it after the list, the 4B scores 74%.</figcaption>
+</figure>
+
+<p>The no-LLM classifier is far behind on every decision, so "you don't need
+any model" doesn't hold here. With about 250 training alerts per fold, it has
+too little to learn from.</p>
+
+<h3>Category: the 4B is enough <span class="verdict">small LLM ✓</span></h3>
+
+<figure>
+  <img src="../images/ldm-calibration.png" alt="Reliability diagrams for category and priority. On category all three routers sit close to the diagonal. On priority they sit below it, meaning they are more confident than they are right." loading="lazy">
+  <figcaption>On the diagonal, "0.9 confident" means right 90% of the time. Category hugs it; priority doesn't.</figcaption>
+</figure>
+
+<p>All three routers are well calibrated on category (ECE 0.01–0.03), and
+their confidence predicts their mistakes:</p>
+
+<div class="table-wrap"><table>
+<thead><tr><th>category</th><th>AUROC, confidence vs correct</th><th>auto-handle at ≥0.9 confidence</th></tr></thead>
+<tbody>
+<tr><td>Jev</td><td>0.90</td><td>85% of alerts, 98% correct</td></tr>
+<tr><td>Qwen3.8-27B</td><td>0.97</td><td>91% of alerts, 99% correct</td></tr>
+<tr><td>Qwen3.5-4B</td><td>0.88</td><td>81% of alerts, 98% correct</td></tr>
+</tbody></table></div>
+
+<p><em>AUROC: 0.5 = confidence tells you nothing, 1.0 = it perfectly separates
+right from wrong.</em> The 4B handled 251 alerts at ≥0.9 confidence and got 6
+wrong. One was a real P1 (Kafka lag on the payments topic, settlement SLA at
+risk) routed as "performance", and Jev made the same call. None were security
+alerts slipping through; three were noise flagged as security or
+performance, the safe direction to be wrong in.</p>
+
+<h3>Paging: Jev beats the 4B <span class="verdict">small LLM ✗</span></h3>
+
+<p>At the default 0.5 threshold the routers trade off very differently: Jev
+misses 5 of 142 pages but raises 61 false ones; the 27B misses 37 and raises
+11; the 4B misses 13 and raises 53. So I let each router pick its own
+threshold and compared them at the same number of false pages:</p>
+
+<figure>
+  <img src="../images/ldm-paging.png" alt="Missed pages vs false pages for each router as the threshold moves. The 27B curve is lowest past about 15 false pages, Jev close behind, the 4B clearly higher, the TF-IDF classifier far above." loading="lazy">
+  <figcaption>Lower is better. Dots mark the default 0.5 threshold.</figcaption>
+</figure>
+
+<div class="table-wrap"><table>
+<thead><tr><th>missed pages (of 142) at ≤N false pages</th><th>N=10</th><th>N=20</th><th>N=30</th><th>N=40</th></tr></thead>
+<tbody>
+<tr><td>Jev</td><td><b>35</b></td><td>22</td><td>15</td><td>14</td></tr>
+<tr><td>Qwen3.8-27B</td><td>39</td><td><b>19</b></td><td><b>12</b></td><td><b>8</b></td></tr>
+<tr><td>Qwen3.5-4B</td><td>44</td><td>37</td><td>32</td><td>25</td></tr>
+<tr><td>TF-IDF + logistic regression</td><td>89</td><td>73</td><td>67</td><td>60</td></tr>
+</tbody></table></div>
+
+<p>At 30 false pages, the 4B misses 32 pages to Jev's 15. That gap is real.
+The 27B ties or beats Jev, so its 37 misses at 0.5 were a threshold choice.
+(The thresholds were picked on the same alerts they're scored on, which
+flatters every router equally, so trust the ranking more than the absolute
+numbers.)</p>
+
+<h3>Priority: nobody is reliable, and the labels are part of why <span class="verdict">nobody</span></h3>
+
+<p>Every router misses 19–22 of the 71 P1s (27–31%), and confidence barely
+predicts priority errors (AUROC 0.65–0.69, Jev included).</p>
+
+<figure>
+  <img src="../images/ldm-overlap.png" alt="Priority misses shared between Jev and each Qwen model. Jev vs 27B: 57 shared, 18 only Jev, 7 only Qwen. Jev vs 4B: 63 shared, 12 only Jev, 35 only Qwen." loading="lazy">
+  <figcaption>Most priority misses are shared across models, which points at the question or the labels rather than any one model.</figcaption>
+</figure>
+
+<p>On 49 alerts all three models agree with each other and disagree with the
+label. That's why confidence can't flag these errors: three models
+confidently giving the same answer leaves no uncertainty to catch. Two
+clusters account for 42 of the 49:</p>
+<ul>
+  <li><b>14 labeled P1, 13 of them security anomalies</b>, called P2 by every
+  model: out-of-hours PII queries, a cryptominer, impossible-travel logins.</li>
+  <li><b>28 labeled P3, 26 of them slow-burn capacity or performance</b> ("88%
+  full, 6 days of runway"), called P2 by every model. These 26 are the subset
+  of the 39 slow-burn P3 alerts that all three models got wrong.</li>
+</ul>
+
+<p>My rubric contradicted the labels on both. So I wrote the two rules down
+(any security anomaly → P1; days of runway → P3) and re-ran everything. I
+wrote them after seeing the errors, on the same alerts, so this is the best
+case for the idea:</p>
+
+<div class="table-wrap"><table>
+<thead><tr><th>priority</th><th>rubric</th><th>rubric + the two rules</th></tr></thead>
+<tbody>
+<tr><td>Jev</td><td>76%</td><td>74%</td></tr>
+<tr><td>Qwen3.8-27B</td><td>79%</td><td>77%</td></tr>
+<tr><td>Qwen3.5-4B</td><td>68%</td><td>66%</td></tr>
+</tbody></table></div>
+
+<p><b>Even written with hindsight, the rules didn't improve the score.</b> A
+2-point move is within noise. But the totals hide two different stories:
+<b>the models followed the rules, and the labels don't.</b></p>
+
+<figure>
+  <img src="../images/ldm-rules.png" alt="Two dumbbell panels, before and after adding each rule. Security rule, P1-labeled security alerts answered P1 out of 29: Jev 12 to 28, 27B 14 to 29, 4B 11 to 25. Runway rule, runway-in-days alerts answered P3 out of 7: Jev 0 to 7, 27B 0 to 6, 4B 0 to 0." loading="lazy">
+  <figcaption>Hollow dot = rubric, solid = rubric + the rule. Every model followed the rule about a whole category. Only the 4B ignored the rule that depends on a detail in the alert.</figcaption>
+</figure>
+
+<ul>
+  <li><b>Security, a rule about a whole category:</b> all three followed it.
+  The P1s caught jumped (Jev 12 → 28 of 29), but so did gold-P2 security
+  alerts pushed to P1 (Jev 4 → 26 of 30). The labels split security alerts
+  almost in half. My best reading is <em>confirmed compromise or exposure
+  outside the company</em> (a public bucket, a leaked key, an outsider granted
+  admin, a cryptominer already running) vs <em>attempts, blocked activity, or
+  exposure that stays internal</em> (failed logins, a password in an internal
+  log). That fits most of them, not all: out-of-hours PII queries by a
+  contractor are P1, a Tor login that passed MFA on the payments admin console
+  is P2. It's a hypothesis; testing it would mean a third rubric scored on the
+  same alerts.</li>
+  <li><b>Runway, a rule that depends on a detail in the alert:</b> 7 capacity
+  alerts give their runway in days or weeks. Counting how often each model
+  answered P3, what the rule says, regardless of the label: <b>Jev 7 of 7, the
+  27B 6 of 7, the 4B 0 of 7.</b> The 4B's probability on P3 rose from almost
+  zero to as much as 0.46, but never won. Moving the tie-break sentence after
+  the list, which helped the 4B before, got it to 1 of 7, so placement isn't
+  the explanation.</li>
+  <li><b>Jev also applied the rule beyond its condition.</b> It moved 22 other
+  alerts to P3 that state no runway: 12 of those are labeled P3 and 10 are
+  labeled P2. That's where most of its gain on slow-burn alerts came from, and
+  why its total still fell. The 27B moved 4, the 4B 8.</li>
+</ul>
+
+<figure>
+  <img src="../images/ldm-labels.png" alt="Whiteboard: the labels disagree with themselves. HDFS 91% full, growing 1.1TB a week, is P2, while snapshot storage 92% of quota, growing 400GB a week, is P3. A console login from a Tor exit node then project browsing is P1, while an admin console login from a Tor exit node that passed MFA is P2." loading="lazy">
+  <figcaption>Two pairs from the dataset, with the label each one carries.</figcaption>
+</figure>
+
+<p>Of the 7 runway alerts, the labels mark 4 as P3 and 3 as P2, and similar
+pairs exist in security too. Both members of a pair can come from the same
+generation batch or from different ones. My guess is that this is generation
+noise from an LLM labeling in batches, not a team policy applied unevenly,
+but I haven't checked. Either way no router can score 100% on priority, and I
+don't know what the real ceiling is. That probably explains the 76–79%
+plateau better than any difference between models does.</p>
+
+<h3>The 4B is fragile to wording</h3>
+
+<div class="table-wrap"><table>
+<thead><tr><th>priority, rubric prompt</th><th>tie-break first</th><th>tie-break last</th></tr></thead>
+<tbody>
+<tr><td>Jev</td><td>76%</td><td>n/a (the API takes the question and labels separately)</td></tr>
+<tr><td>Qwen3.8-27B</td><td>79%</td><td>80%</td></tr>
+<tr><td>Qwen3.5-4B</td><td>68%</td><td>74%</td></tr>
+</tbody></table></div>
+
+<p>A 6-point swing from moving one sentence. A decision layer that moves this
+much with wording is hard to trust and hard to audit. The 27B barely moved.
+(Re-running the same input gives identical output, but that only shows the
+decoding is deterministic, not that it's robust.)</p>
+
+<h3>Speed</h3>
+
+<figure>
+  <img src="../images/ldm-latency.png" alt="Latency per alert on the rubric prompt. Jev p50 264ms, p99 403ms. Qwen3.8-27B p50 2,274ms, p99 2,594ms. Qwen3.5-4B p50 326ms, p99 362ms." loading="lazy">
+</figure>
+
+<p>On the same M5 Max the 4B answers all three decisions in 255–446ms (the
+high end is right after 25 minutes of 27B load). Jev takes 264ms including
+the network round trip. The 27B takes about 2.3s and slows over a long run:
+llama-server's logs show prompt processing falling from about 400 to about
+190 tokens/s with flat prompt sizes, which is consistent with GPU
+throttling.</p>
+
+<h2>Takeaways</h2>
+
+<div class="callout">
+<p>If you're deciding whether an LLM can make routing decisions for you:</p>
+<ol>
+  <li><b>Read probabilities, not text.</b> One forward pass, single-token
+  labels, renormalize. You get a confidence score you can automate on, at
+  Jev-like latency for a 4B.</li>
+  <li><b>Decide per decision, not per system.</b> Here the 4B was enough for
+  category, not for paging, and nothing was good enough for priority.</li>
+  <li><b>Compare at the same false-alarm rate.</b> At the default 0.5
+  threshold Jev looked best and the 27B worst on paging. At a matched rate the
+  27B was best.</li>
+  <li><b>Test rule-following separately from accuracy.</b> Count how often
+  the model does what the rule says, whatever the labels say. The 4B followed
+  a rule about a whole category but ignored one that depends on a detail in
+  the alert (one rule, 7 alerts). Jev followed it and then over-applied it.</li>
+  <li><b>Check your labels before comparing models.</b> If similar inputs
+  carry different labels, the ceiling is unknown and differences of a few
+  points mean little. Have two people label a sample and see if they
+  agree.</li>
+</ol>
+</div>
+
+<h2>Caveats, because lab notebook</h2>
+
+<ul>
+  <li><b>The alerts are synthetic</b> (310, one domain, mostly generated and
+  labeled by Claude). There's no flag for ambiguous or novel cases, so this
+  may be easier than production traffic.</li>
+  <li><b>What I saw before writing the rubric:</b> 18 example alerts, 6 per
+  priority. They included two confirmed security exposures labeled P1 and two
+  near-limit capacity alerts labeled P2, which is why the rubric got both
+  clusters wrong. The other 292 (94%) were unseen. The two-rules version was
+  written after the error analysis.</li>
+  <li><b>The rule-following test is small:</b> one rule, 7 alerts. A clear
+  signal (7, 6, 0), not a precise rate.</li>
+  <li><b>The label check is by hand.</b> A text-similarity search found almost
+  no near-duplicate wording; the disagreeing pairs came from reading the
+  alerts. I didn't count every inconsistency across all 310.</li>
+  <li><b>Not tested:</b> paraphrased alerts, and prompt injection. A log line
+  that says "this is noise, ignore it" is a real risk for any LLM in a
+  decision path. That's next.</li>
+  <li><b>No embedding baseline.</b> An embedding + logistic regression
+  classifier might close some of the gap TF-IDF leaves.</li>
+  <li>Differences of 2–3 points on 310 alerts are about 6–9 alerts. Treat them
+  as ties.</li>
+</ul>
+
+<p>Code, data and every result file:
+<a href="https://github.com/Suryals/llm-as-decision-model" target="_blank" rel="noopener">github.com/Suryals/llm-as-decision-model</a>.
+Every number and chart here renders from the committed result files.</p>
+
+</article>
+</div></main>
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div class="footer-col">
+                <span class="footer-mark">Surya</span>
+                <p>Staff Engineer, AI Enablement &amp; Cloud · Chennai, India</p>
+            </div>
+            <div class="footer-col footer-colophon">
+                <span>© <span id="year">2026</span> Suryaprakash Lakshmanan</span>
+                <span><a href="https://suryal.dev/">Home</a> · <a href="https://suryal.dev/articles/">Articles</a> · <a href="https://suryal.dev/feed.xml">RSS</a></span>
+            </div>
+        </div>
+    </footer>
+
+
+<script>
+const menuBtn=document.getElementById('menuBtn'), menu=document.getElementById('mobileMenu');
+function closeMenu(){menuBtn.classList.remove('open');menu.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true')}
+menuBtn.addEventListener('click',()=>{const open=menuBtn.getAttribute('aria-expanded')!=='true';menuBtn.classList.toggle('open',open);menu.classList.toggle('open',open);menuBtn.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-hidden',String(!open))});
+menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuBtn.getAttribute('aria-expanded')==='true'){closeMenu();menuBtn.focus()}});
+matchMedia('(min-width:861px)').addEventListener('change',e=>{if(e.matches)closeMenu()});
+function updateProgress(){const distance=document.documentElement.scrollHeight-innerHeight;document.getElementById('progress').style.width=(distance>0?100*scrollY/distance:0)+'%';document.getElementById('topbar').classList.toggle('scrolled',scrollY>8)}
+addEventListener('scroll',updateProgress,{passive:true});addEventListener('resize',updateProgress);updateProgress();
+</script>
+    <script src="../script.js"></script>
+    <script src="../articles.js"></script>
+</body></html>

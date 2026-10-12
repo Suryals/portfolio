@@ -7,7 +7,15 @@
     <description>Long-form engineering and architecture notes on enterprise AI, MCP and agentic operations, SRE/platform engineering, and cloud modernization.</description>
     <language>en-us</language>
     <managingEditor>suryal.k90@gmail.com (Suryaprakash Lakshmanan)</managingEditor>
-    <lastBuildDate>Thu, 24 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 13 Oct 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Do you need a decision model? Qwen3.5-4B and Qwen3.8-27B vs Jev</title>
+      <link>https://suryal.dev/articles/do-you-need-a-decision-model-qwen3-5-4b-vs-jev.html</link>
+      <guid isPermaLink="true">https://suryal.dev/articles/do-you-need-a-decision-model-qwen3-5-4b-vs-jev.html</guid>
+      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Can an ordinary small LLM replace a dedicated decision model like TypeSafe's Jev if you read its label probabilities instead of its text? Qwen3.5-4B and Qwen3.8-27B vs Jev on 310 alerts, three decisions each. The 4B matched Jev on alert type, lost on paging, and ignored a rule that depends on a detail in the alert. On priority nobody was reliable: adding the rules the errors pointed to didn't help, and the labels disagree with themselves. Ends with five checks to run before trusting any model with decisions like these.</description>
+    </item>
 
     <item>
       <title>Testing Jev: can a model that can't talk route my alerts?</title>

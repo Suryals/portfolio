@@ -71,7 +71,19 @@
 
             <section class="art-list" id="artList">
                 <!-- Featured / latest -->
-                <a class="art-row featured" data-category="agentic" href="jev-vs-qwen3-8-27b-vs-claude-sonnet-5.html">
+                <a class="art-row featured" data-category="agentic" href="do-you-need-a-decision-model-qwen3-5-4b-vs-jev.html">
+                    <div class="art-main">
+                        <span class="art-cat">Agentic AIOps · Model Eval</span>
+                        <h2>Do you need a decision model? Qwen3.5-4B and Qwen3.8-27B vs Jev</h2>
+                        <p class="art-sub">I read a local LLM's label probabilities instead of its text, and ran it against TypeSafe's Jev on the same 310 alerts.</p>
+                        <p class="art-sum">A 4B on a laptop matched Jev on alert type (94% vs 95%) and could auto-handle ~80% of alerts. It lost on paging (32 missed pages vs Jev's 15 at the same false-page rate) and ignored a rule that depends on a detail in the alert (0 of 7). On priority nobody was reliable, and the labels turned out to disagree with themselves. Five checks to run before trusting any model with decisions like these.</p>
+                        <div class="art-tags"><span>Jev</span><span>Qwen3.5-4B</span><span>Qwen3.8-27B</span><span>llama.cpp</span><span>AIOps</span><span>Agent Eval</span></div>
+                        <span class="art-go">Read the experiment →</span>
+                    </div>
+                    <div class="art-meta">October 2026 · Lab notebook</div>
+                </a>
+
+                <a class="art-row" data-category="agentic" href="jev-vs-qwen3-8-27b-vs-claude-sonnet-5.html">
                     <div class="art-main">
                         <span class="art-cat">Agentic AIOps · Model Eval</span>
                         <h2>Testing Jev: can a model that can't talk route my alerts?</h2>
